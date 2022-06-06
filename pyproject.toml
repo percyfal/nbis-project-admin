@@ -1,0 +1,46 @@
+# see https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools_scm>=6.4"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/nbis/_version.py"
+
+[project]
+name = "nbis_project_admin"
+description = "NBIS project admin"
+readme = "README.md"
+# url = https://nbissweden.github.io/nbis_project_admin
+keywords = ["bioinformatics"]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Bio-Informatics"
+]
+dependencies = [
+    'importlib-metadata; python_version>="3.7"',
+]
+dynamic = ["version"]
+
+
+# Conda dependencies?
+# [project.optional-dependencies]
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "nbis.__version__"}
+entry-points = {file = [" nbis = nbis.__main__:main"] }
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
