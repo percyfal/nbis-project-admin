@@ -17,6 +17,7 @@ jobs:
       - name: Create Conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
+          environment-file: environment.yaml
           use-only-tar-bz2: true
       - name: Install test dependencies
         run: conda install -c conda-forge pytest pip tox

@@ -36,14 +36,14 @@ repos:
         args: [--skip-errors]
         additional_dependencies: [black==22.3.0]
         language_version: python3
-  - repo: https://github.com/snakemake/snakefmt
-    rev: 0.4.4
-    hooks:
-      - id: snakefmt
-  - repo: local
-    hooks:
-      - id: lint
-        name: Snakemake lint
-        entry: snakemake --lint text
-        language: system
-        files: ''
+  # - repo: https://github.com/snakemake/snakefmt
+  #   rev: 0.4.4
+  #   hooks:
+  #     - id: snakefmt
+  # - repo: local
+  #   hooks:
+  #     - id: lint
+  #       name: Snakemake lint
+  #       entry: snakemake --lint text
+  #       language: system
+  #       files: ''
