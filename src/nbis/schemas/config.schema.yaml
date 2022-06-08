@@ -1,0 +1,30 @@
+$schema: "http://json-schema.org/draft/2020-12/schema#"
+
+description: |
+  NBIS project admin configuration
+
+properties:
+  project_name:
+    description: |
+      NBIS project name. This is a very long description that spans
+      several lines and should be wrapped into several lines.
+    default: nbis-project
+    type: str
+  confluence:
+    description: confluence address
+    default: null
+    type: [str, 'null']
+  webexport:
+    description: webexport configuration
+    type: object
+    default: {}
+    properties:
+      url:
+        description: webexport url
+        type: [str, 'null']
+        default: null
+  foo:
+    description: foo option
+    type: numeric
+    default: 0
+    

@@ -1,13 +1,12 @@
-import os
-import pytest
-import subprocess
-import jsonschema
-import pkg_resources
-from collections import OrderedDict
-from nbis.config import Config, ConfigSchema
-from ruamel.yaml import YAML
-import textwrap
 import io
+import os
+
+import pkg_resources
+import pytest
+from nbis.config import Config
+from nbis.config import ConfigSchema
+from ruamel.yaml import YAML
+
 
 @pytest.fixture
 def schemafile():
@@ -117,7 +116,7 @@ webexport:
 
 # confluence address
 confluence: null
-"""
+"""  # noqa: E501
 
 
 @pytest.fixture
