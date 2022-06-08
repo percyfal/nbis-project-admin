@@ -3,26 +3,51 @@ import sys
 import logging
 import pkgutil
 import importlib
-from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import warnings
 
 from . import cli  as cli_package
 
 from . import __version__
 
+# Code initially by Marcel Martin, with minor modifications by author
 __author__ = "Per Unneberg"
 
 
 logger = logging.getLogger(__name__)
 
+
+class RawDescriptionDefaultsHelpFormatter(ArgumentDefaultsHelpFormatter):
+    """Help message formatter which retains any formatting in descriptions and adds default values.
+    """
+
+    def _fill_text(self, text, width, indent):
+        return ''.join(indent + line for line in text.splitlines(keepends=True))
+
+
+class DescriptionArgumentParser(ArgumentParser):
+    """An ArgumentParser that prints correctly formatted description and epilog help strings"""
+
+    def __init__(self, *args, **kwargs):
+        if 'formatter_class' not in kwargs:
+            kwargs['formatter_class'] = RawDescriptionDefaultsHelpFormatter
+        super().__init__(*args, **kwargs)
+
+    def error(self, message):
+        self.print_help(sys.stderr)
+        args = {'prog': self.prog, 'message': message}
+        self.exit(2, '%(prog)s: error: %(message)s\n' % args)
+
+
 def main(arguments=None):
     if arguments is None:
         arguments = sys.argv[1:]
+
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     subcommand_name = get_subcommand_name(arguments)
     module = importlib.import_module("." + subcommand_name, cli_package.__name__)
 
-    parser = ArgumentParser(description=__doc__, prog='nbis')
+    parser = DescriptionArgumentParser(description=__doc__, prog='nbis')
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
     parser.add_argument('--debug', action='store_true', default=False, help='Print debug messages')
 
@@ -35,6 +60,7 @@ def main(arguments=None):
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
     del args.debug
+
 
     try:
         module.main(args)
@@ -56,7 +82,7 @@ def get_subcommand_name(arguments) -> str:
     Return:
         subcommand name
     """
-    parser = ArgumentParser(description=__doc__, prog="igdiscover")
+    parser = DescriptionArgumentParser(description=__doc__, prog="nbis")
     parser.add_argument("--version", action="version", version=__version__)
     subparsers = parser.add_subparsers()
 

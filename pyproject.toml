@@ -23,24 +23,45 @@ classifiers = [
 ]
 dependencies = [
     'importlib-metadata; python_version>="3.7"',
+    'jsonschema',
+    'ruamel.yaml'
 ]
 dynamic = ["version"]
 
-
-# Conda dependencies?
-# [project.optional-dependencies]
-
+[tool.setuptools.dynamic]
+version = {attr = "nbis.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.setuptools.dynamic]
-version = {attr = "nbis.__version__"}
-entry-points = {file = [" nbis = nbis.__main__:main"] }
+[tool.setuptools]
+package-data = { nbis = ["schemas/config.schema.yaml"]}
+
+
+[project.scripts]
+nbis-admin = "nbis.__main__:main"
 
 [tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -q"
+minversion = "7.0"
+addopts = "-ra -q --doctest-modules"
+pythonpath = [
+    "src"
+]
 testpaths = [
     "tests",
 ]
+
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py39
+isolated_build = true
+
+[testenv]
+deps =
+    pytest
+    pip>=7.0.0
+    wheel
+commands = pytest
+"""
