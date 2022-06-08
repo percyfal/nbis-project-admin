@@ -7,7 +7,7 @@ def add_arguments(parser):
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--dry-run', action='store_true', default=False,
                        help='dry run')
-    arg('--json', metavar="FILE", help="write statistics to FILE")
+    arg('--json', metavar="FILE", help="write statistics to FILE", default="webexport.json")
 
 def main(args):
-    print(args)
+    pass
