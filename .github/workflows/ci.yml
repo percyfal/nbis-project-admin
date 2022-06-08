@@ -1,0 +1,26 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+    defaults:
+      run:
+        shell: bash -l {0}  # a login shell is required for conda activation
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Conda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          use-only-tar-bz2: true
+      - name: Install test dependencies
+        run: conda install -c conda-forge pytest pip tox
+      - name: Install nbis-project-admin
+        run: pip install --no-deps .
+      - name: Run tests
+        run: pytest
