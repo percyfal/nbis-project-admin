@@ -7,7 +7,6 @@ from nbis.config import Config
 from nbis.config import ConfigSchema
 from ruamel.yaml import YAML
 
-
 @pytest.fixture
 def schemafile():
     return pkg_resources.resource_filename("nbis", ConfigSchema.PATH)
