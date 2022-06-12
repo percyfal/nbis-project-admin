@@ -1,15 +1,14 @@
 """Console script for nbis."""
 import ast
-import sys
+import importlib
 import logging
 import pkgutil
-import importlib
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-import warnings
-
-from . import subcommands
+import sys
+from argparse import ArgumentDefaultsHelpFormatter
+from argparse import ArgumentParser
 
 from . import __version__
+from . import subcommands
 
 # Code initially by Marcel Martin, with minor modifications by author
 __author__ = "Per Unneberg"
@@ -19,29 +18,30 @@ logger = logging.getLogger(__name__)
 
 
 class RawDescriptionDefaultsHelpFormatter(ArgumentDefaultsHelpFormatter):
-    """Help message formatter which retains any formatting in descriptions and adds default values.
-    """
+    """Help message formatter which retains any formatting in
+    descriptions and adds default values."""
 
     def _fill_text(self, text, width, indent):
-        return ''.join(indent + line for line in text.splitlines(keepends=True))
+        return "".join(indent + line for line in text.splitlines(keepends=True))
 
 
 class DescriptionArgumentParser(ArgumentParser):
-    """An ArgumentParser that prints correctly formatted description and epilog help strings"""
+    """An ArgumentParser that prints correctly formatted description
+    and epilog help strings"""
 
     def __init__(self, *args, **kwargs):
-        if 'formatter_class' not in kwargs:
-            kwargs['formatter_class'] = RawDescriptionDefaultsHelpFormatter
+        if "formatter_class" not in kwargs:
+            kwargs["formatter_class"] = RawDescriptionDefaultsHelpFormatter
         super().__init__(*args, **kwargs)
 
     def error(self, message):
         self.print_help(sys.stderr)
-        args = {'prog': self.prog, 'message': message}
-        self.exit(2, '%(prog)s: error: %(message)s\n' % args)
-
+        args = {"prog": self.prog, "message": message}
+        self.exit(2, "%(prog)s: error: %(message)s\n" % args)
 
 
 def get_nbis_parser():
+    # fmt: off
     top_parser = DescriptionArgumentParser(
         description=__doc__,
         prog='nbis'
@@ -57,14 +57,14 @@ def get_nbis_parser():
         default=False,
         help='Print debug messages'
     )
-
+    # fmt: on
     return top_parser
 
 
 def main(arg_list=None):
     if arg_list is None:
         arg_list = sys.argv[1:]
-    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     minimal_parser = make_minimal_parser(subcommands)
     subcommand_name = get_subcommand_name(minimal_parser, arg_list)
     parser = make_subcommand_parser(subcommand_name)
@@ -96,9 +96,13 @@ def make_subcommand_parser(subcommand_name):
     parser = get_nbis_parser()
     subparsers = parser.add_subparsers()
     module = importlib.import_module("." + subcommand_name, subcommands.__name__)
+    # fmt: off
     subparser = subparsers.add_parser(
-        subcommand_name, help=module.__doc__.split("\n", maxsplit=1)[1], description=module.__doc__
+        subcommand_name,
+        help=module.__doc__.split("\n", maxsplit=2)[1],
+        description=module.__doc__
     )
+    # fmt: on
     subparser.set_defaults(module_name=subcommand_name, runner=module.main)
     module.add_arguments(subparser)
     return parser
@@ -116,10 +120,13 @@ def make_minimal_parser(package_list):
         package_list = [package_list]
     for pkg in package_list:
         for module_name, docstring in subcommands_modules(pkg):
-            help = docstring.split("\n", maxsplit=1)[1].replace("%", "%%")
+            help_str = docstring.split("\n", maxsplit=2)[1].replace("%", "%%")
+            # fmt: off
             subparser = subparsers.add_parser(
-                module_name, help=help, description=docstring, add_help=False
+                module_name, help=help_str,
+                description=docstring, add_help=False
             )
+            # fmt: on
         subparser.set_defaults(module_name=module_name)
     return parser
 
