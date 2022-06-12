@@ -1,12 +1,10 @@
-import os
-import sys
-import pytest
-import importlib
 import argparse
 from importlib.machinery import SourceFileLoader
-import subprocess
-from nbis import subcommands
-from nbis.cli import subcommands_modules, make_minimal_parser, make_subcommand_parser
+
+import pytest
+from nbis.cli import make_minimal_parser
+from nbis.cli import make_subcommand_parser
+from nbis.cli import subcommands_modules
 
 
 def add_module(p, pkg, modules):
@@ -24,33 +22,40 @@ def package(tmp_path):
     pout = add_module(tmp_path, "package", ["init"])
     add_module(pout, "commands", ["init", "foo", "bar"])
     add_module(pout, "utils", ["init", "foobar", "barfoo"])
-    package = SourceFileLoader(fullname="package", path=str(pout / "__init__.py")).load_module()
+    package = SourceFileLoader(
+        fullname="package", path=str(pout / "__init__.py")
+    ).load_module()
     return package
 
 
 @pytest.fixture
 def commands(package):
     from package import commands
+
     return commands
 
 
 @pytest.fixture
 def utils(package):
     from package import utils
+
     return utils
+
 
 @pytest.fixture
 def webexport(monkeypatch):
     from nbis.subcommands import webexport
+
     def mockreturn(cls):
         return "Mock webexport runner"
-    monkeypatch.setattr(webexport, 'main', mockreturn)
 
+    monkeypatch.setattr(webexport, "main", mockreturn)
 
 
 def test_subcommands_modules(commands):
-    modules = dict((mod, docstring.strip()) for mod, docstring in
-                   subcommands_modules(commands))
+    modules = {
+        mod: docstring.strip() for mod, docstring in subcommands_modules(commands)
+    }
     assert sorted(modules.keys()) == ["bar", "foo"]
     assert sorted(modules.values()) == ["bar", "foo"]
 
@@ -62,7 +67,7 @@ def test_make_minimal_parser(commands, utils):
         for act in action._actions:
             if isinstance(act, argparse._SubParsersAction):
                 subcommands.extend(act.choices.keys())
-    assert set(subcommands) == {'bar', 'foo', 'barfoo', 'foobar'}
+    assert set(subcommands) == {"bar", "foo", "barfoo", "foobar"}
 
 
 def test_webexport_subcommand(webexport):
