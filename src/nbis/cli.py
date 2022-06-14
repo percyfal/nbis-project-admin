@@ -71,7 +71,8 @@ def main(arg_list=None):
     if arg_list is None:
         arg_list = sys.argv[1:]
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-    minimal_parser = make_minimal_parser(subcommands)
+    top_parser = get_nbis_parser()
+    minimal_parser, _ = make_minimal_parser(top_parser, subcommands)
     logger.info(dir(minimal_parser))
     subcommand_name = get_subcommand_name(minimal_parser, arg_list)
     parser = make_subcommand_parser(subcommand_name)
@@ -101,13 +102,13 @@ def get_subcommand_name(parser, arg_list) -> str:
     return module_name
 
 
-def make_subcommand_parser(subcommand_name):
+def make_subcommand_parser(subcommand_name, package=subcommands):
     """
     Make parser and load module whilst adding subparser documentation.
     """
     parser = get_nbis_parser()
     subparsers = parser.add_subparsers()
-    module = importlib.import_module("." + subcommand_name, subcommands.__name__)
+    module = importlib.import_module("." + subcommand_name, package.__name__)
     # fmt: off
     subparser = subparsers.add_parser(
         subcommand_name,
@@ -121,17 +122,18 @@ def make_subcommand_parser(subcommand_name):
 
 
 # We need the minimal parser just to get the actual subcommand name
-def make_minimal_parser(package_list):
+def make_minimal_parser(parser, package_list):
     """
     Make minimal parser including subcommands from package_list
     """
-    parser = get_nbis_parser()
     subparsers = parser.add_subparsers()
+    subcommands_map = dict()
 
     if not isinstance(package_list, list):
         package_list = [package_list]
     for pkg in package_list:
         for module_name, docstring in subcommands_modules(pkg):
+            subcommands_map[module_name] = pkg
             help_str = docstring.split("\n", maxsplit=2)[1].replace("%", "%%")
             # fmt: off
             subparser = subparsers.add_parser(
@@ -140,7 +142,7 @@ def make_minimal_parser(package_list):
             )
             # fmt: on
         subparser.set_defaults(module_name=module_name)
-    return parser
+    return parser, subcommands_map
 
 
 def subcommands_modules(package):

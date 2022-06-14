@@ -2,6 +2,7 @@ import argparse
 from importlib.machinery import SourceFileLoader
 
 import pytest
+from nbis.cli import get_nbis_parser
 from nbis.cli import make_minimal_parser
 from nbis.cli import make_subcommand_parser
 from nbis.cli import subcommands_modules
@@ -61,7 +62,8 @@ def test_subcommands_modules(commands):
 
 
 def test_make_minimal_parser(commands, utils):
-    parser = make_minimal_parser([commands, utils])
+    top_parser = get_nbis_parser()
+    parser, _ = make_minimal_parser(top_parser, [commands, utils])
     subcommands = []
     for action in parser._action_groups:
         for act in action._actions:
