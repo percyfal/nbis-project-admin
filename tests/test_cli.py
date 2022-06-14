@@ -73,7 +73,8 @@ def test_make_minimal_parser(commands, utils):
 
 
 def test_webexport_subcommand(webexport):
-    parser = make_subcommand_parser("webexport")
+    top_parser = get_nbis_parser()
+    parser = make_subcommand_parser(top_parser, "webexport")
     args = parser.parse_args(["webexport"])
     results = args.runner(args)
     assert results == "Mock webexport runner"

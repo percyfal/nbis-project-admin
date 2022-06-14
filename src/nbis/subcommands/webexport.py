@@ -1,4 +1,5 @@
-"""nbis-admin webexport: sync webexport folders
+"""
+nbis-admin webexport: sync webexport folders
 
 All contents of folder reports/webexport will be synced to the url
 defined by the 'webexport.url' configuration property.

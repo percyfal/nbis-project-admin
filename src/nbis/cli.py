@@ -75,7 +75,8 @@ def main(arg_list=None):
     minimal_parser, _ = make_minimal_parser(top_parser, subcommands)
     logger.info(dir(minimal_parser))
     subcommand_name = get_subcommand_name(minimal_parser, arg_list)
-    parser = make_subcommand_parser(subcommand_name)
+    top_parser = get_nbis_parser()
+    parser = make_subcommand_parser(top_parser, subcommand_name)
 
     args, extra = parser.parse_known_args(arg_list)
 
@@ -102,11 +103,10 @@ def get_subcommand_name(parser, arg_list) -> str:
     return module_name
 
 
-def make_subcommand_parser(subcommand_name, package=subcommands):
+def make_subcommand_parser(parser, subcommand_name, package=subcommands):
     """
     Make parser and load module whilst adding subparser documentation.
     """
-    parser = get_nbis_parser()
     subparsers = parser.add_subparsers()
     module = importlib.import_module("." + subcommand_name, package.__name__)
     # fmt: off
@@ -141,7 +141,7 @@ def make_minimal_parser(parser, package_list):
                 description=docstring, add_help=False
             )
             # fmt: on
-        subparser.set_defaults(module_name=module_name)
+            subparser.set_defaults(module_name=module_name)
     return parser, subcommands_map
 
 
