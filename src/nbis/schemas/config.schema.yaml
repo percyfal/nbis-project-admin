@@ -1,30 +1,47 @@
 $schema: "http://json-schema.org/draft/2020-12/schema#"
 
 description: |
-  NBIS project admin configuration
+  NBIS project admin configuration. The configuration file resides in
+  the project root directory which will be inferred from the
+  configuration file name.
 
 properties:
   project_name:
-    description: |
-      NBIS project name. This is a very long description that spans
-      several lines and should be wrapped into several lines.
+    description: NBIS project name
     default: nbis-project
     type: str
   confluence:
-    description: confluence address
-    default: null
-    type: [str, 'null']
-  webexport:
-    description: webexport configuration
+    description: Confluence configuration. 
     type: object
     default: {}
     properties:
       url:
-        description: webexport url
+        description: Confluence url.
         type: [str, 'null']
         default: null
-  foo:
-    description: foo option
-    type: numeric
-    default: 0
+  webexport:
+    description: Webexport configuration
+    type: object
+    default: {}
+    properties:
+      url:
+        description: |
+          Webexport url. All files located in the webexport build
+          directory will be synced to this url.
+        type: [str, 'null']
+        default: null
+      builddir:
+        description: |
+          Webexport build directory.
+        type: str
+        default: reports/webexport
+      src:
+        description: |
+          Webexport source directory.
+        type: str
+        default: docs/webexport
+  bibliography:
+    description: Bibliography file
+    type: str
+    default: references/bibliography.bib
     

@@ -47,6 +47,12 @@ def get_nbis_parser():
         prog='nbis'
     )
     top_parser.add_argument(
+        '--config-file',
+        action='store',
+        default=None,
+        help='configuration file'
+    )
+    top_parser.add_argument(
         '--version',
         action='version',
         version='%(prog)s ' + __version__
@@ -66,15 +72,21 @@ def main(arg_list=None):
         arg_list = sys.argv[1:]
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     minimal_parser = make_minimal_parser(subcommands)
+    logger.info(dir(minimal_parser))
     subcommand_name = get_subcommand_name(minimal_parser, arg_list)
     parser = make_subcommand_parser(subcommand_name)
 
-    args = parser.parse_args(arg_list)
+    args, extra = parser.parse_known_args(arg_list)
 
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
     del args.debug
 
+    args.project_name = "nbis"
+    args.prog = parser.prog
+    args.extra_options = extra
+    if args.config_file is None:
+        args.config_file = f"{args.project_name}.yaml"
     args.runner(args)
 
     return 0

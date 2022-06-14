@@ -6,6 +6,8 @@ import os
 import sys
 from datetime import date
 
+from . import SubcommandError
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,8 +32,8 @@ Initialized diary with `{project_name} {args}`.
 
 def init_diary(args):
     if os.path.exists(args.diary_file):
-        logger.warning(f"{args.diary_file} already exsist; skipping init")
-        return
+        logger.warning(f"{args.diary_file} already exists; skipping init")
+        raise SubcommandError
     try:
         with open(args.diary_file, "w") as fh:
             sysargs = " ".join(sys.argv[1:])
