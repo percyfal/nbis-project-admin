@@ -6,6 +6,8 @@ import os
 import sys
 from datetime import date
 
+from nbis.templates import env
+
 from . import SubcommandError
 
 logger = logging.getLogger(__name__)
@@ -22,14 +24,6 @@ def add_arguments(parser):
     )
 
 
-DIARY_MYST_TEMPLATE = """# Project diary for {project_name}
-
-## {date}
-
-Initialized diary with `{project_name} {args}`.
-"""
-
-
 def init_diary(args):
     if os.path.exists(args.diary_file):
         logger.warning(f"{args.diary_file} already exists; skipping init")
@@ -37,8 +31,9 @@ def init_diary(args):
     try:
         with open(args.diary_file, "w") as fh:
             sysargs = " ".join(sys.argv[1:])
+            template = env.get_template("diary.md.j2")
             fh.write(
-                DIARY_MYST_TEMPLATE.format(
+                template.render(
                     project_name=args.project_name, args=sysargs, date=date.today()
                 )
             )

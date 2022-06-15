@@ -14,6 +14,13 @@ jobs:
         shell: bash -l {0}  # a login shell is required for conda activation
     steps:
       - uses: actions/checkout@v2
+      - name: cache-conda
+        uses: actions/cache@v2
+        env:
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yaml') }}
       - name: Create Conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -25,7 +32,7 @@ jobs:
       - name: Install test dependencies
         run: conda install -c conda-forge pytest pip tox
       - name: Install R revealjs
-        run: R -e "install.packages(revealjs)"
+        run: R -e "install.packages(\"revealjs\")"
       - name: Install nbis-project-admin
         run: pip install --no-deps .
       - name: Run tests
