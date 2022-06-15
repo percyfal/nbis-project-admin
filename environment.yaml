@@ -3,5 +3,12 @@ channels:
   - bioconda
   - defaults
 dependencies:
+  - jinja2
+  - jupyter
+  - jupyter-book
   - jsonschema
+  - r-base
+  - r-bookdown
+  - r-rmarkdown
   - ruamel.yaml
+  - snakemake

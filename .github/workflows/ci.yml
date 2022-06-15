@@ -21,6 +21,8 @@ jobs:
           use-only-tar-bz2: true
       - name: Install test dependencies
         run: conda install -c conda-forge pytest pip tox
+      - name: Install R revealjs
+        run: R -e "install.packages(revealjs)"
       - name: Install nbis-project-admin
         run: pip install --no-deps .
       - name: Run tests
