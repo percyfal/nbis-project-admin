@@ -23,6 +23,7 @@ classifiers = [
 ]
 dependencies = [
     'importlib-metadata; python_version>="3.7"',
+    'jinja2',
     'jsonschema',
     'ruamel.yaml'
 ]
@@ -35,7 +36,11 @@ version = {attr = "nbis.__version__"}
 where = ["src"]
 
 [tool.setuptools]
-package-data = { nbis = ["schemas/config.schema.yaml"]}
+package-data = { nbis = [
+	     "schemas/config.schema.yaml",
+	     "templates/*.j2",
+	     "resources/*"
+]}
 
 
 [project.scripts]
@@ -64,6 +69,7 @@ isolated_build = true
 [testenv]
 deps =
     pytest
+    pytest-cov
     pip>=7.0.0
     wheel
 commands = pytest

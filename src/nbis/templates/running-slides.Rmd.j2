@@ -1,0 +1,75 @@
+---
+title: "{{ title | d('', true) }}"
+{% if subtitle -%}
+  subtitle: "{{ subtitle }}"
+{% endif -%}  
+author:
+    - "{{ author }}"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+  rmd: {{ filename }}
+fontsize: 8pt
+output:
+  revealjs::revealjs_presentation:
+    {% if css -%}
+    css: [ "{{ css | join('", "') }}" ]
+    {% endif -%}
+    {% if in_header -%}
+    includes:
+      in_header: {{ in_header }}
+    {% endif -%}
+    self_contained: true
+    reveal_plugins: []
+    highlight: breezedark
+    fig_caption: false
+    toc: false
+    toc_depth: 2
+    slide_level: 1
+    transition: none
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+      minScale: 1
+      maxScale: 1
+      height: 800
+      width: 1200
+{% if csl -%}
+  csl: {{ csl }}
+{% endif -%}
+mainfont: Liberation Serif
+monofont: Liberation Mono
+{% if bibliography -%}
+  bibliography: {{ bibliography }}
+{% endif -%}
+---
+
+```{r knitr-setup, echo=FALSE, include=FALSE }
+library(knitr)
+{% for lib in libraries -%}
+  library({{ lib }})
+{% endfor -%}
+options(browser="firefox")
+knitr::opts_chunk$set(warning = FALSE, message = FALSE,
+                      fig.width=12, fig.height=10, autodep=TRUE, echo=TRUE, include=TRUE,
+                      cache=FALSE, include=TRUE, eval=TRUE, tidy=FALSE, error=TRUE,
+                      class.source = "numberLines lineAnchors",
+                      class.output = c("numberLines lineAnchors chunkout"))
+knitr::knit_hooks$set(inline = function(x) {
+                      prettyNum(x, big.mark=" ")
+                  })
+
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+                      x <- def.chunk.hook(x, options)
+                      ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+}) 
+```
+
+{% if not title %}
+#
+
+<h1 style="color: black;">Presentation title</h1>
+
+{% endif %}
+
+# Section 1

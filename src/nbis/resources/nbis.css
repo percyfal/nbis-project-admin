@@ -1,0 +1,32 @@
+div.scilife-logo {
+    content: "";
+    background-image: url("https://www.scilifelab.se/wp-content/uploads/2020/09/SciLifeLab_Logotype_Green_POS_large-copy-1536x334.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    bottom: 10px;
+    left: 150px;
+    height: 50px;
+    width: 200px;
+}
+
+/* NBIS logo in bottom right corner  */
+div.nbis-logo {
+    content: "";
+    background-image: url("https://nbis.se/assets/img/logos/nbislogo-green.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    bottom: 23px;
+    right: 150px;
+    height: 35px;
+    width: 100px;
+}
+
+div.footer-text {
+    position: absolute;
+    bottom: 20px;
+    left: 450px;
+    height: 20px;
+    width: 800px;
+}
