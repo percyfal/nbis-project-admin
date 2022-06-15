@@ -67,10 +67,12 @@ envlist = py39
 isolated_build = true
 
 [testenv]
+changedir = tests
 deps =
     pytest
     pytest-cov
     pip>=7.0.0
     wheel
-commands = pytest
+commands =
+    pytest --basetemp="{envtmpdir}" {posargs}
 """

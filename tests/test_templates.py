@@ -1,6 +1,13 @@
+import os
+import shutil
+import pytest
 import pkg_resources
 import subprocess
 from nbis.templates import env
+
+
+if os.getenv("TOX_ENV_NAME") is not None:
+    pytest.skip(allow_module_level=True, reason="disable test in tox environment")
 
 
 def test_running_slides_template(tmp_path):

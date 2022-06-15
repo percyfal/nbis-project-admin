@@ -1,2 +1,6 @@
 /src/nbis/_version.py
 /src/nbis_project_admin.egg-info/
+/.tox/
+/.jupyter/
+/Makefile
+/build/
