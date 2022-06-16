@@ -11,7 +11,7 @@ properties:
     default: nbis-project
     type: str
   confluence:
-    description: Confluence configuration. 
+    description: Confluence configuration.
     type: object
     default: {}
     properties:
@@ -19,6 +19,15 @@ properties:
         description: Confluence url.
         type: [str, 'null']
         default: null
+  docs:
+    description: Documentation configuration
+    type: object
+    default: {}
+    properties:
+      src:
+        description: Documentation source directory.
+        type: str
+        default: docs
   webexport:
     description: Webexport configuration
     type: object
@@ -26,20 +35,14 @@ properties:
     properties:
       url:
         description: |
-          Webexport url. All files located in the webexport build
-          directory will be synced to this url.
+          Webexport url. All directories located in the docs directory
+          will be synced to this url.
         type: [str, 'null']
         default: null
-      builddir:
+      include:
         description: |
-          Webexport build directory.
-        type: str
-        default: reports/webexport
-      src:
-        description: |
-          Webexport source directory.
-        type: str
-        default: docs/webexport
+          List of directories, relative to the documentation source
+          directory, to include in webexport.
   bibliography:
     description: Bibliography file
     type: str
