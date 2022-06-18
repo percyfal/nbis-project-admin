@@ -1,4 +1,4 @@
-$schema: "http://json-schema.org/draft/2020-12/schema#"
+$schema: "http://json-schema.org/draft-07/schema#"
 
 description: |
   NBIS project admin configuration. The configuration file resides in
@@ -9,7 +9,7 @@ properties:
   project_name:
     description: NBIS project name
     default: nbis-project
-    type: str
+    type: string
   confluence:
     description: Confluence configuration.
     type: object
@@ -17,7 +17,7 @@ properties:
     properties:
       url:
         description: Confluence url.
-        type: [str, 'null']
+        type: [string, 'null']
         default: null
   docs:
     description: Documentation configuration
@@ -26,7 +26,7 @@ properties:
     properties:
       src:
         description: Documentation source directory.
-        type: str
+        type: string
         default: docs
   webexport:
     description: Webexport configuration
@@ -37,7 +37,7 @@ properties:
         description: |
           Webexport url. All directories located in the docs directory
           will be synced to this url.
-        type: [str, 'null']
+        type: [string, 'null']
         default: null
       include:
         description: |
@@ -45,6 +45,12 @@ properties:
           directory, to include in webexport.
   bibliography:
     description: Bibliography file
-    type: str
+    type: string
     default: references/bibliography.bib
-    
+
+required:
+  - bibliography
+  - confluence
+  - docs
+  - project_name
+  - webexport

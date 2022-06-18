@@ -1,17 +1,17 @@
 from __future__ import annotations
 
+import copy
+import json
 import logging
-import os
-import pathlib
-import textwrap
+import pprint
+import re
 import types
 from collections import OrderedDict
-from dataclasses import dataclass
-from dataclasses import field
 from typing import Any
 from typing import Mapping
 
-import pkg_resources
+import jsonschema
+import ruamel.yaml
 from ruamel.yaml import YAML
 
 logger = logging.getLogger(__name__)
@@ -21,59 +21,26 @@ class ConfigError(Exception):
     pass
 
 
-# Populate a configuration option with standard jsonschema keys
-# property, description, type, ...
-@dataclass
-class ConfigEntry:
-    _fill_column = 70
-    _comment_column = 40
-
-    name: str = "main"
-    level: int = 0
-    description: str = None
-    type: str | list | dict = None  # noqa: A003
-    default: str | list = None
-    properties: OrderedDict = field(default_factory=OrderedDict)
-
-    def __post_init__(self):
-        self.description = " ".join(self.description.split("\n")).strip()
-        if self.default is None:
-            self.default = "null"
-
-    @property
-    def indent(self):
-        return "  "
-
-    def commented_description(self, precomment=True):
-        lines = textwrap.wrap(self.description, width=self._fill_column)
-        if precomment:
-            return "\n".join([f"# {line}" for line in lines])
-        s = f"# {lines[0]}\n"
-        if len(lines) > 0:
-            s += "\n".join(
-                [
-                    "{0:>{fill}}{1}".format(" ", f"# {line}", fill=self._comment_column)
-                    for line in lines[1:]
-                ]
-            )
-        return s.strip()
-
-    def __str__(self):
-        if isinstance(self.default, dict):
-            keyval = f"{self.indent * self.level}{self.name}:"
-        else:
-            keyval = f"{self.indent * self.level}{self.name}: {self.default}"
-        if self.level == 0:
-            s = f"{self.commented_description()}\n{keyval}"
-        else:
-            s = "{0:<{fill}}".format(keyval, fill=40)
-            s += f"{self.commented_description(precomment=False)}"
-        for prop in self.properties:
-            s += f"\n{prop}"
-        return s
+class SchemaFiles:
+    CONFIGURATION_SCHEMA = "schemas/config.schema.yaml"
 
 
-class ConfigSchema:
+# Need jsonschema>=4 for Draft202012Validator, but jupyter-book
+# depends on jsonschema<4
+DefaultSchemaValidator = jsonschema.validators.extend(
+    jsonschema.validators.Draft7Validator
+)
+
+
+# Allow null schema; from tskit.metadata
+def validate_bytes(data: bytes | None) -> None:
+    if data is not None and not isinstance(data, bytes):
+        raise TypeError(
+            f"If no encoding is set metadata should be bytes, found {type(data)}"
+        )
+
+
+class Schema:
     """Class for storing configuration schema.
 
     NB: The parser cannot resolve references meaning only the
@@ -83,59 +50,95 @@ class ConfigSchema:
 
     """
 
-    PATH = "schemas/config.schema.yaml"
-    _fill_column = 70
-
-    def __init__(self, schema: Mapping[str, Any] | None, name: str = "nbis") -> None:
+    def __init__(self, schema: Mapping[str, Any] | None) -> None:
         self._schema = schema
-        self._description = " ".join(self._schema.get("description").split("\n"))
-        self._properties = self._parse_properties(
-            schema.get("properties", OrderedDict())
-        )
-        self._name = name
+        if schema is None:
+            self._string = ""
+            self._validate_row = validate_bytes
+        else:
+            try:
+                DefaultSchemaValidator(schema)
+            except jsonschema.exceptions.SchemaError as ve:
+                logger.error(ve)
+                raise
+            self._string = json.dumps(schema, sort_keys=True, separators=(",", ":"))
+            self._validate_row = DefaultSchemaValidator(schema).validate
+            if "type" in schema and "null" in schema["type"]:
+                self.empty_value = None
+            else:
+                self.empty_value = {}
 
-    @property
-    def description(self):
-        return self._description
+    def __repr__(self) -> str:
+        return self._string
+
+    def __str__(self) -> str:
+        return pprint.pformat(self._schema)
 
     @property
     def schema(self):
-        return self._schema.get("$schema")
+        return copy.deepcopy(self._schema)
 
-    @property
-    def name(self):
-        return self._name
+    def asdict(self) -> Mapping[str, Any] | None:
+        return self.schema
 
-    @property
-    def properties(self):
-        return self._properties
+    def validate(self, row: Any) -> dict:
+        """Validate a configuration row (dict) against this schema."""
+        try:
+            self._validate_row(row)
+        except jsonschema.exceptions.SchemaError as ve:
+            logger.error(ve)
+            raise
+        return row
 
-    def __str__(self):
-        # FIXME: use project name from configuration file
-        s = f"# {self.name} project admin configuration file\n\n"
-        lines = textwrap.wrap(self.description, width=self._fill_column)
-        s += "\n".join([f"# {line}" for line in lines]) + "\n"
-        for prop in self.properties:
-            s += f"\n{prop}\n"
-        return s
+    def dump_properties(self, comments=True, comment_column=40) -> dict:
+        """Dump schema properties as dict.
 
-    # Parse schema properties to config entries
-    def _parse_properties(self, obj, level=-1):
-        if isinstance(obj, str):
-            return
-        property_list = []
-        level = level + 1
-        for k, v in obj.items():
-            if isinstance(v, dict):
-                properties = v.pop("properties", None)
-                entry = ConfigEntry(name=k, level=level, **v)
-            else:
-                properties = None
-                entry = ConfigEntry(name=k, level=level, **v)
-            if properties is not None:
-                entry.properties = self._parse_properties(properties, level=level)
-            property_list.append(entry)
-        return property_list
+        :param bool comments: include comments in output
+        :param int comment_column: inline comments are placed in this column
+        :return: A dictionary of properties and possibly  descriptions.
+        :rtype: dict
+        """
+        if comments:
+            properties = ruamel.yaml.comments.CommentedMap()
+        else:
+            raise NotImplementedError
+
+        header = self.asdict().get("description", "")
+        properties.yaml_set_start_comment(header)
+
+        def update_properties(props, section, level):
+            if isinstance(section, str):
+                return
+            if isinstance(section, dict):
+                for k, v in section.items():
+                    if isinstance(v, dict):
+                        desc = re.sub("\n", " ", v.get("description", None))
+                        if "properties" in v.keys():
+                            props[k] = ruamel.yaml.comments.CommentedMap()
+                            props[k] = update_properties(
+                                props[k], v["properties"], level=level + 1
+                            )
+                            props.yaml_set_comment_before_after_key(before="\n", key=k)
+                            props.yaml_set_comment_before_after_key(before=desc, key=k)
+                        else:
+                            props[k] = v.get("default", None)
+                            if level == 0:
+                                props.yaml_set_comment_before_after_key(
+                                    before="\n", key=k
+                                )
+                                props.yaml_set_comment_before_after_key(
+                                    before=desc, key=k
+                                )
+                            else:
+                                props.yaml_add_eol_comment(
+                                    desc, k, column=comment_column
+                                )
+            return props
+
+        properties = update_properties(
+            properties, self.asdict().get("properties", {}), level=0
+        )
+        return properties
 
 
 class PropertyDict(OrderedDict):
@@ -175,48 +178,42 @@ class PropertyDict(OrderedDict):
                 raise
 
 
-class Config(PropertyDict):
-    DEFAULT_PATH = "nbis.yaml"
-
-    def __init__(self, path=None):
-        if path is None:
-            path = self.DEFAULT_PATH
-        else:
-            if not os.path.exists(path):
-                logger.warning(
-                    f"'{path}' doesn't exist; trying default path '{self.DEFAULT_PATH}'"
-                )
-                path = self.DEFAULT_PATH
-        with open(path) as fh:
-            data = YAML().load(fh)
+class Config(OrderedDict):
+    def __init__(self, data=None, file=None):
+        if data is None:
+            data = dict()
         super().__init__(data)
-        self._project_root = pathlib.Path(path).parent
+        if file is not None:
+            data = self.read_from_file(file)
+            self.update(**data)
 
-    @property
-    def project_root(self):
-        return self._project_root
+    def read_from_file(self, file):
+        yaml = YAML()
+        data = yaml.load(file)
+        return data
 
     @classmethod
-    def init(cls, dirname=None, **kw):
-        """Save configuration representation of schema"""
-        if kw.get("prog") is None:
-            prog = "nbis"
-            path = cls.DEFAULT_PATH
-        else:
-            prog = kw["prog"]
-            path = f"{prog}.yaml"
-        if dirname is not None:
-            path = os.path.join(dirname, path)
-        if os.path.exists(path):
-            logger.warning(
-                f"{pathlib.Path(path).absolute()} exists; please edit manually"
-            )
-            raise ConfigError
-        schemafile = pkg_resources.resource_filename("nbis", ConfigSchema.PATH)
-        with open(schemafile) as fh:
-            schema = YAML().load(fh)
-        config = ConfigSchema(schema, name=prog)
-        # Use project command as default
-        config.properties[0].default = prog
-        with open(path, "w") as fh:
-            fh.write(str(config))
+    def from_schema(cls, schema, file=None, **kwargs):
+        props = schema.dump_properties()
+        props.update(**kwargs)
+
+        cls._dump_yaml(props, file)
+
+        return Config(props)
+
+    @classmethod
+    def _dump_yaml(cls, d, file=None):
+        if file is None:
+            return
+
+        yaml = YAML()
+
+        def represent_none(self, data):
+            return self.represent_scalar("tag:yaml.org,2002:null", "null")
+
+        yaml.representer.add_representer(type(None), represent_none)
+        yaml.indent(sequence=0, offset=2)
+        yaml.dump(d, file)
+
+    def save(self, file):
+        self._dump_yaml(dict(self), file)

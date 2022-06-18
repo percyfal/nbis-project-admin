@@ -7,6 +7,7 @@ class Namespace:
     prog = "nbis"
     project_name = "nbis"
     diary_file = "diary.md"
+    config_file = None
 
 
 @pytest.fixture
