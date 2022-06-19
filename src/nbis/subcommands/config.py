@@ -26,8 +26,6 @@ def add_arguments(parser):
 
 def init(args):
     logger.info("Initializing config")
-    if args.config_file is None:
-        args.config_file = f"{args.prog}.yaml"
 
     yaml = YAML()
     schemafile = pkg_resources.resource_filename(
@@ -37,12 +35,15 @@ def init(args):
         schemadict = yaml.load(fh)
     schema = Schema(schemadict)
     with open(args.config_file, "w") as fh:
-        cfg = Config.from_schema(schema, file=fh)
-    print(cfg)
+        Config.from_schema(schema, file=fh)
+
 
 
 def main(args):
     logger.info("Running nbis-admin config")
+
+    if args.config_file is None:
+        args.config_file = f"{args.prog}.yaml"
 
     if args.init:
         init(args)

@@ -178,7 +178,12 @@ class PropertyDict(OrderedDict):
                 raise
 
 
-class Config(OrderedDict):
+    def asdict(self):
+        return json.loads(json.dumps(self))
+
+
+class Config(PropertyDict):
+
     def __init__(self, data=None, file=None):
         if data is None:
             data = dict()
@@ -216,4 +221,4 @@ class Config(OrderedDict):
         yaml.dump(d, file)
 
     def save(self, file):
-        self._dump_yaml(dict(self), file)
+        self._dump_yaml(self.asdict(), file)
