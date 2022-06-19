@@ -40,7 +40,7 @@ class DescriptionArgumentParser(ArgumentParser):
         self.exit(2, "%(prog)s: error: %(message)s\n" % args)
 
 
-def get_top_parser(prog):
+def get_top_parser(prog, version=__version__):
     # fmt: off
     top_parser = DescriptionArgumentParser(
         description=__doc__,
@@ -55,7 +55,7 @@ def get_top_parser(prog):
     top_parser.add_argument(
         '--version',
         action='version',
-        version='%(prog)s ' + __version__
+        version='%(prog)s ' + version
     )
     top_parser.add_argument(
         '--debug',
