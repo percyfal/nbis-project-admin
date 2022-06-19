@@ -38,7 +38,6 @@ def init(args):
         Config.from_schema(schema, file=fh)
 
 
-
 def main(args):
     logger.info("Running nbis-admin config")
 

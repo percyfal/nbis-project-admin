@@ -177,13 +177,11 @@ class PropertyDict(OrderedDict):
                 print(key, value)
                 raise
 
-
     def asdict(self):
         return json.loads(json.dumps(self))
 
 
 class Config(PropertyDict):
-
     def __init__(self, data=None, file=None):
         if data is None:
             data = dict()

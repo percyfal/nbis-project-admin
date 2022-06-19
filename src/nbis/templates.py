@@ -1,6 +1,6 @@
+import pkg_resources
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-import pkg_resources
 
 
 template_path = pkg_resources.resource_filename("nbis", "templates")
