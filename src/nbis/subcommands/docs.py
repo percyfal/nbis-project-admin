@@ -14,9 +14,16 @@ def add_arguments(parser):
     parser.add_argument(
         "--path", help="work on path only", action="store", default=None
     )
+    parser.add_argument(
+        "--template",
+        help="which template to add",
+        action="store",
+        default="running-slides",
+        choices=["running-slides", "jupyterbook", "diary"],
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--build", help="build documentation", action="store_true")
-    group.add_argument("--init", help="init documentation", action="store_true")
+    group.add_argument("--add", help="add documentation", action="store_true")
 
 
 def build(args):
@@ -31,9 +38,12 @@ def build(args):
                 sources.append(fn)
 
 
-def init(args):
+def add(args):
     """Initialize documentation folders"""
-    pass
+    if args.path is not None:
+        pass
+    if args.template == "running-slides":
+        pass
 
 
 def main(args):
@@ -42,5 +52,5 @@ def main(args):
     if args.build:
         build(args)
 
-    if args.init:
-        init(args)
+    if args.add:
+        add(args)
