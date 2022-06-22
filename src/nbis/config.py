@@ -11,6 +11,7 @@ from typing import Any
 from typing import Mapping
 
 import jsonschema
+import pkg_resources
 import ruamel.yaml
 from ruamel.yaml import YAML
 
@@ -141,6 +142,13 @@ class Schema:
         return properties
 
 
+def get_schema(schema="CONFIGURATION_SCHEMA"):
+    schemafile = pkg_resources.resource_filename("nbis", getattr(SchemaFiles, schema))
+    with open(schemafile) as fh:
+        schema = YAML().load(fh)
+    return Schema(schema)
+
+
 class PropertyDict(OrderedDict):
     """Simple class that allows for property access"""
 
@@ -192,7 +200,16 @@ class Config(PropertyDict):
 
     def read_from_file(self, file):
         yaml = YAML()
-        data = yaml.load(file)
+        try:
+            if isinstance(file, str):
+                with open(file) as fh:
+                    data = yaml.load(fh)
+            else:
+                data = yaml.load(file)
+        except FileNotFoundError as e:
+            logger.error(e)
+            logger.info("setting data to empty dict")
+            data = dict()
         return data
 
     @classmethod
@@ -220,3 +237,7 @@ class Config(PropertyDict):
 
     def save(self, file):
         self._dump_yaml(self.asdict(), file)
+
+    @property
+    def is_empty(self):
+        return self.asdict() == dict()

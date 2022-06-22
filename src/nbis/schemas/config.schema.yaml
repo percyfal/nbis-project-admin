@@ -47,10 +47,3 @@ properties:
     description: Bibliography file
     type: string
     default: references/bibliography.bib
-
-required:
-  - bibliography
-  - confluence
-  - docs
-  - project_name
-  - webexport
