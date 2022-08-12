@@ -79,7 +79,9 @@ def test_empty_schema():
 
 def test_pkg_schema(tmp_path, pkg_schema):
     schema = Schema(pkg_schema)
-    cfg = Config.from_schema(schema)
+    import sys
+
+    cfg = Config.from_schema(schema, file=sys.stdout)
     assert cfg is not None
 
 
