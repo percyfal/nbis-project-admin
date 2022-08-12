@@ -34,6 +34,7 @@ def snakemake(targets=None, options=None, snakefile=None):
         return
 
     try:
+        logger.debug(f"running {cmd}")
         subprocess.run(cmd, check=True, shell=True)
     except subprocess.CalledProcessError:
         logger.error(f"{cmd} failed")
