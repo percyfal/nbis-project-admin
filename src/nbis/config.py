@@ -149,6 +149,14 @@ def get_schema(schema="CONFIGURATION_SCHEMA"):
     return Schema(schema)
 
 
+def load_config(file=None, schema="CONFIGURATION_SCHEMA", validate=True):
+    schema = get_schema(schema)
+    config = Config(file=file)
+    if validate:
+        schema.validate(config)
+    return config
+
+
 class PropertyDict(OrderedDict):
     """Simple class that allows for property access"""
 

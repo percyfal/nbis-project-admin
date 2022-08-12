@@ -8,7 +8,7 @@ import pathlib
 import nbis.wrappers as wrappers
 import pkg_resources
 from nbis.config import Config
-from nbis.config import get_schema
+from nbis.config import load_config
 from nbis.templates import env
 
 logger = logging.getLogger(__name__)
@@ -47,6 +47,8 @@ def build(args, sourcedir):
 
 def add(args, outdir):
     """Initialize documentation folders"""
+    if not outdir.exists():
+        outdir.mkdir()
     if args.template == "running-slides":
         path = args.path if args.path is not None else outdir / "running-slides.Rmd"
         template = env.get_template("running-slides.Rmd.j2")
@@ -70,11 +72,9 @@ def add(args, outdir):
 def main(args):
     logger.info("Running nbis-admin docs")
 
-    schema = get_schema()
-    config = Config(file=args.config_file)
+    config = load_config(file=args.config_file)
     if config.is_empty:
         config = Config({"docs": {"src": os.curdir}})
-    schema.validate(config)
 
     if args.build:
         build(args, sourcedir=pathlib.Path(config.docs.src))

@@ -70,10 +70,12 @@ def get_top_parser(prog, version=__version__):
 def main(arg_list=None):
     if arg_list is None:
         arg_list = sys.argv[1:]
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s"
+    )
     top_parser = get_top_parser("nbis")
     minimal_parser, _ = make_minimal_parser(top_parser, subcommands)
-    logger.info(dir(minimal_parser))
+
     subcommand_name = get_subcommand_name(minimal_parser, arg_list)
     top_parser = get_top_parser("nbis")
     parser = make_subcommand_parser(top_parser, subcommand_name)
