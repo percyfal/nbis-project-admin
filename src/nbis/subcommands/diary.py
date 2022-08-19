@@ -1,5 +1,5 @@
-"""
-nbis-admin diary: manage diary entries
+"""nbis-admin diary: manage diary entries
+
 """
 import logging
 import os

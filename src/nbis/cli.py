@@ -73,11 +73,11 @@ def main(arg_list=None):
     logging.basicConfig(
         level=logging.INFO, format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s"
     )
-    top_parser = get_top_parser("nbis")
+    top_parser = get_top_parser("nbis-admin")
     minimal_parser, _ = make_minimal_parser(top_parser, subcommands)
 
     subcommand_name = get_subcommand_name(minimal_parser, arg_list)
-    top_parser = get_top_parser("nbis")
+    top_parser = get_top_parser("nbis-admin")
     parser = make_subcommand_parser(top_parser, subcommand_name)
 
     args, extra = parser.parse_known_args(arg_list)
@@ -109,12 +109,12 @@ def make_subcommand_parser(parser, subcommand_name, package=subcommands):
     """
     Make parser and load module whilst adding subparser documentation.
     """
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title="subcommands")
     module = importlib.import_module("." + subcommand_name, package.__name__)
     # fmt: off
     subparser = subparsers.add_parser(
         subcommand_name,
-        help=module.__doc__.split("\n", maxsplit=2)[1],
+        help=module.__doc__.split("\n", maxsplit=1)[0],
         description=module.__doc__
     )
     # fmt: on
@@ -128,7 +128,7 @@ def make_minimal_parser(parser, package_list):
     """
     Make minimal parser including subcommands from package_list
     """
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title="subcommands")
     subcommands_map = dict()
 
     if not isinstance(package_list, list):
@@ -136,7 +136,7 @@ def make_minimal_parser(parser, package_list):
     for pkg in package_list:
         for module_name, docstring in subcommands_modules(pkg):
             subcommands_map[module_name] = pkg
-            help_str = docstring.split("\n", maxsplit=2)[1].replace("%", "%%")
+            help_str = docstring.split("\n", maxsplit=1)[0].replace("%", "%%")
             # fmt: off
             subparser = subparsers.add_parser(
                 module_name, help=help_str,

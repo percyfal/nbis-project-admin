@@ -1,5 +1,6 @@
-"""
-nbis-admin doc: manage documentation
+"""nbis-admin doc: manage documentation
+
+
 """
 import logging
 import os
