@@ -1,0 +1,53 @@
+import re
+import sys
+from {{ project_name }} import config as cconf
+from pathlib import Path
+from snakemake.utils import validate
+import pandas as pd
+
+
+##############################
+# Configuration
+##############################
+configfile: Path("config/config.yaml")
+
+
+validate(config, schema=cconf.CONFIGSCHEMA)
+
+samples = pd.read_table(config["samples"])
+validate(samples, schema=cconf.SAMPLESSCHEMA)
+
+
+wildcard_constraints:
+    data="data",
+    interim="data/interim",
+    reports="reports",
+    sample=f"({'|'.join(samples.SM.tolist())})",
+
+
+# Define main ALL target
+ALL = []
+
+{% if test -%}
+if config.get("__test__") is True:
+
+    include: "test-config.smk"
+{% endif -%}
+
+rule all:
+    input:
+        ALL,
+
+##############################
+# Atomic rules
+##############################
+
+
+{% if test -%}
+##############################
+# TEST rules
+##############################
+if config.get("__test__") is True:
+
+    include: "rules/test-setup.smk"
+{% endif -%}
