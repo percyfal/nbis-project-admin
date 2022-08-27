@@ -1,5 +1,6 @@
-"""
-nbis-admin doc: manage documentation
+"""nbis-admin doc: manage documentation
+
+
 """
 import logging
 import os
@@ -23,8 +24,41 @@ def add_arguments(parser):
         help="which template to add",
         action="store",
         default="running-slides",
-        choices=["running-slides", "jupyterbook", "diary"],
+        choices=["running-slides", "jupyterbook", "diary", "scss"],
     )
+    parser.add_argument(
+        "--css",
+        help="css template",
+        action="store",
+        default=None,  # pkg_resources.resource_filename("nbis", "resources/nbis.css"),
+    )
+    parser.add_argument(
+        "--scss",
+        help="scss template",
+        action="store",
+        default=pkg_resources.resource_filename("nbis", "resources/nbis.scss"),
+    )
+    parser.add_argument("--title", help="title", action="store", default="title")
+    parser.add_argument(
+        "--subtitle", help="subtitle", action="store", default="subtitle"
+    )
+    parser.add_argument("--author", help="author", action="store", default=None)
+    parser.add_argument(
+        "--csl",
+        help="csl",
+        action="store",
+        default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa
+    )
+    parser.add_argument(
+        "--bibliography",
+        help="bibliography",
+        action="store",
+        default="../resources/bibliography.bib",
+    )
+    parser.add_argument(
+        "--footer", help="footer", action="store", default="running slides"
+    )
+
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--build", help="build documentation", action="store_true")
     group.add_argument("--add", help="add documentation", action="store_true")
@@ -50,31 +84,24 @@ def add(args, outdir):
     if not outdir.exists():
         outdir.mkdir()
     if args.template == "running-slides":
-        path = args.path if args.path is not None else outdir / "running-slides.Rmd"
-        template = env.get_template("running-slides.Rmd.j2")
+        path = args.path if args.path is not None else outdir / "running-slides.qmd"
+        if path.exists():
+            logger.error(f"{path} exists; not overwriting")
+            raise FileExistsError(f"{path} exists; skipping!")
+        template = env.get_template("running-slides.qmd.j2")
+        options = dict(filename=os.path.basename(path))
+        options.update(vars(args))
         with open(path, "w") as fh:
-            fh.write(
-                template.render(
-                    title="Running slides",
-                    subtitle="Subtitle",
-                    author="",
-                    filename=os.path.basename(path),
-                    css=[pkg_resources.resource_filename("nbis", "resources/nbis.css")],
-                    csl="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa
-                    in_header=pkg_resources.resource_filename(
-                        "nbis", "resources/nbisfooter.html"
-                    ),
-                    libraries=[],
-                )
-            )
+            fh.write(template.render(**options))
 
 
 def main(args):
     logger.info("Running nbis-admin docs")
 
     config = load_config(file=args.config_file)
+
     if config.is_empty:
-        config = Config({"docs": {"src": os.curdir}})
+        config = Config({"docs": {"src": pathlib.Path(os.curdir) / "docs"}})
 
     if args.build:
         build(args, sourcedir=pathlib.Path(config.docs.src))

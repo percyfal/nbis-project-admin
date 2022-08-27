@@ -1,0 +1,24 @@
+import pandas as pd
+from {{ project_name }} import config as cconf
+from snakemake.utils import validate
+
+
+configfile: Path("config/config.yaml")
+
+
+validate(config, schema=cconf.CONFIGSCHEMA)
+config["samples"] = "resources/.test/samples.tsv"
+samples = pd.read_table(config["samples"])
+
+validate(samples, schema=cconf.SAMPLESSCHEMA)
+
+
+include: "test-config.smk"
+
+# Define main ALL target
+ALL = expand()
+
+rule all:
+    input:
+        ALL,
+

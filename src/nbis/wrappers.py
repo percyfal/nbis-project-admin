@@ -23,7 +23,7 @@ class Wrapper:
 def snakemake(targets=None, options=None, snakefile=None):
     cmdlist = [
         "snakemake",
-        f"{'-s ' + snakefile if snakefile else ''}",
+        f"{'-s ' + str(snakefile) if snakefile else ''}",
         f"{str(options) or ''}",
         f"{str(targets) or ''}",
     ]

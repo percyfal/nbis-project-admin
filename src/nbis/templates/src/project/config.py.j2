@@ -1,0 +1,15 @@
+import os
+from pathlib import Path
+
+from nbis.config import load_config
+
+ROOT_DIR = Path(__file__).absolute().parent.parent.parent
+
+# Main config resides in {{ project_name }}.yaml
+config = load_config(file=ROOT_DIR / "{{ project_name }}.yaml")
+
+SNAKEMAKE_ROOT = ROOT_DIR / "src" / "snakemake"
+
+# Schema files
+CONFIGSCHEMA = ROOT_DIR / "schemas" / "config.schema.yaml"
+SAMPLESSCHEMA = ROOT_DIR / "schemas" / "samples.schema.yaml"

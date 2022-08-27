@@ -1,5 +1,5 @@
-"""
-nbis-admin config: administrate configuration
+"""nbis-admin config: administrate configuration
+
 """
 import logging
 

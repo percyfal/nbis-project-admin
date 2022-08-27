@@ -3,8 +3,8 @@
 
 # NBIS project admin
 
-A small collection of tools to administrate [NBIS](https://nbis.se/).
-It serves as the backbone for the cookiecutter
+A small collection of tools to administrate [NBIS](https://nbis.se/)
+projects. It serves as the backbone for the cookiecutter
 [cookiecutter-nbis-project](
 https://github.com/percyfal/cookiecutter-nbis-project).
 
@@ -14,7 +14,7 @@ Tool interaction is hidden behind a CLI. Tools include
 
 - documentation templates for diaries, running slides and more (TODO)
 - configuration interface for uploading documents to webexport and
-  confluence
+  confluence (TODO)
 - wrappers for workflow managers
 - adding python modules to a subcommands directory will make the
   module available via the CLI. Intended for use with

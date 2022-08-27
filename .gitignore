@@ -4,3 +4,4 @@
 /.jupyter/
 /Makefile
 /build/
+*.egg-info
