@@ -8,7 +8,7 @@ from datetime import date
 
 from nbis.templates import env
 
-from . import SubcommandError
+from . import SubCommandError
 
 logger = logging.getLogger(__name__)
 
