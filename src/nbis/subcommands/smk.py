@@ -14,6 +14,11 @@ logger = logging.getLogger(__name__)
 def add_arguments(parser):
     group = parser.add_argument_group("add subcommand")
     group.add_argument(
+        "subcommand",
+        action="store",
+        help="subcommand name"
+    )
+    group.add_argument(
         "-a",
         "--add-subcommand",
         action="store_true",
@@ -49,31 +54,36 @@ def add_arguments(parser):
 
 def add_subcommand(args):
     # Simple input to get subcommand name
-    subcommand = input("Provide subcommand name:")
-    if subcommand is None:
-        raise CommandLineError("Subcommand name is required")
+    # subcommand = input("Provide subcommand name:")
+    # if subcommand is None:
+    #     raise CommandLineError("Subcommand name is required")
 
     # FIXME: should go with general config files
     configfile = pathlib.Path("src") / args.project_name / "config.py"
-    add_template(configfile, "config.py.j2", project_name=args.project_name)
+    add_template(configfile, "src/project/config.py.j2", project_name=args.project_name)
     pyfile = (
-        pathlib.Path("src") / args.project_name / "subcommands" / f"{subcommand}.py"
+        pathlib.Path("src") / args.project_name / "subcommands" / f"{args.subcommand}.py"
     )
     add_template(
         pyfile,
-        "subcommand.py.j2",
+        "src/project/subcommands/subcommand.py.j2",
         project_name=args.project_name,
-        subcommand=subcommand,
+        subcommand=args.subcommand,
         test=args.add_test,
     )
-    smkfile = pathlib.Path("src") / "snakemake" / f"{subcommand}.smk"
+    smkfile = pathlib.Path("src") / "snakemake" / "rules" / f"{args.subcommand}.smk"
     add_template(
         smkfile,
-        "subcommand.smk.j2",
+        "src/snakemake/rules/subcommand.smk.j2",
         project_name=args.project_name,
-        subcommand=subcommand,
+        subcommand=args.subcommand,
         test=args.add_test,
         validation=args.add_validation,
+    )
+    smkfile = pathlib.Path("src") / "snakemake" / "rules" / "test-config.smk"
+    add_template(
+        smkfile,
+        "src/snakemake/rules/test-config.smk.j2",
     )
 
 
