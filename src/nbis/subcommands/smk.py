@@ -20,7 +20,7 @@ def add_arguments(parser):
         help=(
             "Install snakemake subcommand templates. Will install:"
             "  1. src/<project_name>/subcommands/<subcommand>.py"
-            "  2. src/snakemake/<subcommand>.smk"
+            "  2. src/snakemake/rules/<subcommand>.smk"
         ),
         dest="subcommand"
     )
