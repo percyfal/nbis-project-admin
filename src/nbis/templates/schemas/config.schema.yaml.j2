@@ -1,0 +1,16 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+  samples:
+    description: >-
+      sample definition file
+    type: string
+    pattern: .+\.(tsv|csv)$
+      
+# entries that have to be in the config file for successful validation
+required:
+  - samples

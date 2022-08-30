@@ -45,11 +45,19 @@ def add_arguments(parser):
         default=False,
         help=("Add local snakemake profile"),
     )
+    parser.add_argument(
+        "--init",
+        action="store_true",
+        default=False,
+        help=(
+            "Install minimal config, sample and schema files. "
+            "Will install config/config.yaml, resources/samples.tsv, "
+            "schemas/config.schema.yaml and schemas/samples.schema.yaml."
+        )
+    )
 
 
 def add_subcommand(args):
-    # Simple input to get subcommand name
-
     # FIXME: should go with general config files
     configfile = pathlib.Path("src") / args.project_name / "config.py"
     add_template(configfile, "src/project/config.py.j2", project_name=args.project_name)
@@ -79,6 +87,17 @@ def add_subcommand(args):
     )
 
 
+def init(args):
+    yamlconf = pathlib.Path("config") / "config.yaml"
+    add_template(yamlconf, "config/config.yaml.j2")
+    confschema = pathlib.Path("schemas") / "config.schema.yaml"
+    add_template(confschema, "schemas/config.schema.yaml.j2")
+    sampleschema = pathlib.Path("schemas") / "samples.schema.yaml"
+    add_template(sampleschema, "schemas/samples.schema.yaml.j2")
+    samplestsv = pathlib.Path("resources") / "samples.tsv"
+    add_template(samplestsv, "resources/samples.tsv.j2")
+
+
 def add_local_profile(args):
     localprofile = pathlib.Path("config") / "local" / "config.yaml"
     add_template(localprofile, "profile.yaml.j2")
@@ -92,3 +111,6 @@ def main(args):
 
     if args.add_profile:
         add_local_profile(args)
+
+    if args.init:
+        init(args)
