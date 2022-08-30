@@ -14,20 +14,15 @@ logger = logging.getLogger(__name__)
 def add_arguments(parser):
     group = parser.add_argument_group("add subcommand")
     group.add_argument(
-        "subcommand",
-        action="store",
-        help="subcommand name"
-    )
-    group.add_argument(
         "-a",
         "--add-subcommand",
-        action="store_true",
-        default=False,
+        action="store",
         help=(
             "Install snakemake subcommand templates. Will install:"
             "  1. src/<project_name>/subcommands/<subcommand>.py"
             "  2. src/snakemake/<subcommand>.smk"
         ),
+        dest="subcommand"
     )
     group.add_argument(
         "-t",
@@ -54,9 +49,6 @@ def add_arguments(parser):
 
 def add_subcommand(args):
     # Simple input to get subcommand name
-    # subcommand = input("Provide subcommand name:")
-    # if subcommand is None:
-    #     raise CommandLineError("Subcommand name is required")
 
     # FIXME: should go with general config files
     configfile = pathlib.Path("src") / args.project_name / "config.py"
@@ -95,7 +87,7 @@ def add_local_profile(args):
 def main(args):
     logger.info("Running nbis-admin smk")
 
-    if args.add_subcommand:
+    if args.subcommand is not None:
         add_subcommand(args)
 
     if args.add_profile:
