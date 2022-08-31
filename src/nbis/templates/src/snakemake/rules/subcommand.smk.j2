@@ -49,5 +49,5 @@ rule all:
 ##############################
 if config.get("__test__") is True:
 
-    include: "rules/test-setup.smk"
+    include: "test-setup.smk"
 {% endif -%}

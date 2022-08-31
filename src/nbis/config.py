@@ -201,10 +201,10 @@ class Config(PropertyDict):
     def __init__(self, data=None, file=None):
         if data is None:
             data = dict()
-        super().__init__(data)
         if file is not None:
-            data = self.read_from_file(file)
-            self.update(**data)
+            fdata = self.read_from_file(file)
+            data.update(**fdata)
+        super().__init__(data)
 
     def read_from_file(self, file):
         yaml = YAML()
