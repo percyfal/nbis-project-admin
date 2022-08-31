@@ -6,8 +6,6 @@ import pathlib
 
 from nbis.templates import add_template
 
-from . import CommandLineError
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,7 +20,7 @@ def add_arguments(parser):
             "  1. src/<project_name>/subcommands/<subcommand>.py"
             "  2. src/snakemake/rules/<subcommand>.smk"
         ),
-        dest="subcommand"
+        dest="subcommand",
     )
     group.add_argument(
         "-t",
@@ -53,7 +51,7 @@ def add_arguments(parser):
             "Install minimal config, sample and schema files. "
             "Will install config/config.yaml, resources/samples.tsv, "
             "schemas/config.schema.yaml and schemas/samples.schema.yaml."
-        )
+        ),
     )
 
 
@@ -62,7 +60,10 @@ def add_subcommand(args):
     configfile = pathlib.Path("src") / args.project_name / "config.py"
     add_template(configfile, "src/project/config.py.j2", project_name=args.project_name)
     pyfile = (
-        pathlib.Path("src") / args.project_name / "subcommands" / f"{args.subcommand}.py"
+        pathlib.Path("src")
+        / args.project_name
+        / "subcommands"
+        / f"{args.subcommand}.py"
     )
     add_template(
         pyfile,

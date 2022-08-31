@@ -16,6 +16,7 @@ def profile(uri, config):
         logger.debug(f"trying snakemake profile at uri '{uri}'")
     return uri
 
+
 def add_arguments(parser, profile=True, no_profile=True, jobs=True, test=True):
     """Utility function to add some standard arguments to snakemake parser"""
     if profile:
@@ -37,10 +38,7 @@ def add_arguments(parser, profile=True, no_profile=True, jobs=True, test=True):
         )
     if jobs:
         parser.add_argument(
-            "-j", "--jobs",
-            action="store",
-            default=1,
-            help="snakemake jobs"
+            "-j", "--jobs", action="store", default=1, help="snakemake jobs"
         )
     if test:
         parser.add_argument(
@@ -49,5 +47,3 @@ def add_arguments(parser, profile=True, no_profile=True, jobs=True, test=True):
             default=False,
             help="run workflow on small test data set",
         )
-
-

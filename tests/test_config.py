@@ -5,10 +5,7 @@ from nbis.config import PropertyDict
 
 @pytest.fixture
 def data():
-    d = dict(
-        project_name='foo',
-        docs=dict(src='docs')
-    )
+    d = dict(project_name="foo", docs=dict(src="docs"))
     return d
 
 

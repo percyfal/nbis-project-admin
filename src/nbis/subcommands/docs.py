@@ -84,7 +84,11 @@ def add(args, outdir):
     if not outdir.exists():
         outdir.mkdir()
     if args.template == "running-slides":
-        path = args.path if args.path is not None else outdir / "running-slides.qmd"
+        path = (
+            pathlib.Path(args.path)
+            if args.path is not None
+            else outdir / "running-slides.qmd"
+        )
         if path.exists():
             logger.error(f"{path} exists; not overwriting")
             raise FileExistsError(f"{path} exists; skipping!")
