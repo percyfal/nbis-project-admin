@@ -27,7 +27,7 @@ def add_arguments(parser):
 def init_diary(args):
     if os.path.exists(args.diary_file):
         logger.warning(f"{args.diary_file} already exists; skipping init")
-        raise SubcommandError
+        raise SubCommandError
     try:
         with open(args.diary_file, "w") as fh:
             sysargs = " ".join(sys.argv[1:])

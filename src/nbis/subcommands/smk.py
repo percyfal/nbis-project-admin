@@ -86,7 +86,12 @@ def add_subcommand_smk(args):
 
 
 def add_test_config(args):
-    smkfile = pathlib.Path("src") / "snakemake" / "rules" / f"test-{args.subcommand}-config.smk"
+    smkfile = (
+        pathlib.Path("src")
+        / "snakemake"
+        / "rules"
+        / f"test-{args.subcommand}-config.smk"
+    )
     add_template(
         smkfile,
         "src/snakemake/rules/test-config.smk.j2",
