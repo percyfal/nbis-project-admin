@@ -2,14 +2,22 @@
 
 """
 import logging
+import pathlib
 
 import pkg_resources
 from nbis.config import Config
 from nbis.config import Schema
 from nbis.config import SchemaFiles
+from nbis.templates import add_template
 from ruamel.yaml import YAML
 
 logger = logging.getLogger(__name__)
+
+
+def add_config_py(args):
+    """Add python configuration module"""
+    configfile = pathlib.Path("src") / args.project_name / "config.py"
+    add_template(configfile, "src/project/config.py.j2", project_name=args.project_name)
 
 
 def add_arguments(parser):

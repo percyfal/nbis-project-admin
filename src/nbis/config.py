@@ -97,6 +97,7 @@ class Schema:
         :param bool comments: include comments in output
         :param int comment_column: inline comments are placed in this column
         :return: A dictionary of properties and possibly  descriptions.
+
         :rtype: dict
         """
         if comments:

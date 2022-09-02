@@ -6,6 +6,8 @@ import pathlib
 
 from nbis.templates import add_template
 
+from .config import add_config_py
+
 logger = logging.getLogger(__name__)
 
 
@@ -55,10 +57,7 @@ def add_arguments(parser):
     )
 
 
-def add_subcommand(args):
-    # FIXME: should go with general config files
-    configfile = pathlib.Path("src") / args.project_name / "config.py"
-    add_template(configfile, "src/project/config.py.j2", project_name=args.project_name)
+def add_subcommand_py(args):
     pyfile = (
         pathlib.Path("src")
         / args.project_name
@@ -72,6 +71,9 @@ def add_subcommand(args):
         subcommand=args.subcommand,
         test=args.add_test,
     )
+
+
+def add_subcommand_smk(args):
     smkfile = pathlib.Path("src") / "snakemake" / "rules" / f"{args.subcommand}.smk"
     add_template(
         smkfile,
@@ -81,6 +83,9 @@ def add_subcommand(args):
         test=args.add_test,
         validation=args.add_validation,
     )
+
+
+def add_test_config(args):
     smkfile = pathlib.Path("src") / "snakemake" / "rules" / "test-config.smk"
     add_template(
         smkfile,
@@ -88,15 +93,52 @@ def add_subcommand(args):
     )
 
 
-def init(args):
+def add_test_smk_setup(args):
+    smkfile = (
+        pathlib.Path("src")
+        / "snakemake"
+        / "rules"
+        / f"test-{args.subcommand}-setup.smk"
+    )
+    add_template(
+        smkfile, "src/snakemake/rules/test-setup.smk.j2", subcommand=args.subcommand
+    )
+
+
+def add_config_yaml(args):
     yamlconf = pathlib.Path("config") / "config.yaml"
     add_template(yamlconf, "config/config.yaml.j2")
+
+
+def add_config_schema_yaml(args):
     confschema = pathlib.Path("schemas") / "config.schema.yaml"
     add_template(confschema, "schemas/config.schema.yaml.j2")
+
+
+def add_samples_schema_yaml(args):
     sampleschema = pathlib.Path("schemas") / "samples.schema.yaml"
     add_template(sampleschema, "schemas/samples.schema.yaml.j2")
+
+
+def add_samples_tsv(args):
     samplestsv = pathlib.Path("resources") / "samples.tsv"
     add_template(samplestsv, "resources/samples.tsv.j2")
+
+
+def add_subcommand(args):
+    add_config_py(args)
+    add_subcommand_py(args)
+    add_subcommand_smk(args)
+    if args.add_test:
+        add_test_config(args)
+        add_test_smk_setup(args)
+
+
+def init(args):
+    add_config_yaml(args)
+    add_config_schema_yaml(args)
+    add_samples_schema_yaml(args)
+    add_samples_tsv(args)
 
 
 def add_local_profile(args):
