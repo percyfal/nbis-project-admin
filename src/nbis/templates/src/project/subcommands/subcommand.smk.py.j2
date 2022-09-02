@@ -35,7 +35,7 @@ def main(args):
             "__test__=True",
         ]
         args.no_profile = True
-{% endif %}  
+{% endif %}
     if args.profile:
         prof = profile(args.profile, config.config)
         if not args.no_profile:

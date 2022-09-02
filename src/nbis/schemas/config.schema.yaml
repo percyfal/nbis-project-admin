@@ -56,4 +56,4 @@ properties:
       '[0-9a-zA-Z\-_]+':
         type: string
         format: uri
-        description: full path to snakemake profile 
+        description: full path to snakemake profile

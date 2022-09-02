@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
+from ruamel.yaml import YAML
 
 from nbis.config import load_config
+from nbis.config import Schema
 
 ROOT_DIR = Path(__file__).absolute().parent.parent.parent
 
@@ -11,5 +13,15 @@ config = load_config(file=ROOT_DIR / "{{ project_name }}.yaml")
 SNAKEMAKE_ROOT = ROOT_DIR / "src" / "snakemake"
 
 # Schema files
-CONFIGSCHEMA = ROOT_DIR / "schemas" / "config.schema.yaml"
-SAMPLESSCHEMA = ROOT_DIR / "schemas" / "samples.schema.yaml"
+class SchemaFiles:
+    CONFIGURATION_SCHEMA = ROOT_DIR / "schemas" / "config.schema.yaml"
+    SAMPLES_SCHEMA = ROOT_DIR / "schemas" / "samples.schema.yaml"
+
+
+def get_schema(schema="CONFIGURATION_SCHEMA"):
+    schemafile = getattr(SchemaFiles, schema)
+    with open(schemafile) as fh:
+	schema = YAML().load(fh)
+    return Schema(schema)
+
+

@@ -1,16 +1,16 @@
 import pandas as pd
-from {{ project_name }} import config as cconf
+from {{ project_name }}.config import SchemaFiles
 from snakemake.utils import validate
 
 
 configfile: Path("config/config.yaml")
 
 
-validate(config, schema=cconf.CONFIGSCHEMA)
+validate(config, schema=SchemaFiles.CONFIGURATION_SCHEMA)
 config["samples"] = "resources/.test/samples.tsv"
 samples = pd.read_table(config["samples"])
 
-validate(samples, schema=cconf.SAMPLESSCHEMA)
+validate(samples, schema=SchemaFiles.SAMPLES_SCHEMA)
 
 
 include: "test-config.smk"

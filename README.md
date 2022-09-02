@@ -26,15 +26,15 @@ Tool interaction is hidden behind a CLI. Tools include
 Either install via pip
 
 	python -m pip install git+https://github.com/percyfal/nbis-admin@main
-	
+
 Alternatively grab a copy of the source distribution and make a local
 install:
 
 	git clone https://github.com/percyfal/nbis-admin.git
 	cd nbis-admin
 	python -m pip install -e .
-	
-After installation, you can access the tool with the command 
+
+After installation, you can access the tool with the command
 
 	nbis-admin
 
