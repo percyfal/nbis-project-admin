@@ -57,7 +57,7 @@ def add_arguments(parser):
     )
 
 
-def add_subcommand_py(args):
+def add_subcommand_smk_py(args):
     pyfile = (
         pathlib.Path("src")
         / args.project_name
@@ -66,7 +66,7 @@ def add_subcommand_py(args):
     )
     add_template(
         pyfile,
-        "src/project/subcommands/subcommand.py.j2",
+        "src/project/subcommands/subcommand.smk.py.j2",
         project_name=args.project_name,
         subcommand=args.subcommand,
         test=args.add_test,
@@ -127,7 +127,7 @@ def add_samples_tsv(args):
 
 def add_subcommand(args):
     add_config_py(args)
-    add_subcommand_py(args)
+    add_subcommand_smk_py(args)
     add_subcommand_smk(args)
     if args.add_test:
         add_test_config(args)
