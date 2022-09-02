@@ -31,7 +31,7 @@ ALL = []
 {% if test -%}
 if config.get("__test__") is True:
 
-    include: "test-config.smk"
+    include: "test-{{ subcommand }}-config.smk"
 {% endif -%}
 
 rule all:
