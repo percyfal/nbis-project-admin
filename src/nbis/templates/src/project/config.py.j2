@@ -21,7 +21,7 @@ class SchemaFiles:
 def get_schema(schema="CONFIGURATION_SCHEMA"):
     schemafile = getattr(SchemaFiles, schema)
     with open(schemafile) as fh:
-	schema = YAML().load(fh)
+        schema = YAML().load(fh)
     return Schema(schema)
 
 
