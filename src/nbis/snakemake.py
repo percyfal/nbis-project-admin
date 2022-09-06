@@ -23,7 +23,7 @@ def add_arguments(parser, profile=True, no_profile=True, jobs=True, test=True):
         parser.add_argument(
             "--profile",
             action="store",
-            default="rackham",
+            default="local",
             help=(
                 "snakemake profile, either defined as key:value pair in config"
                 " or a URI pointing to profile directory"
