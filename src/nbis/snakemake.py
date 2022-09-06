@@ -17,13 +17,13 @@ def profile(uri, config):
     return uri
 
 
-def add_arguments(parser, profile=True, no_profile=True, jobs=True, test=True):
+def add_arguments(parser, profile=True, no_profile=True, jobs=True, test=True, default_profile="local"):
     """Utility function to add some standard arguments to snakemake parser"""
     if profile:
         parser.add_argument(
             "--profile",
             action="store",
-            default="local",
+            default=default_profile,
             help=(
                 "snakemake profile, either defined as key:value pair in config"
                 " or a URI pointing to profile directory"
