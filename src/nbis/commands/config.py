@@ -6,7 +6,7 @@ import logging
 import pathlib
 
 from nbis.templates import add_template
-from nbis.click import cli
+from nbis.cli import cli
 
 logger = logging.getLogger(__name__)
 
