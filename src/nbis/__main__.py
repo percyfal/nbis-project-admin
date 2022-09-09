@@ -1,4 +1,4 @@
-from nbis.cli import main
+from nbis.click import main
 
 
 if __name__ == "__main__":
