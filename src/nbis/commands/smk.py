@@ -2,16 +2,12 @@
 
 
 """
-import click
 import logging
-import pathlib
 
-from nbis.templates import add_template
+import click
 from nbis.cli import cli
 
 __shortname__ = __name__.split(".")[-1]
-
-#from .config import add_config_py
 
 logger = logging.getLogger(__name__)
 
@@ -19,4 +15,25 @@ logger = logging.getLogger(__name__)
 @cli.group(help=__doc__, name=__shortname__)
 @click.pass_context
 def main(ctx):
-    logger.info(__shortname__)
+    logger.debug(f"Running subcommand {__shortname__}")
+
+
+@main.command()
+@click.pass_context
+def init(ctx):
+    """Initialize snakemake files.
+
+    Info here
+    """
+    pass
+
+
+@main.command()
+@click.pass_context
+def add(ctx):
+    """Add snakefile and python helper code.
+
+    Add snakefile and possibly subcommand code. Options to add tests
+    and validation.
+    """
+    pass

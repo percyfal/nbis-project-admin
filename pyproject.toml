@@ -23,6 +23,7 @@ classifiers = [
 ]
 dependencies = [
     'importlib-metadata; python_version>="3.7"',
+    'click',
     'jinja2',
     'jsonschema',
     'pypandoc',
