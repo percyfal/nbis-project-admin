@@ -6,7 +6,7 @@
 @profile_opt(default_profile="local")
 @jobs_opt()
 {% if test -%}
-  @test_opt
+  @test_opt()
 {% endif -%}
 @click.argument('snakemake_args', nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
