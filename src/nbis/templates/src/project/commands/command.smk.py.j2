@@ -1,7 +1,8 @@
 
 
 @main.command(context_settings=dict(
-    ignore_unknown_options=True))
+    ignore_unknown_options=True),
+              help="{{ command }} help")
 @profile_opt(default_profile="local")
 @jobs_opt()
 {% if test -%}
@@ -10,7 +11,7 @@
 @click.argument('snakemake_args', nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
 def {{ command }}(ctx, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
-    options = list(snakemake_args)
+    options = list(snakemake_args) + ['-j', str(jobs)]
     no_profile = False
     snakefile = config.SNAKEMAKE_ROOT / "rules" / "{{ command }}.smk"
 {% if test %}
