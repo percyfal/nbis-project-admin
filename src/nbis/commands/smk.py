@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def project_name(ctx):
-    return ctx.parent.parent.info_name
+    return ctx.find_root().info_name
 
 
 def add_group_smk_py(ctx, group, **kw):
