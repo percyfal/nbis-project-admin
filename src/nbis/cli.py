@@ -1,11 +1,13 @@
 """Console script for nbis based on click."""
 import importlib
 import logging
+import os
+import pathlib
 import pkgutil
 
 import click
+from nbis import commands
 from nbis import decorators
-from nbis.commands import *  # noqa: F405, F403
 
 from . import __version__
 
@@ -27,20 +29,23 @@ def cli(ctx):
     )
     if ctx.obj["DEBUG"]:
         logging.getLogger().setLevel(logging.DEBUG)
+    ctx.obj["ROOT"] = pathlib.Path(os.curdir())
 
 
 def main():
+    add_subcommands(commands, cli=cli)
     cli(obj={})
 
 
-def add_subcommands(package):
+def add_subcommands(package, cli=cli):
     """Iterate subpackages to add subcommands. NB: this will probably
     take time and we would like to quickly generate the help message."""
     for mod in iter_modules(package):
-        _ = importlib.import_module(package.__name__ + "." + mod.name, mod.name)
+        imod = importlib.import_module(package.__name__ + "." + mod.name, mod.name)
+        cli.add_command(imod.main)
     for pkg in iter_packages(package):
         ipkg = importlib.import_module(package.__name__ + "." + pkg.name, pkg.name)
-        add_subcommands(ipkg)
+        add_subcommands(ipkg, cli)
 
 
 def iter_modules(package):
@@ -61,10 +66,3 @@ def iter_pkgmod(package, ispkg=True):
     for mod in modules:
         if mod.ispkg == ispkg:
             yield mod
-
-
-cli.add_command(config.main)  # noqa: F405
-cli.add_command(diary.main)  # noqa: F405
-cli.add_command(docs.main)  # noqa: F405
-cli.add_command(smk.main)  # noqa: F405
-cli.add_command(webexport.main)  # noqa: F405

@@ -3,7 +3,6 @@
 
 """
 import logging
-import pathlib
 
 import click
 from nbis.templates import add_template
@@ -22,7 +21,7 @@ def project_name(ctx):
 
 
 def add_group_smk_py(ctx, group, **kw):
-    pyfile = pathlib.Path("src") / project_name(ctx) / "commands" / f"{group}.py"
+    pyfile = ctx.obj["ROOT"] / "src" / project_name(ctx) / "commands" / f"{group}.py"
     add_template(
         pyfile,
         "src/project/commands/group.smk.py.j2",
@@ -33,7 +32,7 @@ def add_group_smk_py(ctx, group, **kw):
 
 
 def add_command_smk_py(ctx, group, **kw):
-    pyfile = pathlib.Path("src") / project_name(ctx) / "commands" / f"{group}.py"
+    pyfile = ctx.obj["ROOT"] / "src" / project_name(ctx) / "commands" / f"{group}.py"
     assert (
         f"def {kw['command']}(" not in pyfile.read_text()
     ), f"{kw['command']} already defined"
@@ -41,8 +40,8 @@ def add_command_smk_py(ctx, group, **kw):
         fh.write(render_template("src/project/commands/command.smk.py.j2", **kw))
 
 
-def add_command_smk(ctx, command, **kw):
-    smkfile = pathlib.Path("src") / "snakemake" / "rules" / f"{command}.smk"
+def add_command_smk(ctx, group, command, **kw):
+    smkfile = ctx.obj["ROOT"] / "src" / "snakemake" / "rules" / f"{group}-{command}.smk"
     add_template(
         smkfile,
         "src/snakemake/rules/command.smk.j2",
@@ -50,44 +49,57 @@ def add_command_smk(ctx, command, **kw):
         command=command,
         test=kw["test"],
         validation=kw["validation"],
+        group=group,
     )
 
 
-def add_test_config(command):
-    smkfile = pathlib.Path("src") / "snakemake" / "rules" / f"test-{command}-config.smk"
+def add_test_config(ctx, group, command):
+    smkfile = (
+        ctx.obj["ROOT"]
+        / "src"
+        / "snakemake"
+        / "rules"
+        / f"test-{group}-{command}-config.smk"
+    )
     add_template(
         smkfile,
         "src/snakemake/rules/test-config.smk.j2",
     )
 
 
-def add_test_smk_setup(command):
-    smkfile = pathlib.Path("src") / "snakemake" / "rules" / f"test-{command}-setup.smk"
+def add_test_smk_setup(ctx, group, command):
+    smkfile = (
+        ctx.obj["ROOT"]
+        / "src"
+        / "snakemake"
+        / "rules"
+        / f"test-{group}-{command}-setup.smk"
+    )
     add_template(smkfile, "src/snakemake/rules/test-setup.smk.j2", command=command)
 
 
-def add_config_yaml():
-    yamlconf = pathlib.Path("config") / "config.yaml"
+def add_config_yaml(ctx):
+    yamlconf = ctx.obj["ROOT"] / "config" / "config.yaml"
     add_template(yamlconf, "config/config.yaml.j2")
 
 
-def add_config_schema_yaml():
-    confschema = pathlib.Path("schemas") / "config.schema.yaml"
+def add_config_schema_yaml(ctx):
+    confschema = ctx.obj["ROOT"] / "schemas" / "config.schema.yaml"
     add_template(confschema, "schemas/config.schema.yaml.j2")
 
 
-def add_samples_schema_yaml():
-    sampleschema = pathlib.Path("schemas") / "samples.schema.yaml"
+def add_samples_schema_yaml(ctx):
+    sampleschema = ctx.obj["ROOT"] / "schemas" / "samples.schema.yaml"
     add_template(sampleschema, "schemas/samples.schema.yaml.j2")
 
 
-def add_samples_tsv():
-    samplestsv = pathlib.Path("resources") / "samples.tsv"
+def add_samples_tsv(ctx):
+    samplestsv = ctx.obj["ROOT"] / "resources" / "samples.tsv"
     add_template(samplestsv, "resources/samples.tsv.j2")
 
 
-def add_local_profile():
-    localprofile = pathlib.Path("config") / "local" / "config.yaml"
+def add_local_profile(ctx):
+    localprofile = ctx.obj["ROOT"] / "config" / "local" / "config.yaml"
     add_template(localprofile, "profile.yaml.j2")
 
 
@@ -132,10 +144,10 @@ def add(ctx, group, **kw):
     add_group_smk_py(ctx, group, **kw)
     add_command_smk_py(ctx, group, **kw)
     command = kw.pop("command")
-    add_command_smk(ctx, command, **kw)
+    add_command_smk(ctx, group, command, **kw)
     if kw["test"]:
-        add_test_config(command)
-        add_test_smk_setup(command)
+        add_test_config(ctx, group, command)
+        add_test_smk_setup(ctx, group, command)
 
 
 @main.command()
@@ -149,8 +161,8 @@ def init(ctx):
     """
     # FIXME: move to config?
     add_config_py(ctx)
-    add_local_profile()
-    add_config_yaml()
-    add_config_schema_yaml()
-    add_samples_schema_yaml()
-    add_samples_tsv()
+    add_local_profile(ctx)
+    add_config_yaml(ctx)
+    add_config_schema_yaml(ctx)
+    add_samples_schema_yaml(ctx)
+    add_samples_tsv(ctx)
