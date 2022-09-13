@@ -8,9 +8,8 @@ import sys
 from datetime import date
 
 import click
+from nbis.exceptions import CommandError
 from nbis.templates import env
-
-from . import CommandError
 
 __shortname__ = __name__.split(".")[-1]
 
