@@ -15,12 +15,13 @@ def {{ command }}(ctx, profile, jobs{% if test %}, test{% endif %}, snakemake_ar
     no_profile = False
     snakefile = config.SNAKEMAKE_ROOT / "rules" / "{{ command }}.smk"
 {% if test %}
-    options.extend([
-        "--config",
-        "samples=resources/test/samples.tsv",
-        "__test__=True",
-    ])
-    no_profile = True
+    if test:
+        options.extend([
+            "--config",
+            "samples=resources/test/samples.tsv",
+            "__test__=True",
+        ])
+        no_profile = True
 {% endif %}
     if profile:
         prof = get_profile(profile, config.config)
