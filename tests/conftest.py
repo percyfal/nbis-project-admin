@@ -23,5 +23,8 @@ def runner(request):
 @pytest.fixture(scope="function")
 def main(request):
     from nbis.cli import cli
+    from nbis.cli import setup_commands
+
+    setup_commands(cli)
 
     return cli
