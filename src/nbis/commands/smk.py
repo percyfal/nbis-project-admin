@@ -148,7 +148,7 @@ def init(ctx):
     schemas/config.schema.yaml and schemas/samples.schema.yaml.
     """
     # FIXME: move to config?
-    add_config_py()
+    add_config_py(ctx)
     add_local_profile()
     add_config_yaml()
     add_config_schema_yaml()
