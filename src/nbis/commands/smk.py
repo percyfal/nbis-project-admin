@@ -9,7 +9,7 @@ import click
 from nbis.templates import add_template
 from nbis.templates import render_template
 
-from . import add_config_py
+from .config import add_config_py
 
 
 __shortname__ = __name__.split(".")[-1]
