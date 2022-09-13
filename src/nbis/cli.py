@@ -33,11 +33,11 @@ def cli(ctx):
 
 
 def main():
-    setup_commands(cli)
+    setup_commands()
     cli(obj={})
 
 
-def setup_commands(cli):
+def setup_commands(commands=commands, cli=cli):
     add_subcommands(commands, cli)
 
 

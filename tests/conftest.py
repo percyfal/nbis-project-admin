@@ -25,6 +25,6 @@ def main(request):
     from nbis.cli import cli
     from nbis.cli import setup_commands
 
-    setup_commands(cli)
+    setup_commands(cli=cli)
 
     return cli
