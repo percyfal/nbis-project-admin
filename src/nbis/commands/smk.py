@@ -9,7 +9,7 @@ import click
 from nbis.templates import add_template
 from nbis.templates import render_template
 
-# This import has to be made aware of the calling context; some sort of load_cli function
+from . import add_config_py
 
 
 __shortname__ = __name__.split(".")[-1]
@@ -46,7 +46,7 @@ def add_command_smk(ctx, command, **kw):
     add_template(
         smkfile,
         "src/snakemake/rules/command.smk.j2",
-        project_name=ctx.info_name,
+        project_name=project_name(ctx),
         command=command,
         test=kw["test"],
         validation=kw["validation"],
@@ -147,6 +147,8 @@ def init(ctx):
     config/config.yaml, resources/samples.tsv,
     schemas/config.schema.yaml and schemas/samples.schema.yaml.
     """
+    # FIXME: move to config?
+    add_config_py()
     add_local_profile()
     add_config_yaml()
     add_config_schema_yaml()

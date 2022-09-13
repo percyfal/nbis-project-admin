@@ -48,7 +48,7 @@ def init(ctx, diary):
             template = env.get_template("diary.md.j2")
             fh.write(
                 template.render(
-                    project_name=ctx.parent.parent.info_name,
+                    project_name=ctx.find_root().info_name,
                     args=sysargs,
                     date=date.today(),
                 )

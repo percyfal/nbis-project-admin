@@ -36,7 +36,7 @@ def sync(ctx, backend, dry_run, **kw):
     Add a template diary.
     """
     logger.info("Initializing diary.")
-    config = Config(file=f"{ctx.parent.parent.info_name}.yaml")
+    config = Config(file=f"{ctx.find_root().info_name}.yaml")
     arguments = [backend] + kw["rsync_options"]
     if dry_run:
         arguments.append("-n")

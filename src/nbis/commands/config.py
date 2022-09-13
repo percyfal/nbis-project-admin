@@ -19,8 +19,10 @@ __shortname__ = __name__.split(".")[-1]
 
 def add_config_py(ctx):
     """Add python configuration module"""
-    configfile = pathlib.Path("src") / ctx.info_name / "config.py"
-    add_template(configfile, "src/project/config.py.j2", project_name=ctx.info_name)
+    configfile = pathlib.Path("src") / ctx.find_root().info_name / "config.py"
+    add_template(
+        configfile, "src/project/config.py.j2", project_name=ctx.find_root().info_name
+    )
 
 
 @click.group(help=__doc__, name=__shortname__)
@@ -35,7 +37,7 @@ def main(ctx):
 def init(ctx, config_file):
     logger.info("Initializing configuration file")
     if config_file is None:
-        config_file = pathlib.Path(f"{ctx.parent.parent.info_name}.yaml")
+        config_file = pathlib.Path(f"{ctx.find_root().info_name}.yaml")
 
     yaml = YAML()
     schemafile = pkg_resources.resource_filename(
