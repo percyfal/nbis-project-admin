@@ -8,7 +8,6 @@ import sys
 from datetime import date
 
 import click
-from nbis.cli import cli
 from nbis.templates import env
 
 from . import CommandError
@@ -19,7 +18,7 @@ __shortname__ = __name__.split(".")[-1]
 logger = logging.getLogger(__name__)
 
 
-@cli.group(help=__doc__, name=__shortname__)
+@click.group(help=__doc__, name=__shortname__)
 @click.pass_context
 def main(ctx):
     logger.debug(f"Running {__shortname__} subcommand.")

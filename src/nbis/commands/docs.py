@@ -8,7 +8,6 @@ import pathlib
 
 import click
 import pkg_resources
-from nbis.cli import cli
 from nbis.config import Config
 from nbis.config import load_config
 from nbis.templates import env
@@ -19,7 +18,7 @@ __shortname__ = __name__.split(".")[-1]
 logger = logging.getLogger(__name__)
 
 
-@cli.group(help=__doc__, name=__shortname__)
+@click.group(help=__doc__, name=__shortname__)
 @click.pass_context
 def main(ctx):
     logger.debug(f"Running {__shortname__} subcommand.")

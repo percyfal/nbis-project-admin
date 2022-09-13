@@ -6,7 +6,6 @@ import pathlib
 
 import click
 import pkg_resources
-from nbis.cli import cli
 from nbis.config import Config
 from nbis.config import Schema
 from nbis.config import SchemaFiles
@@ -18,13 +17,13 @@ logger = logging.getLogger(__name__)
 __shortname__ = __name__.split(".")[-1]
 
 
-def add_config_py(args):
+def add_config_py(ctx):
     """Add python configuration module"""
-    configfile = pathlib.Path("src") / args.project_name / "config.py"
-    add_template(configfile, "src/project/config.py.j2", project_name=args.project_name)
+    configfile = pathlib.Path("src") / ctx.info_name / "config.py"
+    add_template(configfile, "src/project/config.py.j2", project_name=ctx.info_name)
 
 
-@cli.group(help=__doc__, name=__shortname__)
+@click.group(help=__doc__, name=__shortname__)
 @click.pass_context
 def main(ctx):
     logger.debug(f"Running {__shortname__} subcommand.")

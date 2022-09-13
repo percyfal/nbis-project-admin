@@ -1,0 +1,33 @@
+
+
+@click.command(context_settings=dict(
+    ignore_unknown_options=True))
+@profile_opt(default_profile="local")
+@jobs_opt()
+{% if test -%}
+  @test_opt
+{% endif -%}
+@click.argument('snakemake_args', nargs=-1, type=click.UNPROCESSED)
+@click.pass_context
+def {{ command }}(ctx, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
+    options = list(snakemake_args)
+    no_profile = False
+    snakefile = config.SNAKEMAKE_ROOT / "rules" / "{{ command }}.smk"
+{% if test %}
+    options.extend([
+        "--config",
+        "samples=resources/test/samples.tsv",
+        "__test__=True",
+    ])
+    no_profile = True
+{% endif %}
+    if profile:
+        prof = get_profile(profile, config.config)
+        if not no_profile:
+            options.extend(["--profile", prof])
+
+    wrappers.snakemake(
+        options=" ".join(options), snakefile=snakefile, targets=""
+    )
+
+

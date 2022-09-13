@@ -1,11 +1,9 @@
 """Console script for nbis based on click."""
-import importlib
 import logging
-import pkgutil
 
 import click
-from nbis import commands
 from nbis import decorators
+from nbis.commands import *  # noqa: F405, F403
 
 from . import __version__
 
@@ -30,37 +28,11 @@ def cli(ctx):
 
 
 def main():
-    package = commands
-    _ = importlib.import_module(".", package.__name__)
-    add_subcommands(package)
     cli(obj={})
 
 
-def add_subcommands(package):
-    """Iterate subpackages to add subcommands. NB: this will probably
-    take time and we would like to quickly generate the help message."""
-    for mod in iter_modules(package):
-        _ = importlib.import_module(package.__name__ + "." + mod.name, mod.name)
-    for pkg in iter_packages(package):
-        ipkg = importlib.import_module(package.__name__ + "." + pkg.name, pkg.name)
-        add_subcommands(ipkg)
-
-
-def iter_modules(package):
-    """Iter modules in a package"""
-    yield from iter_pkgmod(package, ispkg=False)
-
-
-def iter_packages(package):
-    """Iter packages in a package"""
-    yield from iter_pkgmod(package)
-
-
-def iter_pkgmod(package, ispkg=True):
-    """
-    Yield module for all modules or packages in the given package
-    """
-    modules = pkgutil.iter_modules(package.__path__)
-    for mod in modules:
-        if mod.ispkg == ispkg:
-            yield mod
+cli.add_command(config.main)  # noqa: F405
+cli.add_command(diary.main)  # noqa: F405
+cli.add_command(docs.main)  # noqa: F405
+cli.add_command(smk.main)  # noqa: F405
+cli.add_command(webexport.main)  # noqa: F405

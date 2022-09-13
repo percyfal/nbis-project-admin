@@ -1,10 +1,12 @@
 """Snakemake utilities"""
 import logging
 
+import click
+
 logger = logging.getLogger(__name__)
 
 
-def profile(uri, config):
+def get_profile(uri, config):
     """Retrieve snakemake profile from config"""
     try:
         uri = config["snakemake_profiles"][uri]
@@ -17,33 +19,25 @@ def profile(uri, config):
     return uri
 
 
-def add_arguments(parser, profile=True, no_profile=True, jobs=True, test=True, default_profile="local"):
-    """Utility function to add some standard arguments to snakemake parser"""
-    if profile:
-        parser.add_argument(
-            "--profile",
-            action="store",
-            default=default_profile,
-            help=(
-                "snakemake profile, either defined as key:value pair in config"
-                " or a URI pointing to profile directory"
-            ),
-        )
-    if no_profile:
-        parser.add_argument(
-            "--no-profile",
-            action="store_true",
-            default=False,
-            help="disable snakemake profile",
-        )
-    if jobs:
-        parser.add_argument(
-            "-j", "--jobs", action="store", default=1, help="snakemake jobs"
-        )
-    if test:
-        parser.add_argument(
-            "--test",
-            action="store_true",
-            default=False,
-            help="run workflow on small test data set",
-        )
+def profile_opt(default_profile="local"):
+    """Add snakemake profile option"""
+    func = click.option(
+        "--profile/--no-profile",
+        help=(
+            "snakemake profile, either defined as key:value pair in config"
+            " or a URI pointing to profile directory"
+        ),
+    )
+    return func
+
+
+def jobs_opt():
+    """Add jobs option"""
+    return click.option("--jobs", "-j", type=int, default=1, help="snakemake jobs")
+
+
+def test_opt():
+    """Add test option"""
+    return click.option(
+        "--test", is_flag=True, help="run workflow on small test data set"
+    )

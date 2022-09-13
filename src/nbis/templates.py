@@ -26,3 +26,8 @@ def add_template(filename, template, **kwargs):
     except FileNotFoundError:
         logger.error(f"Make sure parent directory exists: {filename}")
         raise
+
+
+def render_template(template, **kw):
+    template = env.get_template(template)
+    return template.render(**kw)
