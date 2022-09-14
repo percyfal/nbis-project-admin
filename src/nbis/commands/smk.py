@@ -41,7 +41,9 @@ def add_command_smk_py(ctx, group, **kw):
 
 
 def add_command_smk(ctx, group, command, **kw):
-    smkfile = ctx.obj["ROOT"] / "src" / "snakemake" / "rules" / f"{group}-{command}.smk"
+    smkfile = (
+        ctx.obj["ROOT"] / "src" / "snakemake" / "commands" / f"{group}-{command}.smk"
+    )
     add_template(
         smkfile,
         "src/snakemake/rules/command.smk.j2",
@@ -58,7 +60,7 @@ def add_test_config(ctx, group, command):
         ctx.obj["ROOT"]
         / "src"
         / "snakemake"
-        / "rules"
+        / "commands"
         / f"test-{group}-{command}-config.smk"
     )
     add_template(
@@ -72,7 +74,7 @@ def add_test_smk_setup(ctx, group, command):
         ctx.obj["ROOT"]
         / "src"
         / "snakemake"
-        / "rules"
+        / "commands"
         / f"test-{group}-{command}-setup.smk"
     )
     add_template(smkfile, "src/snakemake/rules/test-setup.smk.j2", command=command)

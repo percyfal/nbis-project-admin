@@ -22,11 +22,12 @@ def get_profile(uri, config):
 def profile_opt(default_profile="local"):
     """Add snakemake profile option"""
     func = click.option(
-        "--profile/--no-profile",
+        "--profile",
         help=(
             "snakemake profile, either defined as key:value pair in config"
             " or a URI pointing to profile directory"
         ),
+        default=default_profile,
     )
     return func
 
