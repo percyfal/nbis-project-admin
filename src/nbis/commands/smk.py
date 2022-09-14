@@ -46,7 +46,7 @@ def add_command_smk(ctx, group, command, **kw):
     )
     add_template(
         smkfile,
-        "src/snakemake/rules/command.smk.j2",
+        "src/snakemake/commands/command.smk.j2",
         project_name=project_name(ctx),
         command=command,
         test=kw["test"],
@@ -65,7 +65,7 @@ def add_test_config(ctx, group, command):
     )
     add_template(
         smkfile,
-        "src/snakemake/rules/test-config.smk.j2",
+        "src/snakemake/commands/test-config.smk.j2",
     )
 
 
@@ -77,7 +77,7 @@ def add_test_smk_setup(ctx, group, command):
         / "commands"
         / f"test-{group}-{command}-setup.smk"
     )
-    add_template(smkfile, "src/snakemake/rules/test-setup.smk.j2", command=command)
+    add_template(smkfile, "src/snakemake/commands/test-setup.smk.j2", command=command)
 
 
 def add_config_yaml(ctx):

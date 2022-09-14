@@ -13,7 +13,7 @@
 def {{ command }}(ctx, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
     options = list(snakemake_args) + ['-j', str(jobs)]
     no_profile = False
-    snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ command }}.smk"
+    snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
 {% if test %}
     if test:
         options.extend([
