@@ -36,6 +36,7 @@ def add_command_smk_py(ctx, group, **kw):
     assert (
         f"def {kw['command']}(" not in pyfile.read_text()
     ), f"{kw['command']} already defined"
+    kw["group"] = group
     with open(pyfile, "a") as fh:
         fh.write(render_template("src/project/commands/command.smk.py.j2", **kw))
 
