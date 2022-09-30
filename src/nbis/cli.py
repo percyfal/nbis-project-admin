@@ -29,7 +29,7 @@ def cli(ctx):
     )
     if ctx.obj["DEBUG"]:
         logging.getLogger().setLevel(logging.DEBUG)
-    ctx.obj["ROOT"] = pathlib.Path(os.curdir())
+    ctx.obj["ROOT"] = pathlib.Path(os.curdir)
 
 
 def main():
