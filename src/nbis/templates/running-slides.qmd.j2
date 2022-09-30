@@ -27,6 +27,9 @@ format:
     highlight-style: gruvbox
     fig-height: 12
     fig-width: 10
+    width: 1050
+    height: 700
+    margin: 0.1
 {% if csl -%}
   csl: {{ csl }}
 {% endif -%}
@@ -48,7 +51,7 @@ opts:
     fig-format: svg
 ---
 
-## Setup  {.unnumbered .unlisted}
+## Setup  {visibility="hidden" .unnumbered .unlisted}
 
 ```{r libs}
 #| echo: false
