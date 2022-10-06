@@ -18,6 +18,7 @@ def test_cli(runner):
     assert (
         re.search(
             r"Commands:\n\s+"
+            r"\s+add        Add template to python project.\n"
             r"\s+config     Configuration administration utilities.\n",
             result.output,
         )

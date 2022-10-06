@@ -112,21 +112,21 @@ def main(
 
     setup = pdir / "setup.cfg"
     setup.touch()
-    templates.add_template(pdir / "README.md", "project/README.md.j2", **data)
-    templates.add_template(pdir / "pyproject.toml", "project/pyproject.toml.j2", **data)
+    templates.add_template(pdir / "README.md", "README.md.j2", **data)
+    templates.add_template(pdir / "pyproject.toml", "pyproject.toml.j2", **data)
     templates.add_template(
         pdir / ".pre-commit-config.yaml",
-        "project/.pre-commit-config.yaml.j2",
+        ".pre-commit-config.yaml.j2",
         **data,
     )
     templates.add_template(
         pdir / "src" / python_module / "__init__.py",
-        "project/src/python_module/__init__.py.j2",
+        "src/python_module/__init__.py.j2",
         **data,
     )
     templates.add_template(
         pdir / "src" / python_module / "cli.py",
-        "project/src/python_module/cli.py.j2",
+        "src/python_module/cli.py.j2",
         **data,
     )
 
@@ -136,6 +136,6 @@ def main(
     command_init.touch()
     templates.add_template(
         command_dir / "admin.py",
-        "project/src/python_module/commands/admin.py.j2",
+        "src/python_module/commands/admin.py.j2",
         **data,
     )

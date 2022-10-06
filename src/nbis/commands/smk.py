@@ -5,10 +5,9 @@
 import logging
 
 import click
+from nbis.cli import pass_environment
 from nbis.templates import add_template
 from nbis.templates import render_template
-
-from .config import add_config_py
 
 
 __shortname__ = __name__.split(".")[-1]
@@ -16,39 +15,33 @@ __shortname__ = __name__.split(".")[-1]
 logger = logging.getLogger(__name__)
 
 
-def project_name(ctx):
-    return ctx.find_root().info_name
-
-
-def add_group_smk_py(ctx, group, **kw):
-    pyfile = ctx.obj["ROOT"] / "src" / project_name(ctx) / "commands" / f"{group}.py"
+def add_group_smk_py(env, group, **kw):
+    pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
     add_template(
         pyfile,
-        "src/project/commands/group.smk.py.j2",
-        project_name=project_name(ctx),
+        "src/python_module/commands/group.smk.py.j2",
+        project_name=env.config.project_name,
         command=group,
         test=kw["test"],
     )
 
 
-def add_command_smk_py(ctx, group, **kw):
-    pyfile = ctx.obj["ROOT"] / "src" / project_name(ctx) / "commands" / f"{group}.py"
+def add_command_smk_py(env, group, **kw):
+    pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
     assert (
         f"def {kw['command']}(" not in pyfile.read_text()
     ), f"{kw['command']} already defined"
     kw["group"] = group
     with open(pyfile, "a") as fh:
-        fh.write(render_template("src/project/commands/command.smk.py.j2", **kw))
+        fh.write(render_template("src/python_module/commands/command.smk.py.j2", **kw))
 
 
-def add_command_smk(ctx, group, command, **kw):
-    smkfile = (
-        ctx.obj["ROOT"] / "src" / "snakemake" / "commands" / f"{group}-{command}.smk"
-    )
+def add_command_smk(env, group, command, **kw):
+    smkfile = env.home / "src" / "snakemake" / "commands" / f"{group}-{command}.smk"
     add_template(
         smkfile,
         "src/snakemake/commands/command.smk.j2",
-        project_name=project_name(ctx),
+        project_name=env.config.project_name,
         command=command,
         test=kw["test"],
         validation=kw["validation"],
@@ -56,9 +49,9 @@ def add_command_smk(ctx, group, command, **kw):
     )
 
 
-def add_test_config(ctx, group, command):
+def add_test_config(env, group, command):
     smkfile = (
-        ctx.obj["ROOT"]
+        env.home
         / "src"
         / "snakemake"
         / "commands"
@@ -70,9 +63,9 @@ def add_test_config(ctx, group, command):
     )
 
 
-def add_test_smk_setup(ctx, group, command):
+def add_test_smk_setup(env, group, command):
     smkfile = (
-        ctx.obj["ROOT"]
+        env.home
         / "src"
         / "snakemake"
         / "commands"
@@ -81,29 +74,39 @@ def add_test_smk_setup(ctx, group, command):
     add_template(smkfile, "src/snakemake/commands/test-setup.smk.j2", command=command)
 
 
-def add_config_yaml(ctx):
-    yamlconf = ctx.obj["ROOT"] / "config" / "config.yaml"
+def add_config_yaml(env):
+    yamlconf = env.home / "config" / "config.yaml"
     add_template(yamlconf, "config/config.yaml.j2")
 
 
-def add_config_schema_yaml(ctx):
-    confschema = ctx.obj["ROOT"] / "schemas" / "config.schema.yaml"
+def add_config_schema_yaml(env):
+    confschema = env.home / "schemas" / "config.schema.yaml"
     add_template(confschema, "schemas/config.schema.yaml.j2")
 
 
-def add_samples_schema_yaml(ctx):
-    sampleschema = ctx.obj["ROOT"] / "schemas" / "samples.schema.yaml"
+def add_samples_schema_yaml(env):
+    sampleschema = env.home / "schemas" / "samples.schema.yaml"
     add_template(sampleschema, "schemas/samples.schema.yaml.j2")
 
 
-def add_samples_tsv(ctx):
-    samplestsv = ctx.obj["ROOT"] / "resources" / "samples.tsv"
+def add_samples_tsv(env):
+    samplestsv = env.home / "resources" / "samples.tsv"
     add_template(samplestsv, "resources/samples.tsv.j2")
 
 
-def add_local_profile(ctx):
-    localprofile = ctx.obj["ROOT"] / "config" / "local" / "config.yaml"
-    add_template(localprofile, "profile.yaml.j2")
+def add_local_profile(env):
+    localprofile = env.home / "config" / "local" / "config.yaml"
+    add_template(localprofile, "config/local/profile.yaml.j2")
+
+
+def add_config_py(env):
+    """Add python configuration module"""
+    configfile = env.home / "src" / env.config.project_name / "snakemake" / "config.py"
+    add_template(
+        configfile,
+        "src/python_module/snakemake/config.py.j2",
+        project_name=env.config.project_name,
+    )
 
 
 @click.group(help=__doc__, name=__shortname__)
@@ -136,36 +139,35 @@ def main(ctx):
 )
 @click.option("group", "--group", default="smk", help="snakemake command group name")
 @click.option("command", "--command", default="run", help="snakemake command to add")
-@click.pass_context
-def add(ctx, group, **kw):
+@pass_environment
+def add(env, group, **kw):
     """Add snakefile and python helper code.
 
     Add snakefile and possibly a command CLI. There are options to
     add tests and validation.
 
     """
-    add_group_smk_py(ctx, group, **kw)
-    add_command_smk_py(ctx, group, **kw)
+    add_group_smk_py(env, group, **kw)
+    add_command_smk_py(env, group, **kw)
     command = kw.pop("command")
-    add_command_smk(ctx, group, command, **kw)
+    add_command_smk(env, group, command, **kw)
     if kw["test"]:
-        add_test_config(ctx, group, command)
-        add_test_smk_setup(ctx, group, command)
+        add_test_config(env, group, command)
+        add_test_smk_setup(env, group, command)
 
 
 @main.command()
-@click.pass_context
-def init(ctx):
+@pass_environment
+def init(env):
     """Initialize configuration files.
 
     Install minimal config, sample and schema files. Will install
-    config/config.yaml, resources/samples.tsv,
+    config/config.yaml, resources/samples.tsv, src/project_name/snakemake/config.py,
     schemas/config.schema.yaml and schemas/samples.schema.yaml.
     """
-    # FIXME: move to config?
-    add_config_py(ctx)
-    add_local_profile(ctx)
-    add_config_yaml(ctx)
-    add_config_schema_yaml(ctx)
-    add_samples_schema_yaml(ctx)
-    add_samples_tsv(ctx)
+    add_config_py(env)
+    add_local_profile(env)
+    add_config_yaml(env)
+    add_config_schema_yaml(env)
+    add_samples_schema_yaml(env)
+    add_samples_tsv(env)
