@@ -1,7 +1,6 @@
 """Console script for {{ project_name }}"""
 import logging
 import os
-import pathlib
 
 import click
 from nbis import decorators
@@ -23,7 +22,6 @@ pass_environment = click.make_pass_decorator(Environment, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
 
 
-
 class {{ project_name }}CLI(click.MultiCommand):
     def list_commands(self, ctx):
         rv = []
@@ -41,8 +39,12 @@ class {{ project_name }}CLI(click.MultiCommand):
         return mod.main
 
 
-
-@click.command(cls={{ project_name }}CLI, context_settings=CONTEXT_SETTINGS, help=__doc__, name="{{ python_module }}")
+@click.command(
+    cls={{ project_name }}CLI,
+    context_settings=CONTEXT_SETTINGS,
+    help=__doc__,
+    name="{{ python_module }}",
+)
 @click.version_option(version=__version__)
 @decorators.debug_option()
 @pass_environment
@@ -52,3 +54,4 @@ def cli(env):
     )
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)
+

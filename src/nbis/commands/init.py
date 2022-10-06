@@ -80,13 +80,14 @@ def main(
     dry_run,
 ):
     logger.debug(f"Running {__shortname__} subcommand.")
+    p = pathlib.Path(project_directory).absolute()
     if project_name is None:
-        project_name = pathlib.Path(project_directory).name
+        project_name = p.name
     if repo_name is None:
         repo_name = project_name
     python_module = repo_name
     data = {
-        "project_directory": project_directory,
+        "project_directory": str(p),
         "repo_name": repo_name,
         "project_name": project_name,
         "python_module": python_module,
@@ -102,6 +103,11 @@ def main(
     setup.touch()
     templates.add_template(pdir / "README.md", "project/README.md.j2", **data)
     templates.add_template(pdir / "pyproject.toml", "project/pyproject.toml.j2", **data)
+    templates.add_template(
+        pdir / ".pre-commit-config.yaml",
+        "project/.pre-commit-config.yaml.j2",
+        **data,
+    )
     templates.add_template(
         pdir / "src" / python_module / "__init__.py",
         "project/src/python_module/__init__.py.j2",
