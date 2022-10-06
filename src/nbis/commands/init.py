@@ -81,7 +81,7 @@ def main(
 ):
     logger.debug(f"Running {__shortname__} subcommand.")
     if project_name is None:
-        project_name = project_directory
+        project_name = pathlib.Path(project_directory).name
     if repo_name is None:
         repo_name = project_name
     python_module = repo_name
