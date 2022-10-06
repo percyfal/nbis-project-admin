@@ -14,6 +14,8 @@ env = Environment(loader=file_loader)
 
 
 def add_template(filename, template, **kwargs):
+    """Generic function to render template to filename"""
+    logger.info(f"Installing {filename}")
     if filename.exists():
         logger.warning(f"{filename} already exists; skipping")
         return

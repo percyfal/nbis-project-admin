@@ -17,7 +17,7 @@ def cd_tmp_path(tmp_path, monkeypatch):
 
 @pytest.fixture(scope="function")
 def runner(request):
-    return CliRunner()
+    return CliRunner(mix_stderr=False)
 
 
 @pytest.fixture(scope="function")
