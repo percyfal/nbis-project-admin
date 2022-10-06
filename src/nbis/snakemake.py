@@ -42,3 +42,14 @@ def test_opt():
     return click.option(
         "--test", is_flag=True, help="run workflow on small test data set"
     )
+
+
+def directory_opt():
+    """Add snakemake directory option"""
+    return click.option(
+        "--directory/-d",
+        help=(
+            "Specify working directory (relative paths in the snakefile will "
+            "use this as their origin). (default: project directory)"
+        ),
+    )

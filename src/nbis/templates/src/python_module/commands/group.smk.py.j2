@@ -8,8 +8,7 @@ import os
 import click
 
 import nbis.wrappers as wrappers
-from {{ project_name }} import config
-from {{ project_name }}.cli import cli
+from {{ project_name }}.snakemake import config
 from nbis.snakemake import get_profile
 from nbis.snakemake import profile_opt
 from nbis.snakemake import jobs_opt
@@ -24,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 
-@cli.group(help=__doc__, name=__shortname__)
+@click.group(help=__doc__, name=__shortname__)
 @click.pass_context
 def main(ctx):
     logger.debug(f"Running {__shortname__}")

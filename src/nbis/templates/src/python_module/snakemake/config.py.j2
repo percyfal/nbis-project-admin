@@ -2,10 +2,9 @@ from pathlib import Path
 
 from nbis.config import load_config
 from nbis.config import Schema
+from {{ project_name }}.cli import ROOT_DIR
 from ruamel.yaml import YAML
 
-
-ROOT_DIR = Path(__file__).absolute().parent.parent.parent
 
 # Main config resides in {{ project_name }}.yaml
 config = load_config(file=ROOT_DIR / "{{ project_name }}.yaml")

@@ -139,14 +139,22 @@ def main(ctx):
 )
 @click.option("group", "--group", default="smk", help="snakemake command group name")
 @click.option("command", "--command", default="run", help="snakemake command to add")
-@pass_environment
-def add(env, group, **kw):
+@click.pass_context
+def add(ctx, group, **kw):
     """Add snakefile and python helper code.
 
     Add snakefile and possibly a command CLI. There are options to
     add tests and validation.
 
     """
+    env = ctx.obj
+    configfile = env.home / "src" / env.config.project_name / "snakemake" / "config.py"
+    if not configfile.exists():
+        logger.error(
+            "No snakemake configuration module available. "
+            f"Make sure to first run '{ctx.find_root().info_name} smk init.'"
+        )
+        return
     add_group_smk_py(env, group, **kw)
     add_command_smk_py(env, group, **kw)
     command = kw.pop("command")
