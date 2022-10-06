@@ -150,9 +150,12 @@ def get_schema(schema="CONFIGURATION_SCHEMA"):
     return Schema(schema)
 
 
-def load_config(file=None, schema="CONFIGURATION_SCHEMA", validate=True):
+def load_config(file=None, data=None, schema="CONFIGURATION_SCHEMA", validate=True):
     schema = get_schema(schema)
-    config = Config(file=file)
+    if data is not None:
+        config = Config(data=data)
+    else:
+        config = Config(file=file)
     if validate:
         schema.validate(config)
     return config

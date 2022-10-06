@@ -47,22 +47,6 @@ __shortname__ = __name__.split(".")[-1]
 logger = logging.getLogger(__name__)
 
 
-def add_config(config_file, **kw):
-    yaml = YAML()
-    schemafile = pkg_resources.resource_filename(
-        "nbis", SchemaFiles.CONFIGURATION_SCHEMA
-    )
-    with open(schemafile) as fh:
-        schemadict = yaml.load(fh)
-    schemadict["properties"]["project_name"]["default"] = kw["project_name"]
-    schema = Schema(schemadict)
-    if not config_file.exists():
-        with open(config_file, "w") as fh:
-            Config.from_schema(schema, file=fh)
-    else:
-        logger.info(f"{config_file} exists; not overwriting")
-
-
 @click.command(help=__doc__, name=__shortname__)
 @click.argument("project_directory", type=click.Path(exists=False))
 @click.option(
@@ -148,18 +132,6 @@ def main(
     templates.add_template(
         pdir / "src" / python_module / "cli.py",
         "project/src/python_module/cli.py.j2",
-        **data,
-    )
-
-    add_config(**data)
-    templates.add_template(
-        pdir / "src" / python_module / "config.py",
-        "project/src/python_module/config.py.j2",
-        **data,
-    )
-    templates.add_template(
-        pdir / "schemas" / "config.schema.yaml",
-        "project/schemas/config.schema.yaml.j2",
         **data,
     )
 
