@@ -13,8 +13,8 @@ must be put under version control and installed:
     git add -f .
     python -m pip install -e .
 
-The CLI can then be accessed through the PROJECT_NAME comand, which by
-default is equal to the PROJECT_DIRECTORY name:
+The CLI can then be accessed through the PROJECT_NAME command, which
+by default is equal to the PROJECT_DIRECTORY name:
 
     PROJECT_NAME
 
@@ -32,13 +32,8 @@ import logging
 import pathlib
 
 import click
-import pkg_resources
 from nbis import decorators
 from nbis import templates
-from nbis.config import Config
-from nbis.config import Schema
-from nbis.config import SchemaFiles
-from ruamel.yaml import YAML
 
 
 __shortname__ = __name__.split(".")[-1]
@@ -100,7 +95,7 @@ def main(
     if config_file is None:
         config_file = p / f"{python_module}.yaml"
     data = {
-        "project_directory": str(p),
+        "project_directory": str(p.name),
         "repo_name": repo_name,
         "project_name": project_name,
         "python_module": python_module,

@@ -25,7 +25,7 @@ pass_environment = click.make_pass_decorator(Environment, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
 
 
-class {{ project_name }}CLI(click.MultiCommand):
+class {{ project_name }}_CLI(click.MultiCommand):
     def list_commands(self, ctx):
         rv = []
         for filename in os.listdir(cmd_folder):
@@ -43,7 +43,7 @@ class {{ project_name }}CLI(click.MultiCommand):
 
 
 @click.command(
-    cls={{ project_name }}CLI,
+    cls={{ project_name }}_CLI,
     context_settings=CONTEXT_SETTINGS,
     help=__doc__,
     name="{{ python_module }}",
@@ -60,7 +60,7 @@ def cli(env, config_file):
         logging.getLogger().setLevel(logging.DEBUG)
     env.home = ROOT_DIR
     if config_file is None:
-        config_file = ROOT_DIR / "{{ project_name }}.yaml"
+        config_file = env.home / "{{ project_name }}.yaml"
     if config_file.exists():
         config = load_config(file=config_file)
     else:

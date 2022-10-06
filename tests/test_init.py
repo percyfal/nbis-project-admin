@@ -1,4 +1,3 @@
-import pytest
 from nbis.cli import cli
 
 
@@ -15,14 +14,6 @@ expected = [
     "project_foo/src/project_foo/commands/admin.py",
     "project_foo/src/project_foo/config.py",
 ]
-
-
-@pytest.fixture
-def project_foo(tmp_path, monkeypatch):
-    p = tmp_path / "project_foo"
-    p.mkdir()
-    monkeypatch.chdir(p)
-    return p
 
 
 def test_init_relative(runner, cd_tmp_path):

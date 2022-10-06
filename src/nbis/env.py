@@ -3,6 +3,7 @@ import pathlib
 import sys
 
 import click
+from nbis.config import Config
 
 from . import __version__
 
@@ -14,6 +15,7 @@ class Environment:
         self.debug = False
         self.dry_run = False
         self.version = __version__
+        self.config = Config(data={"project_name": "nbis-admin"})
 
     def log(self, msg, *args):
         """Logs a message"""

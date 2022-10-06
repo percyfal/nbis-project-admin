@@ -14,7 +14,7 @@ __author__ = "Per Unneberg"
 logger = logging.getLogger(__name__)
 
 
-CONTEXT_SETTINGS = dict(auto_envvar_prefix="NBIS_ADMIN")
+CONTEXT_SETTINGS = dict(auto_envvar_prefix="NBIS_ADMIN", show_default=True)
 
 pass_environment = click.make_pass_decorator(Environment, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
