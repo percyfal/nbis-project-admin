@@ -8,8 +8,10 @@ import sys
 from datetime import date
 
 import click
+from nbis import decorators
 from nbis.exceptions import CommandError
 from nbis.templates import env
+
 
 __shortname__ = __name__.split(".")[-1]
 
@@ -31,17 +33,22 @@ def main(ctx):
     help="diary file name",
     default=pathlib.Path("docs/diary.md"),
 )
+@decorators.dry_run_option
 @click.pass_context
-def init(ctx, diary):
+def init(ctx, diary, dry_run):
     """Initialize diary.
 
     Add a template diary.
     """
-    logger.info("Initializing diary.")
     diary = pathlib.Path(diary)
+    logger.info(f"Initializing diary file {diary}")
     if diary.exists():
         logger.warning(f"{diary} already exists; skipping init")
-        raise CommandError
+        if not dry_run:
+            raise CommandError
+    if dry_run:
+        click.echo("(DRY RUN)")
+        return
     try:
         with open(diary, "w") as fh:
             sysargs = " ".join(sys.argv[1:])

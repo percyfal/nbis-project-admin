@@ -5,6 +5,7 @@ from click.core import Command
 from click.core import Context
 from click.core import Parameter
 from click.decorators import option
+from nbis.env import Environment
 
 F = t.TypeVar("F", bound=t.Callable[..., t.Any])
 FC = t.TypeVar("FC", t.Callable[..., t.Any], Command)
@@ -19,7 +20,10 @@ def debug_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], FC]:
     """
 
     def callback(ctx: Context, param: Parameter, value: bool) -> None:
-        ctx.obj["DEBUG"] = value
+        if not value or ctx.resilient_parsing:
+            return
+        ctx.ensure_object(Environment)
+        ctx.obj.debug = value
         if ctx.resilient_parsing:
             return
 
@@ -35,5 +39,5 @@ def debug_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], FC]:
 
 
 # FIXME: parametrize some of these to allow for other defaults
-dry_run = click.option("--dry-run", "-n", is_flag=True, help="dry run")
-opt_output_file = click.option("--output-file", "-o", help="output file name")
+dry_run_option = click.option("--dry-run", "-n", is_flag=True, help="dry run")
+output_file_option = click.option("--output-file", "-o", help="output file name")

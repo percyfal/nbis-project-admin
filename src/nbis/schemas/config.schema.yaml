@@ -1,9 +1,9 @@
 $schema: "http://json-schema.org/draft-07/schema#"
 
 description: |
-  NBIS project admin configuration. The configuration file resides in
-  the project root directory which will be inferred from the
-  configuration file name.
+  Project admin configuration file. The configuration file is loaded
+  by the CLI to provide global access to configuration options and
+  settings across commands.
 
 properties:
   project_name:
@@ -11,7 +11,7 @@ properties:
     default: nbis-project
     type: string
   confluence:
-    description: Confluence configuration.
+    description: Confluence configuration (WIP).
     type: object
     default: {}
     properties:
@@ -29,7 +29,7 @@ properties:
         type: string
         default: docs
   webexport:
-    description: Webexport configuration
+    description: Webexport configuration (WIP).
     type: object
     default: {}
     properties:

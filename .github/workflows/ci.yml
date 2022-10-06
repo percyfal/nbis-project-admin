@@ -37,3 +37,5 @@ jobs:
         run: pip install --no-deps .
       - name: Run tests
         run: pytest
+      - name: Run tox to test installation of project
+        run: python -m tox -e project
