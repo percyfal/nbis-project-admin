@@ -6,11 +6,14 @@ expected = [
     "project_foo/.pre-commit-config.yaml",
     "project_foo/README.md",
     "project_foo/setup.cfg",
+    "project_foo/project_foo.yaml",
     "project_foo/pyproject.toml",
+    "project_foo/schemas/config.schema.yaml",
     "project_foo/src/project_foo/__init__.py",
     "project_foo/src/project_foo/cli.py",
     "project_foo/src/project_foo/commands/__init__.py",
     "project_foo/src/project_foo/commands/admin.py",
+    "project_foo/src/project_foo/config.py",
 ]
 
 

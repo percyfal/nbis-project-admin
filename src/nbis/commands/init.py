@@ -32,14 +32,35 @@ import logging
 import pathlib
 
 import click
+import pkg_resources
 from nbis import decorators
 from nbis import templates
+from nbis.config import Config
+from nbis.config import Schema
+from nbis.config import SchemaFiles
+from ruamel.yaml import YAML
 
 
 __shortname__ = __name__.split(".")[-1]
 
 
 logger = logging.getLogger(__name__)
+
+
+def add_config(config_file, **kw):
+    yaml = YAML()
+    schemafile = pkg_resources.resource_filename(
+        "nbis", SchemaFiles.CONFIGURATION_SCHEMA
+    )
+    with open(schemafile) as fh:
+        schemadict = yaml.load(fh)
+    schemadict["properties"]["project_name"]["default"] = kw["project_name"]
+    schema = Schema(schemadict)
+    if not config_file.exists():
+        with open(config_file, "w") as fh:
+            Config.from_schema(schema, file=fh)
+    else:
+        logger.info(f"{config_file} exists; not overwriting")
 
 
 @click.command(help=__doc__, name=__shortname__)
@@ -66,6 +87,11 @@ logger = logging.getLogger(__name__)
     type=click.Choice(["MIT", "BSD-3-Clause"]),
     default=None,
 )
+@click.option(
+    "--config-file",
+    help="configuration file name. Defaults to PROJECT_NAME.yaml.",
+    default=None,
+)
 @click.option("--author", help="author name")
 @decorators.dry_run_option
 @click.pass_context
@@ -77,6 +103,7 @@ def main(
     repo_name,
     open_source_license,
     author,
+    config_file,
     dry_run,
 ):
     logger.debug(f"Running {__shortname__} subcommand.")
@@ -86,6 +113,8 @@ def main(
     if repo_name is None:
         repo_name = project_name
     python_module = repo_name
+    if config_file is None:
+        config_file = p / f"{python_module}.yaml"
     data = {
         "project_directory": str(p),
         "repo_name": repo_name,
@@ -94,11 +123,14 @@ def main(
         "description": description,
         "version": ctx.obj.version,
         "open_source_license": open_source_license,
+        "config_file": config_file,
         "author": author,
     }
+
     pdir = pathlib.Path(project_directory)
     if not pdir.exists():
         pdir.mkdir()
+
     setup = pdir / "setup.cfg"
     setup.touch()
     templates.add_template(pdir / "README.md", "project/README.md.j2", **data)
@@ -118,6 +150,19 @@ def main(
         "project/src/python_module/cli.py.j2",
         **data,
     )
+
+    add_config(**data)
+    templates.add_template(
+        pdir / "src" / python_module / "config.py",
+        "project/src/python_module/config.py.j2",
+        **data,
+    )
+    templates.add_template(
+        pdir / "schemas" / "config.schema.yaml",
+        "project/schemas/config.schema.yaml.j2",
+        **data,
+    )
+
     command_dir = pdir / "src" / python_module / "commands"
     command_dir.mkdir(exist_ok=True, parents=True)
     command_init = command_dir / "__init__.py"
