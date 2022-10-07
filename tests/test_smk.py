@@ -29,7 +29,11 @@ def test_smk_init(runner, pyproject):
 
 def test_smk_add(runner, pyproject):
     out = pyproject
+    config = out / "src" / "nbis-admin" / "snakemake" / "config.py"
+    config.parent.mkdir(parents=True)
+    config.touch()
     result = runner.invoke(cli, ["smk", "add"])
+    config.unlink()
     files = [str(p.relative_to(out.parent)) for p in out.rglob("*") if p.is_file()]
     assert not result.exception
     assert sorted(files) == sorted(expected_add)
