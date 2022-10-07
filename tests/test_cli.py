@@ -18,7 +18,7 @@ def test_cli(runner):
     assert (
         re.search(
             r"Commands:\n\s+"
-            r"\s+add        Add template to python project.\n"
+            r"\s+add        Add template to a project.\n"
             r"\s+config     Configuration administration utilities.\n",
             result.output,
         )
@@ -28,7 +28,7 @@ def test_cli(runner):
 
 def test_cli_debug(runner, caplog):
     caplog.set_level(logging.DEBUG)
-    result = runner.invoke(cli, ["--debug", "diary", "init", "-n"])
+    result = runner.invoke(cli, ["--debug", "add", "diary", "-n"])
     assert not result.exception
     assert caplog.records[0].levelname == "DEBUG"
     assert re.search(r"(DRY RUN)", result.output) is not None

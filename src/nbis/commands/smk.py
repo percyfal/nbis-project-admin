@@ -1,5 +1,32 @@
 """Snakemake administration utilities
 
+The smk command group adds support for adding snakemake subcommands.
+To enable, first run the command
+
+    PROJECT_NAME admin smk init
+
+Thereafter, snakemake commands or command groups can be added as
+
+    PROJECT_NAME admin smk add --group smk --command run
+
+which will add a snakefile src/snakemake/commands/smk-run.smk and a
+CLI command file src/PROJECT_NAME/commands/smk.py. Once installed, the
+snakemake file can be run as
+
+    PROJECT_NAME smk run
+
+Edit the CLI command file to add specific settings for a given
+command. For instance, one may want to set a default directory in
+which to run a snakemake command, which could be achieved by adding a
+click option:
+
+\b
+    @click.option("--directory/-d", default="some/path")
+    @click.pass_context
+    def run(ctx, profile, jobs, snakemake_args, directory):
+        options = list(snakemake_args) + ['-j', str(jobs), '--directory', directory]
+
+
 
 """
 import logging

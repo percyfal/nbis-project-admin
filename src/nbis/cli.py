@@ -33,6 +33,7 @@ class NbisCLI(click.MultiCommand):
         try:
             mod = __import__(f"nbis.commands.{name}", None, None, ["main"])
         except ImportError:
+            raise
             return
         return mod.main
 

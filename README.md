@@ -52,12 +52,12 @@ This will install templates with the following structure:
 	├── pyproject.toml
 	├── setup.cfg
 	└── src
-		└── project_name
-			├── __init__.py
-			├── cli.py
-			└── commands
-				├── __init__.py
-				└── admin.py
+        └── project_name
+            ├── __init__.py
+            ├── cli.py
+            └── commands
+                ├── __init__.py
+                └── admin.py
 
 To activate the CLI, cd to the project directory, add it to version
 control, and install in editable mode:
@@ -87,6 +87,24 @@ The `admin` subcommand consists of the same commands as `nbis-admin`
 but will be executed in the context of the project directory, such
 that new templates automatically will be installed relative to
 `project_name`.
+
+### Adding project configuration
+
+Although not necessary, it is recommended to add a configuration file.
+This can be achieved with the `config` subcomand:
+
+	nbis-admin config show
+	nbis-admin config init
+
+
+### Adding a subcommand plugin
+
+The CLI will pick up any python file that resides in the directory
+`src/project_name/commands`. The only requirement is that the file has
+a `main` function that is either a click command or group. To
+facilitate administration, there is a command to add CLI commands:
+
+	project_name admin add
 
 
 ### Adding snakemake commands

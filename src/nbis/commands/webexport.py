@@ -1,4 +1,4 @@
-"""Webexport administration utilities.
+"""Webexport administration utilities (WIP)
 
 All contents of folder reports/webexport will be synced to the url
 defined by the 'webexport.url' configuration property.

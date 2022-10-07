@@ -1,0 +1,22 @@
+"""Run {{ command }}.
+
+Some text.
+"""
+import click
+import logging
+
+from nbis.cli import pass_environment
+
+
+__shortname__ = __name__.split(".")[-1]
+
+
+logger = logging.getLogger(__name__)
+
+
+
+@click.command(help=__doc__, name=__shortname__)
+@click.pass_context
+def main(ctx):
+    logger.info(f"Running {__shortname__} subcommand")
+

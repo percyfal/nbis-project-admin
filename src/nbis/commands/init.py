@@ -8,6 +8,7 @@ containing module to run a CLI.
 To activate the CLI, after initialization the newly created project
 must be put under version control and installed:
 
+\b
     cd PROJECT_DIRECTORY
     git init
     git add -f .
