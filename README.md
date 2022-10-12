@@ -104,7 +104,8 @@ The CLI will pick up any python file that resides in the directory
 a `main` function that is either a click command or group. To
 facilitate administration, there is a command to add CLI commands:
 
-	project_name admin add
+	project_name admin add command
+	project_name admin add command_group
 
 
 ### Adding snakemake commands
