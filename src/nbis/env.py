@@ -5,6 +5,11 @@ import sys
 import click
 from nbis.config import Config
 
+try:
+    from dotenv import dotenv_values
+except ImportError:
+    pass
+
 from . import __version__
 
 
@@ -16,6 +21,10 @@ class Environment:
         self.dry_run = False
         self.version = __version__
         self.config = Config(data={"project_name": "nbis-admin"})
+        try:
+            self.dotenv = dotenv_values(self.home / ".env")
+        except Exception:
+            self.dotenv = dict()
 
     def log(self, msg, *args):
         """Logs a message"""
