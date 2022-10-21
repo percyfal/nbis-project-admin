@@ -18,7 +18,7 @@ from . import __version__
 logger = logging.getLogger(__name__)
 
 
-ROOT_DIR = pathlib.Path(__file__).absolute().parent.parent.parent
+PKG_DIR = pathlib.Path(__file__).absolute().parent
 CONTEXT_SETTINGS = dict(auto_envvar_prefix="{{ project_name.upper() }}", show_default=True)
 
 pass_environment = click.make_pass_decorator(Environment, ensure=True)
@@ -58,9 +58,12 @@ def cli(env, config_file):
     )
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)
-    env.home = ROOT_DIR
     if config_file is None:
+        env.home = pathlib.Path(os.curdir).absolute()
         config_file = env.home / "{{ project_name }}.yaml"
+    else:
+        config_file = pathlib.Path(config_file).absolute()
+        env.home = config_file.parent
     if config_file.exists():
         config = load_config(file=config_file)
     else:
