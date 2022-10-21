@@ -4,12 +4,13 @@ from nbis.config import Schema
 from {{ project_name }}.cli import PKG_DIR
 from ruamel.yaml import YAML
 
-SNAKEMAKE_ROOT = PKG_DIR / "workflow" / "snakemake"
+WORKFLOW_ROOT = PKG_DIR / "workflow"
+SNAKEMAKE_ROOT = WORKFLOW_ROOT / "snakemake"
 
 
 class SchemaFiles:
-    CONFIGURATION_SCHEMA = PKG_DIR / "schemas" / "config.schema.yaml"
-    SAMPLES_SCHEMA = PKG_DIR / "schemas" / "samples.schema.yaml"
+    CONFIGURATION_SCHEMA = WORKFLOW_ROOT / "schemas" / "config.schema.yaml"
+    SAMPLES_SCHEMA = WORKFLOW_ROOT / "schemas" / "samples.schema.yaml"
 
 
 def get_schema(schema="CONFIGURATION_SCHEMA"):
