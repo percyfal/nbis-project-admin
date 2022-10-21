@@ -9,8 +9,8 @@ def test_cli(runner):
     assert not result.exception
     assert (
         re.search(
-            r"--debug    Print debugging information.\n\s+"
-            r"--help     Show this message and exit.\n\n",
+            r"--debug\s+Print debugging information.\n\s+"
+            r"--help\s+Show this message and exit.\n\n",
             result.output,
         )
         is not None
@@ -18,8 +18,8 @@ def test_cli(runner):
     assert (
         re.search(
             r"Commands:\n\s+"
-            r"\s+add        Add template to a project.\n"
-            r"\s+config     Configuration administration utilities.\n",
+            r"\s+add\s+Add template to a project.\n"
+            r"\s+config\s+Configuration administration utilities.\n",
             result.output,
         )
         is not None

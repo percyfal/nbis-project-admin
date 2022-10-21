@@ -53,7 +53,7 @@ def cli(env, config_file):
     )
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)
-    env.config = load_config(data=dict(project_name="tswf"))
+    env.config = load_config(data=dict(project_name="nbis-admin"))
     if config_file is None:
         env.home = pathlib.Path(os.curdir).absolute()
     else:

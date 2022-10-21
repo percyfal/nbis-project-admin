@@ -8,7 +8,8 @@ import os
 import click
 
 import nbis.wrappers as wrappers
-from {{ project_name }}.snakemake import config
+import {{ project_name }}.snakemake.config as config
+from nbis.cli import pass_environment
 from nbis.snakemake import get_profile
 from nbis.snakemake import profile_opt
 from nbis.snakemake import jobs_opt

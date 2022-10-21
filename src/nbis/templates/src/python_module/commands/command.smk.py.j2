@@ -9,8 +9,8 @@
   @test_opt()
 {% endif -%}
 @click.argument('snakemake_args', nargs=-1, type=click.UNPROCESSED)
-@click.pass_context
-def {{ command }}(ctx, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
+@pass_environment
+def {{ command }}(env, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
     options = list(snakemake_args) + ['-j', str(jobs)]
     no_profile = False
     snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
@@ -24,7 +24,7 @@ def {{ command }}(ctx, profile, jobs{% if test %}, test{% endif %}, snakemake_ar
         no_profile = True
 {% endif %}
     if profile:
-        prof = get_profile(profile, config.config)
+        prof = get_profile(profile, env.config)
         if not no_profile:
             options.extend(["--profile", prof])
 

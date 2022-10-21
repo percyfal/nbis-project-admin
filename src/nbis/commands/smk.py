@@ -64,10 +64,18 @@ def add_command_smk_py(env, group, **kw):
 
 
 def add_command_smk(env, group, command, **kw):
-    smkfile = env.home / "src" / "snakemake" / "commands" / f"{group}-{command}.smk"
+    smkfile = (
+        env.home
+        / "src"
+        / env.config.project_name
+        / "workflow"
+        / "snakemake"
+        / "commands"
+        / f"{group}-{command}.smk"
+    )
     add_template(
         smkfile,
-        "src/snakemake/commands/command.smk.j2",
+        "src/python_module/workflow/snakemake/commands/command.smk.j2",
         project_name=env.config.project_name,
         command=command,
         test=kw["test"],
@@ -80,13 +88,15 @@ def add_test_config(env, group, command):
     smkfile = (
         env.home
         / "src"
+        / env.config.project_name
+        / "workflow"
         / "snakemake"
         / "commands"
         / f"test-{group}-{command}-config.smk"
     )
     add_template(
         smkfile,
-        "src/snakemake/commands/test-config.smk.j2",
+        "src/python_module/workflow/snakemake/commands/test-config.smk.j2",
     )
 
 
@@ -94,11 +104,17 @@ def add_test_smk_setup(env, group, command):
     smkfile = (
         env.home
         / "src"
+        / env.config.project_name
+        / "workflow"
         / "snakemake"
         / "commands"
         / f"test-{group}-{command}-setup.smk"
     )
-    add_template(smkfile, "src/snakemake/commands/test-setup.smk.j2", command=command)
+    add_template(
+        smkfile,
+        "src/python_module/workflow/snakemake/commands/test-setup.smk.j2",
+        command=command,
+    )
 
 
 def add_config_yaml(env):
@@ -107,13 +123,29 @@ def add_config_yaml(env):
 
 
 def add_config_schema_yaml(env):
-    confschema = env.home / "schemas" / "config.schema.yaml"
-    add_template(confschema, "schemas/config.schema.yaml.j2")
+    confschema = (
+        env.home
+        / "src"
+        / env.config.project_name
+        / "workflow"
+        / "schemas"
+        / "config.schema.yaml"
+    )
+    add_template(confschema, "src/python_module/workflow/schemas/config.schema.yaml.j2")
 
 
 def add_samples_schema_yaml(env):
-    sampleschema = env.home / "schemas" / "samples.schema.yaml"
-    add_template(sampleschema, "schemas/samples.schema.yaml.j2")
+    sampleschema = (
+        env.home
+        / "src"
+        / env.config.project_name
+        / "workflow"
+        / "schemas"
+        / "samples.schema.yaml"
+    )
+    add_template(
+        sampleschema, "src/python_module/workflow/schemas/samples.schema.yaml.j2"
+    )
 
 
 def add_samples_tsv(env):
@@ -126,12 +158,12 @@ def add_local_profile(env):
     add_template(localprofile, "config/local/profile.yaml.j2")
 
 
-def add_config_py(env):
+def add_config_py(env, wf="snakemake"):
     """Add python configuration module"""
-    configfile = env.home / "src" / env.config.project_name / "snakemake" / "config.py"
+    configfile = env.home / "src" / env.config.project_name / wf / "config.py"
     add_template(
         configfile,
-        "src/python_module/snakemake/config.py.j2",
+        f"src/python_module/{wf}/config.py.j2",
         project_name=env.config.project_name,
     )
 

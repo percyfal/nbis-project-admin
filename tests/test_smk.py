@@ -6,15 +6,15 @@ expected_init = [
     "project_foo/src/nbis-admin/snakemake/config.py",
     "project_foo/config/local/config.yaml",
     "project_foo/config/config.yaml",
-    "project_foo/schemas/config.schema.yaml",
-    "project_foo/schemas/samples.schema.yaml",
+    "project_foo/src/nbis-admin/workflow/schemas/config.schema.yaml",
+    "project_foo/src/nbis-admin/workflow/schemas/samples.schema.yaml",
     "project_foo/resources/samples.tsv",
 ]
 
 
 expected_add = [
     "project_foo/pyproject.toml",
-    "project_foo/src/snakemake/commands/smk-run.smk",
+    "project_foo/src/nbis-admin/workflow/snakemake/commands/smk-run.smk",
     "project_foo/src/nbis-admin/commands/smk.py",
 ]
 
