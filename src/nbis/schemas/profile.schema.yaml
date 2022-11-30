@@ -79,10 +79,9 @@ properties:
       argument is not specified at all, Snakemake just uses the tmpdir
       resource as outlined above.
     example:
-      default-resources:
-        - runtime=100
-        - mem_mb=6000
-        - disk_mb=10000
+      - runtime=100
+      - mem_mb=6000
+      - disk_mb=10000
   set-threads:
     type: array
     items:
@@ -95,8 +94,7 @@ properties:
       THREADS has to be a positive integer, and RULE has to be the
       name of the rule.
     example:
-      set-threads:
-        - rulename=20
+      - rulename=20
   set-resources:
     type: array
     items:
@@ -109,5 +107,4 @@ properties:
       be a positive integer or a string, RULE has to be the name of
       the rule, and RESOURCE has to be the name of the resource.
     example:
-      set-resources:
-        - rulename:runtime=1200
+      - rulename:runtime=1200
