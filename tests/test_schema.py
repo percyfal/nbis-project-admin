@@ -45,8 +45,10 @@ project_name: {project_name}
 
 # webexport configuration
 webexport:
-  url: null                             # webexport url
-  port: 8080                            # HTTP port number
+  # webexport url
+  url: null
+  # HTTP port number
+  port: 8080
 """
 
 

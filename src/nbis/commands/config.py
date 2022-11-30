@@ -9,23 +9,12 @@ import pkg_resources
 import toml
 from nbis.cli import pass_environment
 from nbis.config import Config
-from nbis.config import Schema
+from nbis.config import get_schema
 from nbis.config import SchemaFiles
-from ruamel.yaml import YAML
 
 logger = logging.getLogger(__name__)
 
 __shortname__ = __name__.split(".")[-1]
-
-
-def load_schema():
-    yaml = YAML()
-    schemafile = pkg_resources.resource_filename(
-        "nbis", SchemaFiles.CONFIGURATION_SCHEMA
-    )
-    with open(schemafile) as fh:
-        schemadict = yaml.load(fh)
-    return Schema(schemadict)
 
 
 @click.group(help=__doc__, name=__shortname__)
@@ -51,7 +40,7 @@ def init(env, config_file):
     if config_file is None:
         config_file = env.home / f"{project_name}.yaml"
 
-    schema = load_schema()
+    schema = get_schema()
     if not config_file.exists():
         with open(config_file, "w") as fh:
             Config.from_schema(schema, file=fh, project_name=project_name)
@@ -65,5 +54,39 @@ def show(env):
     """Show an example configuration"""
     pyproject = toml.load(env.home / "pyproject.toml")
     project_name = pyproject["project"]["name"]
-    schema = load_schema()
+    schema = get_schema()
     _ = Config.from_schema(schema, file=sys.stdout, project_name=project_name)
+
+
+@main.command()
+@click.argument(
+    "configuration",
+    type=click.Choice(("main", "profile")),
+    default="main",
+)
+@pass_environment
+def example(env, configuration):
+    """Show example configuration files."""
+    conf_map = {
+        "main": "CONFIGURATION_SCHEMA",
+        "profile": "SNAKEMAKE_PROFILE_SCHEMA",
+    }
+    kwargs = {}
+    schema = get_schema(conf_map[configuration])
+    schemafile = pkg_resources.resource_filename(
+        "nbis", str(getattr(SchemaFiles, conf_map[configuration]))
+    )
+
+    required = schema._schema.get("required", None)
+    if configuration == "main":
+        kwargs = {"project_name": env.home.name}
+
+    print()
+    print(f"#\n# Showing example configuration for schema {conf_map[configuration]}")
+    print(f"# See schema file {schemafile} for more details.\n#")
+    if required is not None:
+        print(f"# Required fields: {','.join(required)}\n#")
+    print()
+
+    Config.from_schema(schema, file=sys.stdout, example=True, **kwargs)
+    print()
