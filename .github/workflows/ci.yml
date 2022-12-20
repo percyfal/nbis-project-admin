@@ -13,29 +13,35 @@ jobs:
       run:
         shell: bash -l {0}  # a login shell is required for conda activation
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: cache-conda
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yaml') }}
+          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}
+
       - name: Create Conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
-          mamba-version: "*"
-          channels: conda-forge,bioconda,default
-          channel-priority: true
-          environment-file: environment.yaml
+          miniconda-version: "latest"
+          environment-file: conda-linux-64.lock
           use-only-tar-bz2: true
+
       - name: Install test dependencies
         run: conda install -c conda-forge pytest pip tox
+
       - name: Install R revealjs
         run: R -e "install.packages('revealjs', repos='https://cran.rstudio.com/')"
+
       - name: Install nbis-project-admin
         run: pip install --no-deps .
+
       - name: Run tests
         run: pytest
+
       - name: Run tox to test installation of project
         run: python -m tox -e project
