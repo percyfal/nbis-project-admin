@@ -11,7 +11,7 @@ jobs:
         python-version: [3.9]
     defaults:
       run:
-        shell: bash -l {0}  # a login shell is required for conda activation
+        shell: bash -l {0} # a login shell is required for conda activation
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

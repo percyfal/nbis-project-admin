@@ -31,5 +31,3 @@ def {{ command }}(env, profile, jobs{% if test %}, test{% endif %}, snakemake_ar
     wrappers.snakemake(
         options=" ".join(options), snakefile=snakefile, targets=""
     )
-
-
