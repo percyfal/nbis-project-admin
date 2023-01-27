@@ -121,6 +121,21 @@ def main(
         **data,
     )
     templates.add_template(
+        pdir / ".prettierrc.yml",
+        ".prettierrc.yml.j2",
+        **data,
+    )
+    templates.add_template(
+        pdir / ".editorconfig",
+        ".editorconfig.j2",
+        **data,
+    )
+    templates.add_template(
+        pdir / ".prettierignore",
+        ".prettierignore.j2",
+        **data,
+    )
+    templates.add_template(
         pdir / "src" / python_module / "__init__.py",
         "src/python_module/__init__.py.j2",
         **data,

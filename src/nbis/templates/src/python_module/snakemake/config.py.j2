@@ -18,4 +18,3 @@ def get_schema(schema="CONFIGURATION_SCHEMA"):
     with open(schemafile) as fh:
         schema = YAML().load(fh)
     return Schema(schema)
-

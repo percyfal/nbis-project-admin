@@ -25,6 +25,7 @@ def add_template(filename, template, **kwargs):
         with open(filename, "w") as fh:
             template = env.get_template(template)
             fh.write(template.render(**kwargs))
+            fh.write("\n")
     except FileNotFoundError:
         logger.error(f"Make sure parent directory exists: {filename}")
         raise

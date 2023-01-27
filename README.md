@@ -1,6 +1,5 @@
 [![CI](https://github.com/percyfal/nbis-project-admin/actions/workflows/ci.yml/badge.svg)](https://github.com/percyfal/nbis-project-admin/actions/workflows/ci.yml)
 
-
 # NBIS project admin
 
 A small collection of tools to administrate [NBIS](https://nbis.se/)
@@ -21,18 +20,18 @@ Tool interaction is hidden behind a CLI. Features include
 
 Either install via pip
 
-	python -m pip install git+https://github.com/percyfal/nbis-admin@main
+    python -m pip install git+https://github.com/percyfal/nbis-admin@main
 
 or alternatively grab a copy of the source distribution and make a
 local install:
 
-	git clone https://github.com/percyfal/nbis-admin.git
-	cd nbis-admin
-	python -m pip install -e .
+    git clone https://github.com/percyfal/nbis-admin.git
+    cd nbis-admin
+    python -m pip install -e .
 
 After installation, you can access the tool with the command
 
-	nbis-admin
+    nbis-admin
 
 ## Usage example
 
@@ -43,15 +42,15 @@ be added that add subcommands and workflow commands to the CLI.
 
 To start setting up a project issue
 
-	nbis-admin init project_name
+    nbis-admin init project_name
 
 This will install templates with the following structure:
 
-	project_name/
-	├── README.md
-	├── pyproject.toml
-	├── setup.cfg
-	└── src
+    project_name/
+    ├── README.md
+    ├── pyproject.toml
+    ├── setup.cfg
+    └── src
         └── project_name
             ├── __init__.py
             ├── cli.py
@@ -62,26 +61,26 @@ This will install templates with the following structure:
 To activate the CLI, cd to the project directory, add it to version
 control, and install in editable mode:
 
-	cd project_name
-	git init
-	git add -f .
-	python -m pip install -e .
+    cd project_name
+    git init
+    git add -f .
+    python -m pip install -e .
 
 Executing the command `project_name` will expose the available
 commands:
 
-	Usage: project_name [OPTIONS] COMMAND [ARGS]...
+    Usage: project_name [OPTIONS] COMMAND [ARGS]...
 
-	  Console script for project_name
+      Console script for project_name
 
-	Options:
-	  --version           Show the version and exit.
-	  --config-file PATH  configuration file
-	  --debug             Print debugging information.
-	  --help              Show this message and exit.
+    Options:
+      --version           Show the version and exit.
+      --config-file PATH  configuration file
+      --debug             Print debugging information.
+      --help              Show this message and exit.
 
-	Commands:
-	  admin  Administration utilities.
+    Commands:
+      admin  Administration utilities.
 
 The `admin` subcommand consists of the same commands as `nbis-admin`
 but will be executed in the context of the project directory, such
@@ -93,9 +92,8 @@ that new templates automatically will be installed relative to
 Although not necessary, it is recommended to add a configuration file.
 This can be achieved with the `config` subcomand:
 
-	nbis-admin config show
-	nbis-admin config init
-
+    nbis-admin config show
+    nbis-admin config init
 
 ### Adding a subcommand plugin
 
@@ -104,32 +102,31 @@ The CLI will pick up any python file that resides in the directory
 a `main` function that is either a click command or group. To
 facilitate administration, there is a command to add CLI commands:
 
-	project_name admin add command
-	project_name admin add command_group
-
+    project_name admin add command
+    project_name admin add command_group
 
 ### Adding snakemake commands
 
 The following command will initialize support for snakemake commands
 (`smk` subcommand) and add a command called `run`:
 
-	project_name admin smk init
-	project_name admin smk add --command run
+    project_name admin smk init
+    project_name admin smk add --command run
 
 The `smk` subcommand provides wrappers to run template snakemake files
 that were installed above (`run` in this case). The help to
 `project_name smk run --help` is
 
-	Usage: project_foo smk run [OPTIONS] [SNAKEMAKE_ARGS]...
+    Usage: project_foo smk run [OPTIONS] [SNAKEMAKE_ARGS]...
 
-	  run help
+      run help
 
-	Options:
-	  --profile TEXT      snakemake profile, either defined as key:value pair in
-						  config or a URI pointing to profile directory  [default:
-						  local]
-	  -j, --jobs INTEGER  snakemake jobs  [default: 1]
-	  --help              Show this message and exit.
+    Options:
+      --profile TEXT      snakemake profile, either defined as key:value pair in
+                          config or a URI pointing to profile directory  [default:
+                          local]
+      -j, --jobs INTEGER  snakemake jobs  [default: 1]
+      --help              Show this message and exit.
 
 Any additional options will be passed along to the snakemake workflow
 that resides in the directory `src/snakemake`, relative to the project

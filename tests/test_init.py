@@ -2,7 +2,10 @@ from nbis.cli import cli
 
 
 expected = [
+    "project_foo/.editorconfig",
     "project_foo/.pre-commit-config.yaml",
+    "project_foo/.prettierignore",
+    "project_foo/.prettierrc.yml",
     "project_foo/README.md",
     "project_foo/setup.cfg",
     "project_foo/pyproject.toml",
