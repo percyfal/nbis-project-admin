@@ -11,7 +11,6 @@ import sys
 from datetime import date
 
 import click
-import pkg_resources
 from nbis import decorators
 from nbis import templates
 from nbis.cli import pass_environment
@@ -38,19 +37,18 @@ def main(ctx):
 @click.option("--subtitle", help="subtitle", default="subtitle")
 @click.option("--author", help="author")
 @click.option(
-    "--bibliography", help="bibliography", default="../resources/bibliography.bib"
+    "--bibliography", help="bibliography", default="../../resources/bibliography.bib"
 )
 @click.option(
     "--csl",
     help="csl",
     default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa
 )
-@click.option("--path", help="output template to path", type=click.Path(exists=False))
-@click.option("--css", help="css template")
 @click.option(
-    "--scss",
-    help="scss template",
-    default=pkg_resources.resource_filename("nbis", "resources/nbis.scss"),
+    "--name",
+    help="output template to named directory",
+    type=click.Path(exists=False),
+    default="running_slides",
 )
 @pass_environment
 def running_slides(env, slide_type, show, **kw):
@@ -59,22 +57,32 @@ def running_slides(env, slide_type, show, **kw):
     if "docs" not in env.config.keys():
         env.config["docs"] = Config({"src": env.home / "docs"})
 
-    outdir = pathlib.Path(env.config.docs.src)
+    outdir = pathlib.Path(env.config.docs.src) / kw["name"]
+    assets = outdir / "assets"
+    www = assets / "www"
+    css = assets / "css"
+    logos = assets / "logos"
     if not outdir.exists() and not show:
-        outdir.mkdir()
+        www.mkdir(parents=True)
+        css.mkdir()
+        logos.mkdir()
     ext = "qmd"
     if slide_type == "rmarkdown":
         ext = "Rmd"
-    path = (
-        pathlib.Path(kw["path"])
-        if kw["path"] is not None
-        else outdir / f"running-slides.{ext}"
-    )
+    path = outdir / f"index.{ext}"
     if show:
         t = templates.render_template(f"docs/running-slides.{ext}.j2", **kw)
         click.echo(t)
     else:
         templates.add_template(path, f"docs/running-slides.{ext}.j2", **kw)
+        templates.add_template(
+            www / "title-slide.html", "docs/assets/www/title-slide.html"
+        )
+        templates.add_template(www / "tikzfig.tex", "docs/assets/www/tikzfig.tex")
+        templates.add_template(
+            logos / "nbis-scilifelab.svg", "docs/assets/logos/nbis-scilifelab.svg"
+        )
+        templates.add_template(css / "nbis.scss", "docs/assets/css/nbis.scss")
 
 
 @main.command()

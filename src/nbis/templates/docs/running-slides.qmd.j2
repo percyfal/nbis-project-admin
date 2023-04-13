@@ -5,37 +5,44 @@ title: "{{ title }}"
 {% endif -%}
 author:
     - "{{ author }}"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: last-modified
+date-format: "DD-MMM-YYYY"
 institute: NBIS
 from: markdown+emoji
-format:
-  revealjs:
-    theme: [white]
-    {% if css -%}
-    css: [ "{{ css | join('", "') }}" ]
-    {% endif -%}
-    self-contained: true
-    toc: true
-    toc-depth: 1
-    slide-level: 2
-    slide-number: true
-    preview-links: true
-    chalkboard: false
-    footer: {{ footer }}
-    logo: https://nbis.se/assets/img/logos/nbislogo-green.svg
-    smaller: true
-    highlight-style: gruvbox
-    fig-height: 12
-    fig-width: 10
-    width: 1050
-    height: 700
-    margin: 0.1
 {% if csl -%}
   csl: {{ csl }}
 {% endif -%}
 {% if bibliography -%}
   bibliography: {{ bibliography }}
 {% endif -%}
+
+format:
+  revealjs:
+    theme:
+      - assets/css/nbis.scss
+    toc: true
+    toc-depth: 1
+    slide-level: 2
+    slide-number: true
+    preview-links: true
+    chalkboard: true
+    footer: {{ footer|default("footer") }}
+    smaller: false
+    highlight-style: gruvbox
+    fig-height: 12
+    fig-width: 10
+    width: 1280
+    height: 720
+    margin: 0.1
+    navigation-mode: vertical
+    reference-location: margin
+    template-partials:
+      - assets/www/title-slide.html
+    title-slide-attributes:
+      data-background-image: assets/logos/nbis-scilifelab.svg
+      data-background-size: 500px
+      data-background-position: top left
+
 execute:
   echo: true
   warning: false
@@ -44,11 +51,16 @@ execute:
   autodep: true
   eval: true
   error: true
+
 opts:
   knitr:
     code-fold: true
     tidy: true
     fig-format: svg
+
+  filters:
+    - lightbox
+    - fontawesome
 ---
 
 ## Setup  {visibility="hidden" .unnumbered .unlisted}
