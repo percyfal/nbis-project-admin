@@ -1,12 +1,18 @@
+<!-- markdownlint-disable -->
+
 <!--
 [![PyPI](https://img.shields.io/pypi/v/{{ repo_name }}.svg)](https://pypi.python.org/pypi/{{ repo_name }})
--->
+  -->
+
 <!--
 [![CI](https://github.com/NBISweden/{{ project_name }}/actions/workflows/ci.yml/badge.svg)](https://github.com/NBISweden/{{ project_name }}/actions/workflows/ci.yml)
--->
+  -->
+
 <!--
 [![BioConda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/recipes/{{ repo_name }}/README.html)
--->
+  -->
+
+<!-- markdownlint-enable -->
 
 # {{ project_name }}
 
@@ -29,13 +35,17 @@ which can be invoked as
 
 ## Project organization
 
-```
-{{ '%-60s%s' | format(project_directory + "/", "<- top-level project folder") }}
+<!-- markdownlint-disable -->
+
+```text
+{{ '%-40s%s' | format(project_directory + "/", "<- top-level project folder") }}
 |
 ├── README.md
 ├── pyproject.toml
 ├── setup.cfg
-└── src                                                     <- source code
-    └── {{ '%-52s%s' | format(project_name, "<- python module code") }}
-        └── commands                                        <- python module commands
+└── src                                 <- source code
+    └── {{ '%-32s%s' | format(project_name, "<- python module code") }}
+        └── commands                    <- python module commands
 ```
+
+<!-- markdownlint-enable -->

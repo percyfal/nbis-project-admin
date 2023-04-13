@@ -1,4 +1,8 @@
+<!-- markdownlint-disable -->
+
 [![CI](https://github.com/percyfal/nbis-project-admin/actions/workflows/ci.yml/badge.svg)](https://github.com/percyfal/nbis-project-admin/actions/workflows/ci.yml)
+
+<!-- markdownlint-restore -->
 
 # NBIS project admin
 
@@ -129,5 +133,5 @@ that were installed above (`run` in this case). The help to
       --help              Show this message and exit.
 
 Any additional options will be passed along to the snakemake workflow
-that resides in the directory `src/snakemake`, relative to the project
-home.
+that resides in the directory `src/project_name/workflows/snakemake`,
+relative to the project home.

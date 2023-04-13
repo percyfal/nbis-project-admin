@@ -21,7 +21,7 @@ repos:
       - id: pyupgrade
         args: [--py3-plus, --py37-plus]
   - repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: 23.3.0
     hooks:
       - id: black
         language_version: python3
@@ -39,7 +39,7 @@ repos:
         additional_dependencies: [black==22.12.0]
         language_version: python3
   - repo: https://github.com/snakemake/snakefmt
-    rev: v0.8.0
+    rev: v0.8.4
     hooks:
       - id: snakefmt
   - repo: local
@@ -50,7 +50,7 @@ repos:
         language: system
         files: ".*.smk$|.*Snakefile$"
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.0-alpha.4"
+    rev: "v3.0.0-alpha.6"
     hooks:
       - id: prettier
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
@@ -58,3 +58,9 @@ repos:
     hooks:
       - id: editorconfig-checker
         alias: ec
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.6.0
+    hooks:
+      - id: markdownlint-cli2
+        args: ["*.md"]
+        exclude: LICENSE.md
