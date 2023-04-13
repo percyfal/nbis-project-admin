@@ -9,7 +9,7 @@ write_to = "src/nbis/_version.py"
 [project]
 name = "nbis_project_admin"
 authors = [
-	{name = "Per Unneberg", email = "per.unneberg@scilifelab.se"},
+    {name = "Per Unneberg", email = "per.unneberg@scilifelab.se"},
 ]
 description = "NBIS project admin"
 readme = "README.md"
@@ -42,9 +42,9 @@ where = ["src"]
 
 [tool.setuptools]
 package-data = { nbis = [
-	     "schemas/config.schema.yaml",
-	     "templates/*.j2",
-	     "resources/*"
+    "schemas/config.schema.yaml",
+    "templates/*.j2",
+    "resources/*"
 ]}
 
 
@@ -87,7 +87,7 @@ deps =
     pip>=22.1.0
     wheel
 commands =
-	 pytest --basetemp="{envtmpdir}" {posargs}
+    pytest --basetemp="{envtmpdir}" {posargs}
 
 [testenv:project]
 allowlist_externals =
@@ -104,14 +104,14 @@ deps =
     pip>=22.1.0
     wheel
 commands:
-	nbis-admin init .
- 	git init -b main .
-	git add -f .
-	pre-commit
-	{envbindir}/pip install -e . --no-deps
-	project_foo admin config init
-	project_foo admin smk init
-	project_foo admin smk add
-	project_foo
+    nbis-admin init .
+    git init -b main .
+    git add -f .
+    pre-commit
+    {envbindir}/pip install -e . --no-deps
+    project_foo admin config init
+    project_foo admin smk init
+    project_foo admin smk add
+    project_foo
 
 """

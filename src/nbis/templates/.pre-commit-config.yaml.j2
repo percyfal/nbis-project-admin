@@ -21,7 +21,7 @@ repos:
       - id: pyupgrade
         args: [--py3-plus, --py37-plus]
   - repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: 23.3.0
     hooks:
       - id: black
         language_version: python3
@@ -39,7 +39,7 @@ repos:
         additional_dependencies: [black==22.12.0]
         language_version: python3
   - repo: https://github.com/snakemake/snakefmt
-    rev: v0.8.0
+    rev: v0.8.4
     hooks:
       - id: snakefmt
   - repo: local
@@ -50,7 +50,7 @@ repos:
         language: system
         files: ".*.smk$|.*Snakefile$"
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.0-alpha.4"
+    rev: "v3.0.0-alpha.6"
     hooks:
       - id: prettier
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
@@ -58,3 +58,35 @@ repos:
     hooks:
       - id: editorconfig-checker
         alias: ec
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.33.0
+    hooks:
+      - id: markdownlint
+        args: ["*.qmd", "*.md"]
+        exclude: LICENSE.md
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.3.2
+    hooks:
+      - id: style-files
+        name: style-files
+        description: style files with {styler}
+        entry: Rscript inst/hooks/exported/style-files.R
+        language: r
+        files: '(\.[rR]profile|\.[rR]|\.[rR]md|\.[rR]nw|\.[qQ]md)$'
+        exclude: 'renv/activate\.R'
+        minimum_pre_commit_version: "2.13.0"
+      - id: parsable-R
+        name: parsable-R
+        description: check if a .R file is parsable
+        entry: Rscript inst/hooks/exported/parsable-R.R
+        language: r
+        files: '\.[rR](md)?$'
+        minimum_pre_commit_version: "2.13.0"
+      - id: lintr
+        name: lintr
+        description: check if a `.R` file is lint free (using {lintr})
+        entry: Rscript inst/hooks/exported/lintr.R
+        language: r
+        files: '(\.[rR]profile|\.R|\.Rmd|\.Rnw|\.r|\.rmd|\.rnw)$'
+        exclude: 'renv/activate\.R'
+        minimum_pre_commit_version: "2.13.0"
