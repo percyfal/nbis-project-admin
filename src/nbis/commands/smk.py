@@ -26,7 +26,8 @@ click option:
     def run(ctx, profile, jobs, snakemake_args, directory):
         options = list(snakemake_args) + ['-j', str(jobs), '--directory', directory]
 
-
+The option --quarto will add a rule to run quarto based on a
+specialized template.
 
 """
 import logging
@@ -59,8 +60,11 @@ def add_command_smk_py(env, group, **kw):
         f"def {kw['command']}(" not in pyfile.read_text()
     ), f"{kw['command']} already defined"
     kw["group"] = group
+    command = "quarto" if kw["quarto"] else "command"
     with open(pyfile, "a") as fh:
-        fh.write(render_template("src/python_module/commands/command.smk.py.j2", **kw))
+        fh.write(
+            render_template(f"src/python_module/commands/{command}.smk.py.j2", **kw)
+        )
 
 
 def add_command_smk(env, group, command, **kw):
@@ -73,9 +77,10 @@ def add_command_smk(env, group, command, **kw):
         / "commands"
         / f"{group}-{command}.smk"
     )
+    command_template = "quarto" if kw["quarto"] else "command"
     add_template(
         smkfile,
-        "src/python_module/workflow/snakemake/commands/command.smk.j2",
+        f"src/python_module/workflow/snakemake/commands/{command_template}.smk.j2",
         project_name=env.config.project_name,
         command=command,
         test=kw["test"],
@@ -198,6 +203,9 @@ def main(ctx):
 )
 @click.option("group", "--group", default="smk", help="snakemake command group name")
 @click.option("command", "--command", default="run", help="snakemake command to add")
+@click.option(
+    "quarto", "--quarto", is_flag=True, help="add quarto snakeamake code and command"
+)
 @click.pass_context
 def add(ctx, group, **kw):
     """Add snakefile and python helper code.
@@ -214,6 +222,8 @@ def add(ctx, group, **kw):
             f"Make sure to first run '{ctx.find_root().info_name} smk init.'"
         )
         return
+    if kw["quarto"]:
+        kw["command"] = "quarto"
     add_group_smk_py(env, group, **kw)
     add_command_smk_py(env, group, **kw)
     command = kw.pop("command")

@@ -1,0 +1,27 @@
+
+
+@main.command(context_settings=dict(
+    ignore_unknown_options=True),
+              help="{{ command }} help")
+@profile_opt(default_profile="local")
+@jobs_opt()
+@click.argument('snakemake_args', nargs=-1, type=click.UNPROCESSED)
+@pass_environment
+def {{ command }}(env, profile, jobs, snakemake_args):
+    import shutil
+    options = list(snakemake_args) + ['-j', str(jobs)]
+    if shutil.which("quarto") is None:
+        options += ["--use-singularity"]
+    no_profile = False
+snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
+    options.extend(["--directory", str(env.home)])
+    if profile:
+        prof = get_profile(profile, env.config)
+        if not no_profile:
+            options.extend(["--profile", prof])
+    if "QUARTO_IMAGE" not in os.environ and "QUARTO_IMAGE" in env.dotenv:
+        os.environ["QUARTO_IMAGE"] = env.dotenv["QUARTO_IMAGE"]
+
+    wrappers.snakemake(
+        options=" ".join(options), snakefile=snakefile, targets=""
+    )

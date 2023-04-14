@@ -3,6 +3,7 @@ from nbis.cli import cli
 
 expected = [
     "project_foo/.editorconfig",
+    "project_foo/.gitignore",
     "project_foo/.pre-commit-config.yaml",
     "project_foo/.prettierignore",
     "project_foo/.prettierrc.yml",

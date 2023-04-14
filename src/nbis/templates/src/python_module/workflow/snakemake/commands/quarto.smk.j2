@@ -1,0 +1,60 @@
+import os
+import re
+import sys
+import socket
+from {{ project_name }}.snakemake.config import SchemaFiles
+from pathlib import Path
+from snakemake.utils import validate
+import pandas as pd
+
+
+envvars:
+    "QUARTO_IMAGE",
+    "TEXINPUTS"
+
+
+##############################
+# Configuration
+##############################
+configfile: Path("config/config.yaml")
+
+
+validate(config, schema=SchemaFiles.CONFIGURATION_SCHEMA)
+
+samples = pd.read_table(config["samples"])
+validate(samples, schema=SchemaFiles.SAMPLES_SCHEMA)
+
+
+wildcard_constraints:
+    data="data",
+    interim="data/interim",
+    reports="reports",
+
+
+# Define main ALL target
+ALL = []
+
+
+rule all:
+    input:
+        ALL,
+
+
+##############################
+# Atomic rules
+##############################
+rule quarto_render:
+    output:
+        "docs/{prefix}.html",
+    input:
+        "docs/{prefix}.qmd",
+    params:
+        root_dir=Path(os.curdir).absolute(),
+    log:
+        "logs/docs/{prefix}.html.log",
+    conda:
+        "../envs/{{ project_name }}.yaml"
+    container:
+        os.environ.get("QUARTO_IMAGE")
+    shell:
+        "quarto render {input} --execute-dir {params.root_dir}; > {log} 2>&1"
