@@ -136,6 +136,11 @@ def main(
         **data,
     )
     templates.add_template(
+        pdir / ".gitignore",
+        ".gitignore.j2",
+        **data,
+    )
+    templates.add_template(
         pdir / "src" / python_module / "__init__.py",
         "src/python_module/__init__.py.j2",
         **data,
