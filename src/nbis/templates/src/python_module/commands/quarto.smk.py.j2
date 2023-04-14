@@ -13,7 +13,7 @@ def {{ command }}(env, profile, jobs, snakemake_args):
     if shutil.which("quarto") is None:
         options += ["--use-singularity"]
     no_profile = False
-snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
+    snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
     options.extend(["--directory", str(env.home)])
     if profile:
         prof = get_profile(profile, env.config)
