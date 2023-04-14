@@ -11,7 +11,6 @@ import sys
 from datetime import date
 
 import click
-from nbis import decorators
 from nbis import templates
 from nbis.cli import pass_environment
 from nbis.config import Config
@@ -20,6 +19,26 @@ logger = logging.getLogger(__name__)
 
 
 __shortname__ = __name__.split(".")[-1]
+
+
+def _add_doc_and_assets(outdir, assets, ext, template="running-slides", **kw):
+    path = outdir / f"index.{ext}"
+    www = assets / "www"
+    css = assets / "css"
+    logos = assets / "logos"
+    if not outdir.exists():
+        outdir.mkdir(parents=True)
+    if not www.exists():
+        www.mkdir(parents=True)
+        css.mkdir()
+        logos.mkdir()
+    templates.add_template(path, f"docs/{template}.{ext}.j2", **kw)
+    templates.add_template(www / "title-slide.html", "docs/assets/www/title-slide.html")
+    templates.add_template(www / "tikzfig.tex", "docs/assets/www/tikzfig.tex")
+    templates.add_template(
+        logos / "nbis-scilifelab.svg", "docs/assets/logos/nbis-scilifelab.svg"
+    )
+    templates.add_template(css / "nbis.scss", "docs/assets/css/nbis.scss")
 
 
 @click.group(help=__doc__, name=__shortname__)
@@ -36,6 +55,9 @@ def main(ctx):
 @click.option("--title", help="title", default="title")
 @click.option("--subtitle", help="subtitle", default="subtitle")
 @click.option("--author", help="author")
+@click.option(
+    "--assets", help="assets location relative to document", default="../assets"
+)
 @click.option(
     "--bibliography", help="bibliography", default="../../resources/bibliography.bib"
 )
@@ -58,59 +80,74 @@ def running_slides(env, slide_type, show, **kw):
         env.config["docs"] = Config({"src": env.home / "docs"})
 
     outdir = pathlib.Path(env.config.docs.src) / kw["name"]
-    assets = outdir / "assets"
-    www = assets / "www"
-    css = assets / "css"
-    logos = assets / "logos"
-    if not outdir.exists() and not show:
-        www.mkdir(parents=True)
-        css.mkdir()
-        logos.mkdir()
+    assets = outdir / kw["assets"]
     ext = "qmd"
     if slide_type == "rmarkdown":
         ext = "Rmd"
-    path = outdir / f"index.{ext}"
     if show:
         t = templates.render_template(f"docs/running-slides.{ext}.j2", **kw)
         click.echo(t)
     else:
-        templates.add_template(path, f"docs/running-slides.{ext}.j2", **kw)
-        templates.add_template(
-            www / "title-slide.html", "docs/assets/www/title-slide.html"
-        )
-        templates.add_template(www / "tikzfig.tex", "docs/assets/www/tikzfig.tex")
-        templates.add_template(
-            logos / "nbis-scilifelab.svg", "docs/assets/logos/nbis-scilifelab.svg"
-        )
-        templates.add_template(css / "nbis.scss", "docs/assets/css/nbis.scss")
+        _add_doc_and_assets(outdir, assets, ext)
 
 
 @main.command()
 @click.option(
-    "diary",
-    "--diary-file",
-    "-d",
-    help="diary file name",
-    default=pathlib.Path("docs/diary.md"),
+    "doc_type",
+    "--doc-type",
+    type=click.Choice(["quarto", "markdown"]),
+    default="quarto",
 )
-@decorators.dry_run_option
+@click.option("--show", is_flag=True, help="show template")
+@click.option("--title", help="title", default="title")
+@click.option("--subtitle", help="subtitle", default="subtitle")
+@click.option("--author", help="author")
+@click.option(
+    "--assets", help="assets location relative to document", default="../assets"
+)
+@click.option(
+    "--bibliography", help="bibliography", default="../../resources/bibliography.bib"
+)
+@click.option(
+    "--csl",
+    help="csl",
+    default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa
+)
+@click.option(
+    "--name",
+    help="output template to named directory",
+    type=click.Path(exists=False),
+    default="diary",
+)
 @pass_environment
-def diary(env, diary, dry_run):
+def diary(env, doc_type, show, **kw):
     """Add diary template"""
-    diary = pathlib.Path(diary)
     logger.info(f"Initializing diary file {diary}")
-    if dry_run:
-        click.echo("(DRY RUN)")
-        return
+    if "docs" not in env.config.keys():
+        env.config["docs"] = Config({"src": env.home / "docs"})
 
+    outdir = pathlib.Path(env.config.docs.src) / kw["name"]
+    assets = outdir / kw["assets"]
+    ext = "qmd"
+    if doc_type == "markdown":
+        ext = "md"
     sysargs = " ".join(sys.argv[1:])
-    templates.add_template(
-        diary,
-        "docs/diary.md.j2",
-        project_name=env.config.project_name,
-        args=sysargs,
-        date=date.today(),
+    kw.update(
+        **{
+            "project_name": env.config.project_name,
+            "args": sysargs,
+            "date": date.today(),
+        }
     )
+
+    if show:
+        t = templates.render_template(
+            f"docs/diary.{ext}.j2",
+            **kw,
+        )
+        click.echo(t)
+    else:
+        _add_doc_and_assets(outdir, assets, ext, template="diary", **kw)
 
 
 @main.command

@@ -1,17 +1,15 @@
 
 
-@main.command(context_settings=dict(
-    ignore_unknown_options=True),
-              help="{{ command }} help")
+@main.command(context_settings=dict(ignore_unknown_options=True), help="{{ command }}")
 @profile_opt(default_profile="local")
 @jobs_opt()
 {% if test -%}
   @test_opt()
 {% endif -%}
-@click.argument('snakemake_args', nargs=-1, type=click.UNPROCESSED)
+@click.argument("snakemake_args", nargs=-1, type=click.UNPROCESSED)
 @pass_environment
 def {{ command }}(env, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
-    options = list(snakemake_args) + ['-j', str(jobs)]
+    options = list(snakemake_args) + ["-j", str(jobs)]
     no_profile = False
     snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
 {% if test %}
@@ -28,6 +26,4 @@ def {{ command }}(env, profile, jobs{% if test %}, test{% endif %}, snakemake_ar
         if not no_profile:
             options.extend(["--profile", prof])
 
-    wrappers.snakemake(
-        options=" ".join(options), snakefile=snakefile, targets=""
-    )
+    wrappers.snakemake(options=" ".join(options), snakefile=snakefile, targets="")

@@ -65,6 +65,7 @@ def add_command_smk_py(env, group, **kw):
         fh.write(
             render_template(f"src/python_module/commands/{command}.smk.py.j2", **kw)
         )
+        fh.write("\n")
 
 
 def add_command_smk(env, group, command, **kw):
