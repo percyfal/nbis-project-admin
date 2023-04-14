@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 __shortname__ = __name__.split(".")[-1]
 
 
-def _add_doc_and_assets(outdir, assets, ext, template="running-slides", **kw):
+def _add_doc_and_assets(outdir, ext, template="running-slides", **kw):
+    assets = outdir / kw["assets"]
     path = outdir / f"index.{ext}"
     www = assets / "www"
     css = assets / "css"
@@ -80,7 +81,6 @@ def running_slides(env, slide_type, show, **kw):
         env.config["docs"] = Config({"src": env.home / "docs"})
 
     outdir = pathlib.Path(env.config.docs.src) / kw["name"]
-    assets = outdir / kw["assets"]
     ext = "qmd"
     if slide_type == "rmarkdown":
         ext = "Rmd"
@@ -88,7 +88,7 @@ def running_slides(env, slide_type, show, **kw):
         t = templates.render_template(f"docs/running-slides.{ext}.j2", **kw)
         click.echo(t)
     else:
-        _add_doc_and_assets(outdir, assets, ext)
+        _add_doc_and_assets(outdir, ext, **kw)
 
 
 @main.command()
@@ -127,7 +127,6 @@ def diary(env, doc_type, show, **kw):
         env.config["docs"] = Config({"src": env.home / "docs"})
 
     outdir = pathlib.Path(env.config.docs.src) / kw["name"]
-    assets = outdir / kw["assets"]
     ext = "qmd"
     if doc_type == "markdown":
         ext = "md"
@@ -147,7 +146,7 @@ def diary(env, doc_type, show, **kw):
         )
         click.echo(t)
     else:
-        _add_doc_and_assets(outdir, assets, ext, template="diary", **kw)
+        _add_doc_and_assets(outdir, ext, template="diary", **kw)
 
 
 @main.command
