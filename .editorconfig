@@ -10,3 +10,6 @@ indent_style = space
 
 [*.{md,yml,yaml,html,css,scss,js,cff,j2}]
 indent_size = 2
+
+[tests/test_schema.py]
+indent_size = 2

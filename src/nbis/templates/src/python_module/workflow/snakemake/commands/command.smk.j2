@@ -27,23 +27,24 @@ wildcard_constraints:
 
 # Define main ALL target
 ALL = []
+{%- if test %}
 
-{% if test -%}
+
 if config.get("__test__") is True:
 
     include: "test-{{ group }}-{{ command }}-config.smk"
-{% endif -%}
+{% endif %}
+
 
 rule all:
     input:
         ALL,
 
+
 ##############################
 # Atomic rules
 ##############################
-
-
-{% if test -%}
+{%- if test %}
 ##############################
 # TEST rules
 ##############################

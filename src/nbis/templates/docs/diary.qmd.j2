@@ -17,32 +17,15 @@ from: markdown+emoji
 {% endif -%}
 
 format:
-  revealjs:
+  html:
     theme:
-      - {{ assets }}/css/nbis.scss
+      - ../assets/css/custom.scss
     toc: true
-    toc-depth: 1
-    slide-level: 2
-    slide-number: true
-    preview-links: true
-    chalkboard: true
-    footer: {{ footer|default("footer") }}
-    smaller: false
-    highlight-style: gruvbox
-    fig-height: 12
-    fig-width: 10
-    width: 1280
-    height: 720
-    margin: 0.1
-    navigation-mode: vertical
-    reference-location: margin
-    template-partials:
-      - {{ assets }}/www/title-slide.html
-    title-slide-attributes:
-      data-background-image: {{ assets }}/logos/nbis-scilifelab.svg
-      data-background-size: 500px
-      data-background-position: top left
-
+    embed-resources: true
+    date: last-modified
+    date-format: "DD-MMM-YYYY"
+    lightbox:
+      match: auto
 execute:
   echo: true
   warning: false
@@ -63,6 +46,8 @@ opts:
     - fontawesome
 ---
 
+# Project diary for {{ project_name }}
+
 ## Setup  {visibility="hidden" .unnumbered .unlisted}
 
 ```{r libs}
@@ -77,8 +62,11 @@ knitr::knit_hooks$set(inline = function(x) {
                       prettyNum(x, big.mark=" ")
                   })
 ```
+## {{ date }}
 
-# Section 1
+Initialized diary with `{{ project_name }} {{ args }}`.
+
+
 
 
 {% if bibliography -%}

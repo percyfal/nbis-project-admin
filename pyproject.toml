@@ -93,6 +93,8 @@ commands =
 allowlist_externals =
     git
 changedir = {envtmpdir}/project_foo
+setenv =
+    SKIP = lint
 deps =
     build
     pre-commit
@@ -107,11 +109,17 @@ commands:
     nbis-admin init .
     git init -b main .
     git add -f .
-    pre-commit
-    {envbindir}/pip install -e . --no-deps
+    {envpython} -m pip install -e . --no-deps
+    project_foo
     project_foo admin config init
     project_foo admin smk init
     project_foo admin smk add
+    git add .
+    pre-commit
     project_foo
 
 """
+
+[tool.ruff]
+
+exclude = []

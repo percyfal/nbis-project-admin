@@ -28,7 +28,7 @@ def test_cli(runner):
 
 def test_cli_debug(runner, caplog):
     caplog.set_level(logging.DEBUG)
-    result = runner.invoke(cli, ["--debug", "add", "diary", "-n"])
+    result = runner.invoke(cli, ["--debug", "add", "diary", "--show"])
     assert not result.exception
     assert caplog.records[0].levelname == "DEBUG"
-    assert re.search(r"(DRY RUN)", result.output) is not None
+    assert re.search(r"title:", result.output) is not None

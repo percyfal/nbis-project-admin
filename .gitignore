@@ -5,3 +5,4 @@
 /Makefile
 /build/
 *.egg-info
+*.pyc
