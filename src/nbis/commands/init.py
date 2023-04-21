@@ -121,6 +121,11 @@ def main(
         **data,
     )
     templates.add_template(
+        pdir / ".markdownlint.yaml",
+        ".markdownlint.yaml.j2",
+        **data,
+    )
+    templates.add_template(
         pdir / ".prettierrc.yml",
         ".prettierrc.yml.j2",
         **data,
