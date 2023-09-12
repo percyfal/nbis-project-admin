@@ -1,5 +1,6 @@
 """Snakemake utilities"""
 import logging
+import re
 
 import click
 
@@ -53,3 +54,35 @@ def directory_opt():
             "use this as their origin). (default: project directory)"
         ),
     )
+
+
+def format_snakemake_help(smkfile, *, default=None):
+    """Return docstring from snakemake file.
+
+    Provided that a document starts with triple quotes,
+    the document is read and split on that delimiter. This
+    will produce a list where the first entry is the empty
+    string, so the function returns the second entry in the
+    list.
+
+    Use in command function:
+
+        @cli.command(context_settings=dict(ignore_unknown_options=True),
+                    help=format_snakemake_help(config.SNAKEMAKE_ROOT / smkfile))
+    """
+    with open(smkfile) as fh:
+        file_contents = "".join(fh.readlines())
+    text = default
+    if re.match('^"""', file_contents):
+        m = re.split('"""', file_contents)
+        text = m[1]
+    else:
+        if default is None:
+            return None, None
+        text = default
+    try:
+        title, body = text.split("\n", maxsplit=1)
+    except ValueError:
+        title = default
+        body = default
+    return title, body
