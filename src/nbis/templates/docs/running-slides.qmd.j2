@@ -52,15 +52,23 @@ execute:
   eval: true
   error: true
 
-opts:
-  knitr:
-    code-fold: true
+knitr:
+  opts_chunk:
+    code-fold: false
     tidy: true
+    comment-char: "#>"
     fig-format: svg
+    engine.opts:
+      dvisvgm.opts: --font-format=woff
+      template: assets/www/tikzfig.tex
 
-  filters:
-    - lightbox
-    - fontawesome
+# Install extensions:
+# quarto add quarto-ext/lightbox
+# quarto add quarto-ext/fontawesome
+# and uncomment
+#filters:
+#  - lightbox
+#  - fontawesome
 ---
 
 ## Setup  {visibility="hidden" .unnumbered .unlisted}
