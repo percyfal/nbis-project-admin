@@ -4,13 +4,13 @@ Nbis project administration code. See
 https://github.com/percyfal/nbis-project-admin for more information.
 
 """
+
 import logging
 
 import click
 from nbis import cli as nbiscli
 
-
-__shortname__ = __name__.split(".")[-1]
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 
 logger = logging.getLogger(__name__)
@@ -22,6 +22,6 @@ logger = logging.getLogger(__name__)
     help=__doc__,
     name=__shortname__,
 )
-@nbiscli.pass_environment
-def main(env):
+def main():
+    """Main command docstring"""
     logger.info(__shortname__)

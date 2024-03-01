@@ -3,47 +3,6 @@ title: "{{ title }}"
 {% if subtitle -%}
     subtitle: "{{ subtitle }}"
 {% endif -%}
-author:
-    - "{{ author }}"
-date: last-modified
-date-format: "DD-MMM-YYYY"
-institute: NBIS
-from: markdown+emoji
-{% if csl -%}
-  csl: {{ csl }}
-{% endif -%}
-{% if bibliography -%}
-  bibliography: {{ bibliography }}
-{% endif -%}
-
-format:
-  html:
-    theme:
-      - ../assets/css/custom.scss
-    toc: true
-    embed-resources: true
-    date: last-modified
-    date-format: "DD-MMM-YYYY"
-    lightbox:
-      match: auto
-execute:
-  echo: true
-  warning: false
-  cache: true
-  include: true
-  autodep: true
-  eval: true
-  error: true
-
-opts:
-  knitr:
-    code-fold: true
-    tidy: true
-    fig-format: svg
-
-  filters:
-    - lightbox
-    - fontawesome
 ---
 
 # Project diary for {{ project_name }}

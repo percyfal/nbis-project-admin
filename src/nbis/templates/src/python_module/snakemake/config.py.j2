@@ -1,18 +1,24 @@
+"""Snakemake configuration."""
+
 from nbis.config import Schema
-from {{ project_name }}.cli import PKG_DIR
 from ruamel.yaml import YAML
+
+from {{ project_name }}.cli import PKG_DIR
 
 WORKFLOW_ROOT = PKG_DIR / "workflow"
 SNAKEMAKE_ROOT = WORKFLOW_ROOT / "snakemake"
 
 
-class SchemaFiles:
+class SchemaFiles:  # pylint: disable=too-few-public-methods
+    """SchemaFiles class"""
+
     CONFIGURATION_SCHEMA = WORKFLOW_ROOT / "schemas" / "config.schema.yaml"
     SAMPLES_SCHEMA = WORKFLOW_ROOT / "schemas" / "samples.schema.yaml"
 
 
 def get_schema(schema="CONFIGURATION_SCHEMA"):
+    """Get configuration schema."""
     schemafile = getattr(SchemaFiles, schema)
-    with open(schemafile) as fh:
-        schema = YAML().load(fh)
+    with open(schemafile, encoding="utf-8") as file:
+        schema = YAML().load(file)
     return Schema(schema)

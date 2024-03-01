@@ -29,15 +29,15 @@ commands here is that they will automatically apply the project
 settings and context to execution.
 
 """
+
 import logging
 import pathlib
 
 import click
-from nbis import decorators
+
 from nbis import templates
 
-
-__shortname__ = __name__.split(".")[-1]
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 
 logger = logging.getLogger(__name__)
@@ -73,9 +73,8 @@ logger = logging.getLogger(__name__)
     default=None,
 )
 @click.option("--author", help="author name")
-@decorators.dry_run_option
 @click.pass_context
-def main(
+def main(  # pylint: disable=too-many-arguments
     ctx,
     project_directory,
     description,
@@ -84,9 +83,9 @@ def main(
     open_source_license,
     author,
     config_file,
-    dry_run,
 ):
-    logger.debug(f"Running {__shortname__} subcommand.")
+    """Main init command"""
+    logger.debug("Running %s subcommand.", __shortname__)
     p = pathlib.Path(project_directory).absolute()
     if project_name is None:
         project_name = p.name

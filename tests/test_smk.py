@@ -1,5 +1,6 @@
-from nbis.cli import cli
+"""Test snakemake commands."""
 
+from nbis.cli import cli
 
 expected_init = [
     "project_foo/pyproject.toml",
@@ -20,6 +21,7 @@ expected_add = [
 
 
 def test_smk_init(runner, pyproject):
+    """Test initialization of snakemake."""
     out = pyproject
     result = runner.invoke(cli, ["smk", "init"])
     files = [str(p.relative_to(out.parent)) for p in out.rglob("*") if p.is_file()]
@@ -28,6 +30,7 @@ def test_smk_init(runner, pyproject):
 
 
 def test_smk_add(runner, pyproject):
+    """Test adding snakemake commands."""
     out = pyproject
     config = out / "src" / "nbis-admin" / "snakemake" / "config.py"
     config.parent.mkdir(parents=True)

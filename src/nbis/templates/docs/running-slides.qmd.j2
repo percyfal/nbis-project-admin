@@ -3,72 +3,10 @@ title: "{{ title }}"
 {% if subtitle -%}
     subtitle: "{{ subtitle }}"
 {% endif -%}
-author:
-    - "{{ author }}"
-date: last-modified
-date-format: "DD-MMM-YYYY"
-institute: NBIS
-from: markdown+emoji
-{% if csl -%}
-  csl: {{ csl }}
-{% endif -%}
-{% if bibliography -%}
-  bibliography: {{ bibliography }}
-{% endif -%}
 
 format:
   revealjs:
-    theme:
-      - {{ assets }}/css/nbis.scss
-    toc: true
-    toc-depth: 1
-    slide-level: 2
-    slide-number: true
-    preview-links: true
-    chalkboard: true
     footer: {{ footer|default("footer") }}
-    smaller: false
-    highlight-style: gruvbox
-    fig-height: 12
-    fig-width: 10
-    width: 1280
-    height: 720
-    margin: 0.1
-    navigation-mode: vertical
-    reference-location: margin
-    template-partials:
-      - {{ assets }}/www/title-slide.html
-    title-slide-attributes:
-      data-background-image: {{ assets }}/logos/nbis-scilifelab.svg
-      data-background-size: 500px
-      data-background-position: top left
-
-execute:
-  echo: true
-  warning: false
-  cache: true
-  include: true
-  autodep: true
-  eval: true
-  error: true
-
-knitr:
-  opts_chunk:
-    code-fold: false
-    tidy: true
-    comment-char: "#>"
-    fig-format: svg
-    engine.opts:
-      dvisvgm.opts: --font-format=woff
-      template: assets/www/tikzfig.tex
-
-# Install extensions:
-# quarto add quarto-ext/lightbox
-# quarto add quarto-ext/fontawesome
-# and uncomment
-#filters:
-#  - lightbox
-#  - fontawesome
 ---
 
 ## Setup  {visibility="hidden" .unnumbered .unlisted}

@@ -1,26 +1,28 @@
 """Configuration administration utilities.
 
 """
+
 import logging
 import sys
 
 import click
 import pkg_resources
 import toml
+
 from nbis.cli import pass_environment
 from nbis.config import Config
-from nbis.config import get_schema
 from nbis.config import SchemaFiles
+from nbis.config import get_schema
 
 logger = logging.getLogger(__name__)
 
-__shortname__ = __name__.split(".")[-1]
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 
 @click.group(help=__doc__, name=__shortname__)
-@pass_environment
-def main(env):
-    logger.debug(f"Running {__shortname__} subcommand.")
+def main():
+    """Configuration administration utilities."""
+    logger.debug("Running %s subcommand.", __shortname__)
 
 
 @main.command()
@@ -42,10 +44,10 @@ def init(env, config_file):
 
     schema = get_schema()
     if not config_file.exists():
-        with open(config_file, "w") as fh:
+        with open(config_file, "w", encoding="utf-8") as fh:
             Config.from_schema(schema, file=fh, project_name=project_name)
     else:
-        logger.info(f"{config_file} exists; not overwriting")
+        logger.info("%s exists; not overwriting", config_file)
 
 
 @main.command()
@@ -77,7 +79,7 @@ def example(env, configuration):
         "nbis", str(getattr(SchemaFiles, conf_map[configuration]))
     )
 
-    required = schema._schema.get("required", None)
+    required = schema.schema.get("required", None)
     if configuration == "main":
         kwargs = {"project_name": env.home.name}
 

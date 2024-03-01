@@ -4,6 +4,7 @@ Render various templates to a project. This includes documentation
 templates, such as running-slides, commands and command groups,
 
 """
+
 import logging
 import pathlib
 import re
@@ -11,6 +12,7 @@ import sys
 from datetime import date
 
 import click
+
 from nbis import templates
 from nbis.cli import pass_environment
 from nbis.config import Config
@@ -18,7 +20,7 @@ from nbis.config import Config
 logger = logging.getLogger(__name__)
 
 
-__shortname__ = __name__.split(".")[-1]
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 
 def _add_doc_and_assets(outdir, ext, template="running-slides", **kw):
@@ -43,9 +45,9 @@ def _add_doc_and_assets(outdir, ext, template="running-slides", **kw):
 
 
 @click.group(help=__doc__, name=__shortname__)
-@click.pass_context
-def main(ctx):
-    logger.debug(f"Running {__shortname__} subcommand.")
+def main():
+    """Add template to a project."""
+    logger.debug("Running %s subcommand.", __shortname__)
 
 
 @main.command()
@@ -65,7 +67,7 @@ def main(ctx):
 @click.option(
     "--csl",
     help="csl",
-    default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa
+    default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa, pylint: disable=line-too-long
 )
 @click.option(
     "--name",
@@ -111,7 +113,7 @@ def running_slides(env, slide_type, show, **kw):
 @click.option(
     "--csl",
     help="csl",
-    default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa
+    default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa, pylint: disable=line-too-long
 )
 @click.option(
     "--name",
@@ -122,7 +124,7 @@ def running_slides(env, slide_type, show, **kw):
 @pass_environment
 def diary(env, doc_type, show, **kw):
     """Add diary template"""
-    logger.info(f"Initializing diary file {diary}")
+    logger.info("Initializing diary file %s", diary)
     if "docs" not in env.config.keys():
         env.config["docs"] = Config({"src": env.home / "docs"})
 
@@ -149,12 +151,12 @@ def diary(env, doc_type, show, **kw):
         _add_doc_and_assets(outdir, ext, template="diary", **kw)
 
 
-@main.command
+@main.command(name="command-group")
 @click.argument("command_group")
 @click.option("--path", help="output template to path", type=click.Path(exists=False))
 @click.option("--show", is_flag=True, help="show rendered template")
 @pass_environment
-def command_group(env, command_group, path, show):
+def pcommand_group(env, command_group, path, show):
     """Add project CLI COMMAND_GROUP
 
     Add a subcommand group. This will only add the main entry point
@@ -181,7 +183,7 @@ def command_group(env, command_group, path, show):
         templates.add_template(path, tpl, **kw)
 
 
-@main.command
+@main.command(name="command")
 @click.argument("command")
 @click.option(
     "--group",
@@ -194,7 +196,9 @@ def command_group(env, command_group, path, show):
 @click.option("--show", is_flag=True, help="show rendered template")
 @click.option("--standalone", is_flag=True, help="make standalone command file")
 @pass_environment
-def command(env, command, group, path, show, standalone):
+def pcommand(
+    env, command, group, path, show, standalone
+):  # pylint: disable=too-many-arguments
     """Render COMMAND to project CLI command group
 
     Add a subcommand to a command group or make standalone command
@@ -214,9 +218,9 @@ def command(env, command, group, path, show, standalone):
     if show:
         click.echo(t)
     else:
-        data = path.read_text()
+        data = path.read_text(encoding="utf-8")
         data = data + t
         if not re.search(rf"def {command}\(", data):
-            path.write_text(data)
+            path.write_text(data, encoding="utf-8")
         else:
-            logger.warning(f"Command {command} already defined in {path}; skipping")
+            logger.warning("Command %s already defined in %s; skipping", command, path)

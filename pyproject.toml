@@ -69,12 +69,12 @@ filterwarnings = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py39
+envlist = py310
 isolated_build = true
 
 [gh-actions]
 python =
-    3.9: py39
+    3.10: py310
 
 [testenv:test]
 changedir = tests

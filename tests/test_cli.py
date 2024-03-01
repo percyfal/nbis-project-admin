@@ -1,3 +1,5 @@
+"""Test CLI."""
+
 import logging
 import re
 
@@ -5,6 +7,7 @@ from nbis.cli import cli
 
 
 def test_cli(runner):
+    """Test CLI."""
     result = runner.invoke(cli, [])
     assert not result.exception
     assert (
@@ -27,6 +30,7 @@ def test_cli(runner):
 
 
 def test_cli_debug(runner, caplog):
+    """Test CLI debug."""
     caplog.set_level(logging.DEBUG)
     result = runner.invoke(cli, ["--debug", "add", "diary", "--show"])
     assert not result.exception

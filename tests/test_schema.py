@@ -1,13 +1,16 @@
+"""Test schema."""
+
 import io
+import sys
 
 import jsonschema
 import pkg_resources
 import pytest
+from ruamel.yaml import YAML
+
 from nbis.config import Config
 from nbis.config import Schema
 from nbis.config import SchemaFiles
-from ruamel.yaml import YAML
-
 
 _SCHEMA = """$schema: "http://json-schema.org/draft/2020-12/schema#"
 
@@ -52,42 +55,48 @@ webexport:
 """
 
 
-@pytest.fixture(scope="session")
-def pkg_schemafile():
+@pytest.fixture(scope="session", name="pkg_schemafile")
+def fpkg_schemafile():
+    """Pkg schemafile fixture"""
     return pkg_resources.resource_filename("nbis", SchemaFiles.CONFIGURATION_SCHEMA)
 
 
-@pytest.fixture(scope="session")
-def pkg_schema(pkg_schemafile):
-    with open(pkg_schemafile) as fh:
+@pytest.fixture(scope="session", name="pkg_schema")
+def fpkg_schema(pkg_schemafile):
+    """Pkg schema fixture"""
+    with open(pkg_schemafile, encoding="utf-8") as fh:
         schema = YAML().load(fh)
     return schema
 
 
-@pytest.fixture(scope="session")
-def schemaio():
+@pytest.fixture(scope="session", name="schemaio")
+def fschemaio():
+    """Schemaio fixture"""
     return io.StringIO(_SCHEMA)
 
 
-@pytest.fixture(scope="session")
-def schema(schemaio):
+@pytest.fixture(scope="session", name="schema")
+def fschema(schemaio):
+    """Schema fixture"""
     return Schema(YAML().load(schemaio))
 
 
 def test_empty_schema():
+    """Test empty schema."""
     schema = Schema(schema=None)
     assert schema is not None
 
 
-def test_pkg_schema(tmp_path, pkg_schema):
+def test_pkg_schema(pkg_schema):
+    """Test pkg schema."""
     schema = Schema(pkg_schema)
-    import sys
 
     cfg = Config.from_schema(schema, file=sys.stdout)
     assert cfg is not None
 
 
 def test_schema(tmp_path, schema):
+    """Test schema."""
     p = tmp_path / "config.yaml"
     cfg = Config.from_schema(schema, project_name="foo", file=p)
     schema.validate(cfg)
@@ -98,6 +107,7 @@ def test_schema(tmp_path, schema):
 
 
 def test_validation_error(schema):
+    """Test validation error."""
     cfg = Config.from_schema(schema, project_name=123)
     with pytest.raises(jsonschema.exceptions.ValidationError):
         schema.validate(cfg)
