@@ -1,5 +1,6 @@
-from nbis.cli import cli
+"""Test initialization of project."""
 
+from nbis.cli import cli
 
 expected = [
     "project_foo/.editorconfig",
@@ -19,6 +20,7 @@ expected = [
 
 
 def test_init_relative(runner, cd_tmp_path):
+    """Test initialization of project with relative path."""
     out = cd_tmp_path / "project_foo"
     result = runner.invoke(cli, ["init", out.name])
     assert not result.exception
@@ -27,6 +29,7 @@ def test_init_relative(runner, cd_tmp_path):
 
 
 def test_init_absolute(runner, tmp_path):
+    """Test initialization of project with absolute path."""
     out = tmp_path / "project_foo"
     result = runner.invoke(cli, ["init", str(out)])
     assert not result.exception
@@ -35,6 +38,7 @@ def test_init_absolute(runner, tmp_path):
 
 
 def test_init_curdir(runner, project_foo):
+    """Test initialization of project."""
     out = project_foo
     result = runner.invoke(cli, ["init", "."])
     assert not result.exception

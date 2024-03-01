@@ -1,8 +1,11 @@
+"""Environment for nbis-admin"""
+
 import os
 import pathlib
 import sys
 
 import click
+
 from nbis.config import Config
 
 try:
@@ -14,6 +17,8 @@ from . import __version__
 
 
 class Environment:
+    """Environment for nbis-admin"""
+
     def __init__(self):
         self.verbose = False
         self.home = pathlib.Path(os.getcwd())
@@ -23,8 +28,8 @@ class Environment:
         self.config = Config(data={"project_name": "nbis-admin"})
         try:
             self.dotenv = dotenv_values(self.home / ".env")
-        except Exception:
-            self.dotenv = dict()
+        except NameError:
+            self.dotenv = {}
 
     def log(self, msg, *args):
         """Logs a message"""

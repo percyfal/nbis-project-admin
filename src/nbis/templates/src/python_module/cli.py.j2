@@ -1,4 +1,5 @@
 """Console script for {{ project_name }}"""
+
 import logging
 import os
 import pathlib
@@ -10,7 +11,6 @@ from nbis.env import Environment
 
 from . import __version__
 
-
 {% if author -%}
   __author__ = "{{ author }}"
 {% endif -%}
@@ -19,13 +19,15 @@ logger = logging.getLogger(__name__)
 
 
 PKG_DIR = pathlib.Path(__file__).absolute().parent
-CONTEXT_SETTINGS = dict(auto_envvar_prefix="{{ project_name.upper() }}", show_default=True)
+CONTEXT_SETTINGS = {"auto_envvar_prefix": "{{ project_name.upper() }}", "show_default": True}
 
 pass_environment = click.make_pass_decorator(Environment, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
 
+{% set ProjectName = project_name.replace("_", " ").title().replace(" ", "") %}
+class {{ ProjectName }}Cli(click.MultiCommand):
+    """{{ project_name }} CLI class"""
 
-class {{ project_name }}_CLI(click.MultiCommand):
     def list_commands(self, ctx):
         rv = []
         for filename in os.listdir(cmd_folder):
@@ -34,16 +36,16 @@ class {{ project_name }}_CLI(click.MultiCommand):
         rv.sort()
         return rv
 
-    def get_command(self, ctx, name):
+    def get_command(self, ctx, cmd_name):
         try:
-            mod = __import__(f"{{ python_module }}.commands.{name}", None, None, ["main"])
+            mod = __import__(f"{{ python_module }}.commands.{cmd_name}", None, None, ["main"])
         except ImportError:
-            return
+            return None
         return mod.main
 
 
 @click.command(
-    cls={{ project_name }}_CLI,
+    cls={{ ProjectName }}Cli,
     context_settings=CONTEXT_SETTINGS,
     help=__doc__,
     name="{{ python_module }}",
@@ -53,6 +55,7 @@ class {{ project_name }}_CLI(click.MultiCommand):
 @decorators.debug_option()
 @pass_environment
 def cli(env, config_file):
+    """CLI docstring"""
     logging.basicConfig(
         level=logging.INFO, format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s"
     )
@@ -67,5 +70,5 @@ def cli(env, config_file):
     if config_file.exists():
         config = load_config(file=config_file)
     else:
-        config = load_config(data=dict(project_name="{{ project_name }}"))
+        config = load_config(data={"project_name": "{{ project_name }}"})
     env.config = config

@@ -1,11 +1,12 @@
 
 
-@main.command(context_settings=dict(ignore_unknown_options=True), help="{{ command }}")
+@main.command(context_settings={"ignore_unknown_options": True}, help="{{ command }}")
 @profile_opt(default_profile="local")
 @jobs_opt()
 @click.argument('snakemake_args', nargs=-1, type=click.UNPROCESSED)
 @pass_environment
 def {{ command }}(env, profile, jobs, snakemake_args):
+    """Quarto docstring"""
     import shutil
     options = list(snakemake_args) + ["-j", str(jobs)]
     if shutil.which("quarto") is None:

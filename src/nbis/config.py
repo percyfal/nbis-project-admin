@@ -1,3 +1,5 @@
+"""Module for handling configuration data."""
+
 from __future__ import annotations
 
 import copy
@@ -19,10 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 class ConfigError(Exception):
-    pass
+    """Base class for exceptions in this module."""
 
 
-class SchemaFiles:
+class SchemaFiles:  # pylint: disable=too-few-public-methods
+    """Class for storing schema file names."""
+
     CONFIGURATION_SCHEMA = "schemas/config.schema.yaml"
     SNAKEMAKE_PROFILE_SCHEMA = "schemas/profile.schema.yaml"
 
@@ -36,6 +40,7 @@ DefaultSchemaValidator = jsonschema.validators.extend(
 
 # Allow null schema; from tskit.metadata
 def validate_bytes(data: bytes | None) -> None:
+    """Validate that data is bytes."""
     if data is not None and not isinstance(data, bytes):
         raise TypeError(
             f"If no encoding is set metadata should be bytes, found {type(data)}"
@@ -78,9 +83,11 @@ class Schema:
 
     @property
     def schema(self):
+        """Return a copy of the schema."""
         return copy.deepcopy(self._schema)
 
     def asdict(self) -> Mapping[str, Any] | None:
+        """Return the schema as a dictionary."""
         return self.schema
 
     def validate(self, row: Any) -> dict:
@@ -92,11 +99,10 @@ class Schema:
             raise
         return row
 
-    def dump_properties(self, comments=True, comment_column=40, example=False) -> dict:
+    def dump_properties(self, comments=True, example=False) -> dict:
         """Dump schema properties as dict.
 
         :param bool comments: include comments in output
-        :param int comment_column: inline comments are placed in this column
         :param bool example: use property examples instead of defaults
         :return: A dictionary of properties and possibly  descriptions.
 
@@ -115,37 +121,35 @@ class Schema:
 
         def update_properties(props, section, level):
             if isinstance(section, str):
-                return
-            if isinstance(section, dict):
-                for k, v in section.items():
-                    if isinstance(v, dict):
-                        desc = v.get("description", "")
-                        if "properties" in v.keys():
-                            props[k] = ruamel.yaml.comments.CommentedMap()
-                            props[k] = update_properties(
-                                props[k], v["properties"], level=level + 1
-                            )
+                return None
+            if not isinstance(section, dict):
+                return None
+            for k, v in section.items():
+                if isinstance(v, dict):
+                    desc = v.get("description", "")
+                    if "properties" in v.keys():
+                        props[k] = ruamel.yaml.comments.CommentedMap()
+                        props[k] = update_properties(
+                            props[k], v["properties"], level=level + 1
+                        )
+                        props.yaml_set_comment_before_after_key(before="\n", key=k)
+                        props.yaml_set_comment_before_after_key(before=desc, key=k)
+                    else:
+                        if example:
+                            props[k] = v.get("example", v.get("default", None))
+                        else:
+                            props[k] = v.get("default", None)
+
+                        if level == 0:
                             props.yaml_set_comment_before_after_key(before="\n", key=k)
                             props.yaml_set_comment_before_after_key(before=desc, key=k)
                         else:
-                            if example:
-                                props[k] = v.get("example", v.get("default", None))
-                            else:
-                                props[k] = v.get("default", None)
-                            if level == 0:
+                            try:
                                 props.yaml_set_comment_before_after_key(
-                                    before="\n", key=k
+                                    before=desc, key=k, indent=level * 2
                                 )
-                                props.yaml_set_comment_before_after_key(
-                                    before=desc, key=k
-                                )
-                            else:
-                                try:
-                                    props.yaml_set_comment_before_after_key(
-                                        before=desc, key=k, indent=level * 2
-                                    )
-                                except IndexError:
-                                    pass
+                            except IndexError:
+                                pass
             return props
 
         properties = update_properties(
@@ -155,15 +159,17 @@ class Schema:
 
 
 def get_schema(schema="CONFIGURATION_SCHEMA"):
+    """Get schema from file."""
     schemafile = pkg_resources.resource_filename(
         "nbis", str(getattr(SchemaFiles, schema))
     )
-    with open(schemafile) as fh:
+    with open(schemafile, encoding="utf-8") as fh:
         schema = YAML().load(fh)
     return Schema(schema)
 
 
 def load_config(file=None, data=None, schema="CONFIGURATION_SCHEMA", validate=True):
+    """Load configuration from file or data."""
     schema = get_schema(schema)
     config = Config(file=file, data=data)
     if validate:
@@ -176,7 +182,7 @@ class PropertyDict(OrderedDict):
 
     def __init__(self, data=None):
         if data is None:
-            data = dict()
+            data = {}
         super().__init__(data)
         if isinstance(data, types.GeneratorType):
             return
@@ -199,7 +205,7 @@ class PropertyDict(OrderedDict):
 
     def __setitem__(self, key, value):
         OrderedDict.__setitem__(self, key, value)
-        if key not in dir(dict()):
+        if key not in dir({}):
             try:
                 setattr(self, key, value)
             except Exception as e:
@@ -208,34 +214,39 @@ class PropertyDict(OrderedDict):
                 raise
 
     def asdict(self):
+        """Return the PropertyDict as a dict."""
         return json.loads(json.dumps(self))
 
 
 class Config(PropertyDict):
+    """Class for storing configuration data."""
+
     def __init__(self, data=None, file=None):
         if data is None:
-            data = dict()
+            data = {}
         if file is not None:
             fdata = self.read_from_file(file)
             data.update(**fdata)
         super().__init__(data)
 
     def read_from_file(self, file):
+        """Read configuration from file."""
         yaml = YAML()
         try:
             if isinstance(file, str):
-                with open(file) as fh:
+                with open(file, encoding="utf-8") as fh:
                     data = yaml.load(fh)
             else:
                 data = yaml.load(file)
         except FileNotFoundError as e:
             logger.error(e)
             logger.info("setting data to empty dict")
-            data = dict()
+            data = {}
         return data
 
     @classmethod
     def from_schema(cls, schema, file=None, tsv=False, example=False, **kwargs):
+        """Create a configuration from a schema."""
         props = schema.dump_properties(example=example)
         props.update(**kwargs)
         if tsv:
@@ -266,7 +277,7 @@ class Config(PropertyDict):
 
         yaml = YAML()
 
-        def represent_none(self, data):
+        def represent_none(self, _):
             return self.represent_scalar("tag:yaml.org,2002:null", "null")
 
         yaml.representer.add_representer(type(None), represent_none)
@@ -274,8 +285,10 @@ class Config(PropertyDict):
         yaml.dump(d, file)
 
     def save(self, file):
+        """Save configuration to file in YAML format."""
         self._dump_yaml(self.asdict(), file)
 
     @property
     def is_empty(self):
-        return self.asdict() == dict()
+        """Return True if the configuration is empty."""
+        return self.asdict() == {}

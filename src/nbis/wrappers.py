@@ -1,4 +1,5 @@
 """Command wrappers"""
+
 import logging
 import os
 import shutil
@@ -9,7 +10,7 @@ import pypandoc
 logger = logging.getLogger(__name__)
 
 
-class Wrapper:
+class Wrapper:  # pylint: disable=too-few-public-methods
     """Documentation wrapper base class."""
 
     def __init__(self):
@@ -21,6 +22,7 @@ class Wrapper:
 
 
 def snakemake(targets=None, options=None, snakefile=None):
+    """Run snakemake workflows."""
     cmdlist = [
         "snakemake",
         f"{'-s ' + str(snakefile) if snakefile else ''}",
@@ -30,18 +32,19 @@ def snakemake(targets=None, options=None, snakefile=None):
     cmd = " ".join(cmdlist)
     if shutil.which("snakemake") is None:
         logger.info("snakemake not installed; cannot run command:")
-        logger.info(f"  {cmd}")
+        logger.info("  %s", cmd)
         return
 
     try:
-        logger.debug(f"running {cmd}")
+        logger.debug("running %s", cmd)
         subprocess.run(cmd, check=True, shell=True)
     except subprocess.CalledProcessError:
-        logger.error(f"{cmd} failed")
+        logger.error("%s failed", cmd)
         raise
 
 
 def rmarkdown(path, output_dir=None):
+    """Render Rmarkdown files"""
     render_args = [f'"{str(path)}"']
     if output_dir is not None:
         render_args += [f'output_dir="{str(output_dir)}"']
@@ -51,29 +54,25 @@ def rmarkdown(path, output_dir=None):
     try:
         subprocess.run(cmd, shell=True, check=True)
     except subprocess.CalledProcessError:
-        logger.error(f"{cmd} failed")
+        logger.error("%s failed", cmd)
         raise
 
 
-def jupyter_book(path, output_dir=None, output_format="html"):
+def jupyter_book(path, output_format="html"):
+    """Build jupyter book"""
     reportdir = f"_build/{output_format}/reports"
     cmdlist = ["jupyter-book", "build", "-W", "-n", "--keep-going", path]
     cmd = " ".join(cmdlist)
     try:
         subprocess.run(cmd, shell=True, check=True)
     except subprocess.CalledProcessError:
-        logger.error(f"{cmd} failed")
+        logger.error("%s failed", cmd)
         if os.path.exists(reportdir):
             logger.info("Error occured; showing saved reports")
-            subprocess.run(["cat", f"{reportdir}/*"])
+            subprocess.run(["cat", f"{reportdir}/*"], check=True)
         raise
 
 
 def pandoc(path, output, output_format="html", **kwargs):
     """Convert single markdown files"""
-    try:
-        output = pypandoc.convert_file(
-            path, outputfile=output, to=output_format, **kwargs
-        )
-    except Exception:
-        raise
+    output = pypandoc.convert_file(path, outputfile=output, to=output_format, **kwargs)

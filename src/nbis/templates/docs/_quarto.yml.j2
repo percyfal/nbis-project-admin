@@ -1,0 +1,85 @@
+project:
+  render:
+    - diary/index.qmd
+  resources:
+    - "*.ipynb"
+
+author: "{{ author }}"
+institute: NBIS
+{% if bibliography -%}
+  bibliography: {{ bibliography }}
+{% endif %}
+from: markdown+emoji
+{% if csl -%}
+  csl: {{ csl }}
+{% endif -%}
+
+format:
+  revealjs:
+    theme:
+      - {{ assets }}/css/nbis.scss
+    date: last-modified
+    date-format: "DD-MMM-YYYY"
+    embed-resources: false
+    code-line-numbers: false
+    toc: true
+    toc-depth: 2
+    slide-level: 3
+    slide-number: true
+    preview-links: true
+    chalkboard: false
+    smaller: false
+    highlight-style: gruvbox
+    fig-height: 12
+    fig-width: 10
+    width: 1280
+    height: 720
+    margin: 0.1
+    navigation-mode: vertical
+    reference-location: margin
+    template-partials:
+      - {{ assets }}/www/title-slide.html
+    title-slide-attributes:
+      data-background-image: "{{ assets }}/logos/nbis-scilifelab.svg"
+      data-background-size: 500px
+      data-background-position: top left
+
+  html:
+    theme:
+      - {{ assets }}/css/nbis.scss
+    date: last-modified
+    date-format: "DD-MMM-YYYY"
+    toc: true
+    embed-resources: false
+    code-line-numbers: false
+    lightbox:
+            match: auto
+  confluence-html:
+    theme:
+      - {{ assets }}/css/nbis.scss
+    toc: true
+    embed-resources: true
+    date: last-modified
+    date-format: "DD-MMM-YYYY"
+    lightbox:
+      match: auto
+
+execute:
+  echo: true
+  warning: false
+  cache: true
+  include: true
+  autodep: true
+  eval: true
+  error: true
+opts:
+  knitr:
+    code-fold: true
+    tidy: true
+    fig-format: svg
+
+# Install extensions:
+# quarto add quarto-ext/fontawesome
+# and uncomment
+#filters:
+#  - fontawesome

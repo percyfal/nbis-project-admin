@@ -30,20 +30,22 @@ The option --quarto will add a rule to run quarto based on a
 specialized template.
 
 """
+
 import logging
 
 import click
+
 from nbis.cli import pass_environment
 from nbis.templates import add_template
 from nbis.templates import render_template
 
-
-__shortname__ = __name__.split(".")[-1]
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 logger = logging.getLogger(__name__)
 
 
 def add_group_smk_py(env, group, **kw):
+    """Add snakemake python command group file"""
     pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
     add_template(
         pyfile,
@@ -55,13 +57,14 @@ def add_group_smk_py(env, group, **kw):
 
 
 def add_command_smk_py(env, group, **kw):
+    """Add snakemake python command file"""
     pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
     assert (
         f"def {kw['command']}(" not in pyfile.read_text()
     ), f"{kw['command']} already defined"
     kw["group"] = group
     command = "quarto" if kw["quarto"] else "command"
-    with open(pyfile, "a") as fh:
+    with open(pyfile, "a", encoding="utf-8") as fh:
         fh.write(
             render_template(f"src/python_module/commands/{command}.smk.py.j2", **kw)
         )
@@ -69,6 +72,7 @@ def add_command_smk_py(env, group, **kw):
 
 
 def add_command_smk(env, group, command, **kw):
+    """Add snakemake command file"""
     smkfile = (
         env.home
         / "src"
@@ -91,6 +95,7 @@ def add_command_smk(env, group, command, **kw):
 
 
 def add_test_config(env, group, command):
+    """Add snakemake test config file"""
     smkfile = (
         env.home
         / "src"
@@ -107,6 +112,7 @@ def add_test_config(env, group, command):
 
 
 def add_test_smk_setup(env, group, command):
+    """Add snakemake test setup file"""
     smkfile = (
         env.home
         / "src"
@@ -124,11 +130,13 @@ def add_test_smk_setup(env, group, command):
 
 
 def add_config_yaml(env):
+    """Add config.yaml file"""
     yamlconf = env.home / "config" / "config.yaml"
     add_template(yamlconf, "config/config.yaml.j2")
 
 
 def add_config_schema_yaml(env):
+    """Add config.schema.yaml file"""
     confschema = (
         env.home
         / "src"
@@ -141,6 +149,7 @@ def add_config_schema_yaml(env):
 
 
 def add_samples_schema_yaml(env):
+    """Add samples.schema.yaml file"""
     sampleschema = (
         env.home
         / "src"
@@ -155,11 +164,13 @@ def add_samples_schema_yaml(env):
 
 
 def add_samples_tsv(env):
+    """Add samples.tsv file"""
     samplestsv = env.home / "resources" / "samples.tsv"
     add_template(samplestsv, "resources/samples.tsv.j2")
 
 
 def add_local_profile(env):
+    """Add local snakemake profile"""
     localprofile = env.home / "config" / "local" / "config.yaml"
     add_template(localprofile, "config/local/profile.yaml.j2")
 
@@ -175,9 +186,9 @@ def add_config_py(env, wf="snakemake"):
 
 
 @click.group(help=__doc__, name=__shortname__)
-@click.pass_context
-def main(ctx):
-    logger.debug(f"Running command {__shortname__}")
+def main():
+    """Snakemake administration utilities."""
+    logger.debug("Running command %s", __shortname__)
 
 
 @main.command()
@@ -220,7 +231,8 @@ def add(ctx, group, **kw):
     if not configfile.exists():
         logger.error(
             "No snakemake configuration module available. "
-            f"Make sure to first run '{ctx.find_root().info_name} smk init.'"
+            "Make sure to first run '%s smk init.'",
+            ctx.find_root().info_name,
         )
         return
     if kw["quarto"]:
