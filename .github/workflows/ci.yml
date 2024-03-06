@@ -34,6 +34,12 @@ jobs:
           auto-activate-base: true
           activate-environment: ""
 
+
+      - name: Echo environment
+        run:
+          - echo "CONDA_PREFIX: " $CONDA_PREFIX
+          - conda list
+
       - name: Install test dependencies
         run: conda install -c conda-forge pytest pip tox
 
