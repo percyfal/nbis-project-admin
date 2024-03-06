@@ -32,6 +32,7 @@ jobs:
           envorinment-file: environment.yml
           use-only-tar-bz2: true
           auto-activate-base: true
+          activate-environment: ""
 
       - name: Install test dependencies
         run: conda install -c conda-forge pytest pip tox
