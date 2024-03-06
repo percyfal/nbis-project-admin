@@ -40,7 +40,7 @@ jobs:
           conda env list
 
       - name: Install test dependencies
-        run: conda install -c conda-forge pytest pip tox
+        run: conda install -c conda-forge pytest pip tox pylint
 
       - name: Install R revealjs
         run: R -e "install.packages('revealjs', repos='https://cran.rstudio.com/')"
