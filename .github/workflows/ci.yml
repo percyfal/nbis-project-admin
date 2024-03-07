@@ -14,7 +14,7 @@ jobs:
         shell: bash -l {0} # a login shell is required for conda activation
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: cache-conda
         uses: actions/cache@v3
@@ -25,14 +25,22 @@ jobs:
           key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}
 
       - name: Create Conda environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           miniconda-version: "latest"
-          environment-file: conda-linux-64.lock
+          # environment-file: conda-linux-64.lock; waiting for conda update
+          environment-file: environment.yml
           use-only-tar-bz2: true
+          activate-environment: "nbis"
+
+      - name: Echo environment
+        run: |
+          echo "CONDA_PREFIX: $CONDA_PREFIX"
+          conda list
+          conda env list
 
       - name: Install test dependencies
-        run: conda install -c conda-forge pytest pip tox
+        run: conda install -c conda-forge pytest pip tox pylint
 
       - name: Install R revealjs
         run: R -e "install.packages('revealjs', repos='https://cran.rstudio.com/')"

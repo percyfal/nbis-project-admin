@@ -1,6 +1,6 @@
 
 
-@main.command(context_settings=dict(ignore_unknown_options=True), help="{{ command }}")
+@main.command(context_settings={"ignore_unknown_options": True}, help="{{ command }}")
 @profile_opt(default_profile="local")
 @jobs_opt()
 {% if test -%}
@@ -9,6 +9,7 @@
 @click.argument("snakemake_args", nargs=-1, type=click.UNPROCESSED)
 @pass_environment
 def {{ command }}(env, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
+    """Command docstring"""
     options = list(snakemake_args) + ["-j", str(jobs)]
     no_profile = False
     snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"

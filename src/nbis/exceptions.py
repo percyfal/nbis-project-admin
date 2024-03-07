@@ -1,6 +1,9 @@
+"""This module contains custom exceptions for the command line interface."""
+
+
 class CommandError(Exception):
-    pass
+    """CommandError is raised when a command fails for any reason."""
 
 
 class CommandLineError(Exception):
-    pass
+    """CommandLineError is raised when a command line is malformed."""

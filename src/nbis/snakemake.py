@@ -1,4 +1,5 @@
 """Snakemake utilities"""
+
 import logging
 import re
 
@@ -12,11 +13,11 @@ def get_profile(uri, config):
     try:
         uri = config["snakemake_profiles"][uri]
     except TypeError as e:
-        logger.debug(f"TypeError: '{e}'")
+        logger.debug("TypeError: '%s'", e)
     except KeyError as e:
-        logger.debug(f"KeyError: no such snakemake-profiles key {e}")
+        logger.debug("KeyError: no such snakemake-profiles key %s", e)
     finally:
-        logger.debug(f"trying snakemake profile at uri '{uri}'")
+        logger.debug("trying snakemake profile at uri '%s'", uri=uri)
     return uri
 
 
@@ -70,7 +71,7 @@ def format_snakemake_help(smkfile, *, default=None):
         @cli.command(context_settings=dict(ignore_unknown_options=True),
                     help=format_snakemake_help(config.SNAKEMAKE_ROOT / smkfile))
     """
-    with open(smkfile) as fh:
+    with open(smkfile, encoding="utf-8") as fh:
         file_contents = "".join(fh.readlines())
     text = default
     if re.match('^"""', file_contents):

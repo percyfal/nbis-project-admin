@@ -2,11 +2,11 @@
 
 Main entry point to run snakemake workflows.
 """
+
 import logging
 
 import click
-import nbis.wrappers as wrappers
-import {{ project_name }}.snakemake.config as config
+from nbis import wrappers
 from nbis.cli import pass_environment
 from nbis.snakemake import get_profile
 from nbis.snakemake import jobs_opt
@@ -14,14 +14,15 @@ from nbis.snakemake import profile_opt
 {% if test -%}
   from nbis.snakemake import test_opt
 {% endif %}
+from {{ project_name }}.snakemake import config
 
-__shortname__ = __name__.split(".")[-1]
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 
 logger = logging.getLogger(__name__)
 
 
 @click.group(help=__doc__, name=__shortname__)
-@click.pass_context
-def main(ctx):
-    logger.debug(f"Running {__shortname__}")
+def main():
+    """Main CLI entry point."""
+    logger.debug("Running %s", __shortname__)
