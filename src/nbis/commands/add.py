@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 
-def _add_doc_and_assets(outdir, ext, template="running-slides", **kw):
+def _add_doc_and_assets(outdir, ext, template_name="running-slides", **kw):
     assets = outdir / kw["assets"]
     path = outdir / f"index.{ext}"
     www = assets / "www"
@@ -35,7 +35,7 @@ def _add_doc_and_assets(outdir, ext, template="running-slides", **kw):
         www.mkdir(parents=True)
         css.mkdir()
         logos.mkdir()
-    templates.add_template(path, f"docs/{template}.{ext}.j2", **kw)
+    templates.add_template(path, f"docs/{template_name}.{ext}.j2", **kw)
     templates.add_template(www / "title-slide.html", "docs/assets/www/title-slide.html")
     templates.add_template(www / "tikzfig.tex", "docs/assets/www/tikzfig.tex")
     templates.add_template(
@@ -54,7 +54,7 @@ def main():
 @click.option(
     "slide_type", "--type", type=click.Choice(["quarto", "rmarkdown"]), default="quarto"
 )
-@click.option("--show", is_flag=True, help="show template")
+@click.option("--show", is_flag=True, help="show rendered template")
 @click.option("--title", help="title", default="title")
 @click.option("--subtitle", help="subtitle", default="subtitle")
 @click.option("--author", help="author")
@@ -100,7 +100,7 @@ def running_slides(env, slide_type, show, **kw):
     type=click.Choice(["quarto", "markdown"]),
     default="quarto",
 )
-@click.option("--show", is_flag=True, help="show template")
+@click.option("--show", is_flag=True, help="show rendered template")
 @click.option("--title", help="title", default="title")
 @click.option("--subtitle", help="subtitle", default="subtitle")
 @click.option("--author", help="author")
@@ -149,6 +149,38 @@ def diary(env, doc_type, show, **kw):
         click.echo(t)
     else:
         _add_doc_and_assets(outdir, ext, template="diary", **kw)
+
+
+@main.command()
+@click.option(
+    "template_name",
+    "--template",
+    "-t",
+    type=click.Choice(templates.INDIVIDUAL_TEMPLATES.keys()),
+)
+@click.option("--show", is_flag=True, help="show rendered template")
+@click.option(
+    "--name",
+    help="output template to named directory",
+    type=click.Path(exists=False),
+)
+@pass_environment
+def template(env, template_name, show, **kw):
+    """Add individual template"""
+    logger.info("Adding template %s", template_name)
+    if template_name is None:
+        click.echo("No template specified; exiting.")
+        return
+    if kw["name"] is None:
+        kw["name"] = env.home
+    outdir = pathlib.Path(kw["name"])
+    tpl = templates.INDIVIDUAL_TEMPLATES[template_name]
+    path = outdir / pathlib.Path(tpl).with_suffix("").name
+    if show:
+        t = templates.render_template(tpl, **kw)
+        click.echo(t)
+    else:
+        templates.add_template(path, tpl, **kw)
 
 
 @main.command(name="command-group")
