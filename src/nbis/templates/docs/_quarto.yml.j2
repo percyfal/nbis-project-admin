@@ -7,7 +7,7 @@ project:
 author: "{{ author }}"
 institute: NBIS
 {% if bibliography -%}
-  bibliography: {{ bibliography }}
+  bibliography: {{ bibliography|default('assets/bibliography.bib') }}
 {% endif %}
 from: markdown+emoji
 {% if csl -%}
@@ -17,14 +17,14 @@ from: markdown+emoji
 format:
   revealjs:
     theme:
-      - {{ assets }}/css/nbis.scss
+      - {{ assets|default('assets') }}/css/nbis.scss
     date: last-modified
     date-format: "DD-MMM-YYYY"
     embed-resources: false
     code-line-numbers: false
     toc: true
     toc-depth: 2
-    slide-level: 3
+    slide-level: 2
     slide-number: true
     preview-links: true
     chalkboard: false
@@ -38,25 +38,25 @@ format:
     navigation-mode: vertical
     reference-location: margin
     template-partials:
-      - {{ assets }}/www/title-slide.html
+      - {{ assets|default('assets') }}/www/title-slide.html
     title-slide-attributes:
-      data-background-image: "{{ assets }}/logos/nbis-scilifelab.svg"
+      data-background-image: "{{ assets|default('assets') }}/logos/nbis-scilifelab.svg"
       data-background-size: 500px
       data-background-position: top left
 
   html:
     theme:
-      - {{ assets }}/css/nbis.scss
+      - {{ assets|default('assets') }}/css/nbis.scss
     date: last-modified
     date-format: "DD-MMM-YYYY"
     toc: true
     embed-resources: false
     code-line-numbers: false
     lightbox:
-            match: auto
+      match: auto
   confluence-html:
     theme:
-      - {{ assets }}/css/nbis.scss
+      - {{ assets|default('assets') }}/css/nbis.scss
     toc: true
     embed-resources: true
     date: last-modified
@@ -77,7 +77,6 @@ opts:
     code-fold: true
     tidy: true
     fig-format: svg
-
 # Install extensions:
 # quarto add quarto-ext/fontawesome
 # and uncomment

@@ -183,6 +183,31 @@ def template(env, template_name, show, **kw):
         templates.add_template(path, tpl, **kw)
 
 
+@main.command()
+@click.argument("tool_name", type=str)
+@click.option("--show", is_flag=True, help="show rendered template")
+@click.option(
+    "--name",
+    help="output template to named directory",
+    type=click.Path(exists=False),
+)
+@pass_environment
+def tool(env, tool_name, show, **kw):
+    """Add individual tool"""
+    logger.info("Adding tool %s", tool_name)
+    if kw["name"] is None:
+        kw["name"] = pathlib.Path("src") / env.config.project_name / "tools"
+    kw["tool_name"] = tool_name
+    outdir = pathlib.Path(kw["name"])
+    tpl = "src/python_module/tools/tool.py.j2"
+    path = outdir / f"{tool_name}.py"
+    if show:
+        t = templates.render_template(tpl, **kw)
+        click.echo(t)
+    else:
+        templates.add_template(path, tpl, **kw)
+
+
 @main.command(name="command-group")
 @click.argument("command_group")
 @click.option("--path", help="output template to path", type=click.Path(exists=False))
