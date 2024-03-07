@@ -112,6 +112,8 @@ commands:
     {envpython} -m pip install -e . --no-deps
     project_foo
     project_foo admin config init
+    project_foo admin add template -t quarto
+    project_foo admin add tool foo
     project_foo admin smk init
     project_foo admin smk add
     git add .
