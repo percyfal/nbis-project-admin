@@ -92,6 +92,7 @@ commands =
 [testenv:project]
 allowlist_externals =
     git
+    touch
 changedir = {envtmpdir}/project_foo
 setenv =
     SKIP = lint
@@ -113,10 +114,11 @@ commands:
     project_foo
     project_foo admin config init
     project_foo admin add template -t quarto
-    project_foo admin add tool foo
+    project_foo admin add tool my_tool
+    touch src/project_foo/tools/__init__.py
     project_foo admin smk init
     project_foo admin smk add
-    git add .
+    git add . _quarto.yml src/project_foo/tools/my_tool.py
     pre-commit
     project_foo
     nbis-admin --version
