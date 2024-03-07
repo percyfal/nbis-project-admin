@@ -29,12 +29,12 @@ class {{ ProjectName }}Cli(click.MultiCommand):
     """{{ project_name }} CLI class"""
 
     def list_commands(self, ctx):
-        rv = []
+        data = []
         for filename in os.listdir(cmd_folder):
             if filename.endswith(".py") and not filename.startswith("__"):
-                rv.append(filename[:-3])
-        rv.sort()
-        return rv
+                data.append(filename[:-3])
+        data.sort()
+        return data
 
     def get_command(self, ctx, cmd_name):
         try:

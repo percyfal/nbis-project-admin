@@ -19,6 +19,6 @@ class SchemaFiles:  # pylint: disable=too-few-public-methods
 def get_schema(schema="CONFIGURATION_SCHEMA"):
     """Get configuration schema."""
     schemafile = getattr(SchemaFiles, schema)
-    with open(schemafile, encoding="utf-8") as fh:
-        schema = YAML().load(fh)
+    with open(schemafile, encoding="utf-8") as file:
+        schema = YAML().load(file)
     return Schema(schema)
