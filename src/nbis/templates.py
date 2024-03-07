@@ -13,6 +13,18 @@ template_path = pkg_resources.resource_filename("nbis", "templates")
 file_loader = FileSystemLoader(template_path)
 env = Environment(loader=file_loader)
 
+INDIVIDUAL_TEMPLATES = {
+    "pyproject.toml": "pyproject.toml.j2",
+    "gitignore": ".gitignore.j2",
+    "prettierignore": ".prettierignore.j2",
+    "markdownlint": ".markdownlint.yaml.j2",
+    "prettierrc": ".prettierrc.yml.j2",
+    "editorconfig": ".editorconfig.j2",
+    "readme": "README.md.j2",
+    "pre-commit-config": ".pre-commit-config.yaml.j2",
+    "quarto": "docs/_quarto.yml.j2",
+}
+
 
 def add_template(filename, template, **kwargs):
     """Generic function to render template to filename"""

@@ -117,6 +117,7 @@ commands:
     git add .
     pre-commit
     project_foo
+    nbis-admin --version
 
 """
 
