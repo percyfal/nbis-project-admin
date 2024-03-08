@@ -28,19 +28,19 @@ cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands")
 class {{ ProjectName }}Cli(click.MultiCommand):
     """{{ project_name }} CLI class"""
 
+    module = "{{ project_name }}.commands"
+    cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
+
     def list_commands(self, ctx):
         data = []
-        for filename in os.listdir(cmd_folder):
+        for filename in os.listdir(self.cmd_folder):
             if filename.endswith(".py") and not filename.startswith("__"):
                 data.append(filename[:-3])
         data.sort()
         return data
 
     def get_command(self, ctx, cmd_name):
-        try:
-            mod = __import__(f"{{ python_module }}.commands.{cmd_name}", None, None, ["main"])
-        except ImportError:
-            return None
+        mod = __import__(f"{self.module}.{cmd_name}", None, None, ["main"])
         return mod.main
 
 

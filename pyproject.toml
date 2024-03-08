@@ -92,7 +92,6 @@ commands =
 [testenv:project]
 allowlist_externals =
     git
-    sed
     touch
 changedir = {envtmpdir}/project_foo
 setenv =
@@ -109,7 +108,6 @@ deps =
     wheel
 commands:
     nbis-admin init .
-    sed -i -e "s/disable=fixme/disable=fixme,import-error,too-few-public-methods/g" .pre-commit-config.yaml
     git init -b main .
     git add -f .
     {envpython} -m pip install -e . --no-deps

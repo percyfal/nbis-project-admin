@@ -203,8 +203,6 @@ def tool(env, tool_name, show, **kw):
         kw["name"] = pathlib.Path("src") / env.config.project_name / "tools"
     kw["tool_name"] = tool_name
     kw["project_name"] = env.config.project_name
-    kw["project_us"] = tool_name.replace("-", "_")
-    kw["project_cc"] = _snake_to_caml(kw["project_us"])
     outdir = pathlib.Path(kw["name"])
     tpl = "src/python_module/tools/tool.py.j2"
     tools_tpl = "src/python_module/commands/tools.py.j2"
@@ -220,7 +218,7 @@ def tool(env, tool_name, show, **kw):
         templates.add_template(cmd_path, tools_tpl, **kw)
         click.echo(
             f"Add {env.config.project_name}-{tool_name} = "
-            '"{env.config.project_name}.tools.{tool_name}:cli" to '
+            f'"{env.config.project_name}.tools.{tool_name}:cli" to '
             "pyproject.toml and reinstall"
         )
 
