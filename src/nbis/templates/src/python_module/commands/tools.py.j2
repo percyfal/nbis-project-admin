@@ -1,0 +1,35 @@
+"""{{ project_name }} tools and scripts.
+
+Tools that also can be called as standalone scripts by adding prefix
+'{{ project_name }}-' to name in list below.
+
+"""
+
+import logging
+import os
+
+import click
+from {{ project_us }}.cli import CONTEXT_SETTINGS
+from {{ project_us }}.cli import {{ project_cc }}Cli
+
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
+
+
+logger = logging.getLogger(__name__)
+
+
+class {{ project_cc }}ToolsCli({{ project_cc }}Cli):
+    """{{ project_cc }} tools command line interface"""
+
+    cmd_folder = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), os.pardir, "tools")
+    )
+    module = "{{ project_us }}.tools"
+
+
+@click.command(
+    cls={{ project_cc }}ToolsCli, context_settings=CONTEXT_SETTINGS, help=__doc__, name="tools"
+)
+def cli():
+    """{{ project_cc }} tools and scripts"""
+    logger.info(__shortname__)
