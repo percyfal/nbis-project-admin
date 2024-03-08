@@ -218,6 +218,11 @@ def tool(env, tool_name, show, **kw):
             pathlib.Path("src") / env.config.project_name / "commands" / "tools.py"
         )
         templates.add_template(cmd_path, tools_tpl, **kw)
+        click.echo(
+            f"Add {env.config.project_name}-{tool_name} = "
+            '"{env.config.project_name}.tools.{tool_name}:cli" to '
+            "pyproject.toml and reinstall"
+        )
 
 
 @main.command(name="command-group")
