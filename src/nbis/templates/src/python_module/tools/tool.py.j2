@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @click.command(help=__doc__, name=__shortname__)
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx):
+def main(ctx):
     """{{ tool_name }} docstring"""
     ctx.ensure_object(dict)
     ctx.obj["VERSION"] = __version__
