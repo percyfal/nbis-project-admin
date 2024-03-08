@@ -1,18 +1,15 @@
 """{{ project_name }} tools and scripts.
 
 Tools that also can be called as standalone scripts by adding prefix
-'{{ project_name.replace("_", "-") }}-' to name in list below.
-
+'{{ project_name }}-' to name in list below.
 """
 
 import logging
 import os
 
 import click
-
-from {{ project_name }}.cli import CONTEXT_SETTINGS
-{% set ProjectName = project_name.replace("_", " ").title().replace(" ", "") -%}
-from {{ project_name }}.cli import {{ ProjectName }}Cli
+from {{ project_us }}.cli import {{ project_cc }}Cli
+from {{ project_us }}.cli import CONTEXT_SETTINGS
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
@@ -20,21 +17,19 @@ __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 logger = logging.getLogger(__name__)
 
 
-class {{ ProjectName }}ToolsCli({{ ProjectName }}Cli):
-    """{{ project_name }} tools command line interface"""
+class {{ project_cc }}ToolsCli({{ project_cc }}Cli):
+    """{{ project_cc }} tools command line interface"""
 
     cmd_folder = os.path.abspath(
         os.path.join(os.path.dirname(__file__), os.pardir, "tools")
     )
-    module = "{{ project_name }}.tools"
+    module = "{{ project_us }}.tools"
 
 
 @click.command(
-    cls={{ ProjectName }}ToolsCli,
-    context_settings=CONTEXT_SETTINGS,
-    help=__doc__,
-    name="tools",
+    cls={{ project_cc }}ToolsCli, context_settings=CONTEXT_SETTINGS,
+    help=__doc__, name="tools"
 )
-def main():
-    """{{ project_name }} tools and scripts"""
+def cli():
+    """{{ project_cc }} tools and scripts"""
     logger.info(__shortname__)
