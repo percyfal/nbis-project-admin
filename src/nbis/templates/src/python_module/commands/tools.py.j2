@@ -4,13 +4,13 @@ Tools that also can be called as standalone scripts by adding prefix
 '{{ project_name }}-' to name in list below.
 
 """
+
 import logging
 import os
 
 import click
-from {{ project_us }}.cli import {{ project_cc }}Cli
 from {{ project_us }}.cli import CONTEXT_SETTINGS
-
+from {{ project_us }}.cli import {{ project_cc }}Cli
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
@@ -28,8 +28,7 @@ class {{ project_cc }}ToolsCli({{ project_cc }}Cli):
 
 
 @click.command(
-    cls={{ project_cc }}ToolsCli, context_settings=CONTEXT_SETTINGS,
-    help=__doc__, name="tools"
+    cls={{ project_cc }}ToolsCli, context_settings=CONTEXT_SETTINGS, help=__doc__, name="tools"
 )
 def cli():
     """{{ project_cc }} tools and scripts"""
