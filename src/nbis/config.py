@@ -13,7 +13,10 @@ from typing import Any
 from typing import Mapping
 
 import jsonschema
-import pkg_resources
+try:
+    import pkg_resources
+except ImportError:
+    from importlib import resources as pkg_resources
 import ruamel.yaml
 from ruamel.yaml import YAML
 
@@ -160,9 +163,12 @@ class Schema:
 
 def get_schema(schema="CONFIGURATION_SCHEMA"):
     """Get schema from file."""
-    schemafile = pkg_resources.resource_filename(
-        "nbis", str(getattr(SchemaFiles, schema))
-    )
+    try:
+        schemafile = pkg_resources.resource_filename(
+            "nbis", str(getattr(SchemaFiles, schema))
+        )
+    except AttributeError:
+        schemafile = pkg_resources.files("nbis") / str(getattr(SchemaFiles, schema))
     with open(schemafile, encoding="utf-8") as fh:
         schema = YAML().load(fh)
     return Schema(schema)

@@ -2,8 +2,12 @@
 
 import logging
 import re
+from typing import Callable
 
 import click
+from click.decorators import FC
+
+from nbis.env import Environment
 
 logger = logging.getLogger(__name__)
 
@@ -17,36 +21,159 @@ def get_profile(uri, config):
     except KeyError as e:
         logger.debug("KeyError: no such snakemake-profiles key %s", e)
     finally:
-        logger.debug("trying snakemake profile at uri '%s'", uri=uri)
+        logger.debug("trying snakemake profile at uri '%s'", uri)
     return uri
 
 
-def profile_opt(default_profile="local"):
-    """Add snakemake profile option"""
-    func = click.option(
-        "--profile",
-        help=(
-            "snakemake profile, either defined as key:value pair in config"
-            " or a URI pointing to profile directory"
-        ),
-        default=default_profile,
-    )
-    return func
+def profile_option(
+        default: str = "local", expose_value: bool = True
+) -> Callable[[FC], FC]:
+    """Add profile option with callback."""
 
+    def profile_callback(
+        ctx: click.core.Context, param: click.core.Option, value: str
+    ) -> str:  # pylint: disable=unused-argument
+        """Profile callback."""
+        env = ctx.ensure_object(Environment)
+        if ctx.params.get("no_profile"):
+            return []
+        if value is None:
+            value = default
+        return ["--profile", get_profile(value, env.config)]
 
-def jobs_opt():
-    """Add jobs option"""
-    return click.option("--jobs", "-j", type=int, default=1, help="snakemake jobs")
-
-
-def test_opt():
-    """Add test option"""
     return click.option(
-        "--test", is_flag=True, help="run workflow on small test data set"
+        "--profile",
+        help="Set the profile",
+        callback=profile_callback,
+        expose_value=expose_value,
+        is_eager=False,
+        default=default,
     )
 
 
-def directory_opt():
+def no_profile_option() -> Callable[[FC], FC]:
+    """Add no profile option with callback."""
+
+    return click.option(
+        "--no-profile",
+        help="Do not use a profile",
+        is_flag=True,
+        expose_value=True,
+        is_eager=True,
+        default=False,
+    )
+
+
+def verbose_option(expose_value: bool = False) -> Callable[[FC], FC]:
+    """Add verbose option with callback."""
+
+    def verbose_callback(
+        ctx: click.core.Context, param: click.core.Option, value: int
+    ) -> int:  # pylint: disable=unused-argument
+        """Verbose callback."""
+        log_level = max(3 - value, 0) * 10
+        logging.basicConfig(
+            level=log_level,
+            format=(
+                "%(asctime)s; %(levelname)s "
+                "[%(name)s:%(funcName)s]: %(message)s"
+            ),
+        )
+        return log_level
+
+    return click.option(
+        "--verbose",
+        "-v",
+        "logger",
+        help="Set the verbosity level",
+        count=True,
+        callback=verbose_callback,
+        expose_value=expose_value,
+        is_eager=True,
+        default=0,
+    )
+
+
+def cores_option(default=None) -> Callable[[FC], FC]:
+    """Add cores option."""
+
+    def cores_callback(
+        ctx: click.core.Context, param: click.core.Option, value: int
+    ) -> int:  # pylint: disable=unused-argument
+        """Cores callback."""
+        if value is None:
+            return []
+        if value < 1:
+            logging.error("Cores must be greater than 0")
+            raise ValueError("Cores must be greater than 0")
+        return ["--cores", str(value)]
+
+    return click.option(
+        "-c",
+        "--cores",
+        help="number of cores",
+        default=None,
+        callback=cores_callback,
+        type=int,
+    )
+
+
+def jobs_option(default=None) -> Callable[[FC], FC]:
+    """Add jobs option."""
+
+    def jobs_callback(
+        ctx: click.core.Context, param: click.core.Option, value: int
+    ) -> int:  # pylint: disable=unused-argument
+        """Jobs callback."""
+        if value is None:
+            return []
+        if value < 1:
+            logging.error("Jobs must be greater than 0")
+            raise ValueError("Jobs must be greater than 0")
+        return ["--jobs", str(value)]
+
+    return click.option(
+        "-j",
+        "--jobs",
+        help="number of jobs",
+        default=default,
+        callback=jobs_callback,
+        type=int,
+    )
+
+
+def threads_option() -> Callable[[FC], FC]:
+    """Add threads option."""
+
+    return click.option(
+        "-t",
+        "--threads",
+        help="number of threads",
+        default=1,
+        type=click.IntRange(
+            1,
+        ),
+    )
+
+
+def test_option() -> Callable[[FC], FC]:
+    """Add test option"""
+
+    def test_callback(
+        ctx: click.core.Context, param: click.core.Option, value: int
+    ) -> int:  # pylint: disable=unused-argument
+        """Callback for test option"""
+        if value:
+            return ["--config", "__test__=True"]
+        return []
+
+    return click.option(
+        "--test", is_flag=True, help="run workflow on small test data set",
+        callback=test_callback
+    )
+
+
+def directory_option():
     """Add snakemake directory option"""
     return click.option(
         "--directory/-d",
