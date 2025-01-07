@@ -2,7 +2,10 @@
 
 import os
 
-import pkg_resources
+try:
+    import pkg_resources
+except ImportError:
+    from importlib import resources as pkg_resources
 import pytest
 
 from nbis import wrappers

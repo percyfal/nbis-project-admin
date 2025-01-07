@@ -4,7 +4,10 @@ import io
 import sys
 
 import jsonschema
-import pkg_resources
+try:
+  import pkg_resources
+except ImportError:
+  from importlib import resources as pkg_resources
 import pytest
 from ruamel.yaml import YAML
 
@@ -58,7 +61,10 @@ webexport:
 @pytest.fixture(scope="session", name="pkg_schemafile")
 def fpkg_schemafile():
     """Pkg schemafile fixture"""
-    return pkg_resources.resource_filename("nbis", SchemaFiles.CONFIGURATION_SCHEMA)
+    try:
+        return pkg_resources.resource_filename("nbis", SchemaFiles.CONFIGURATION_SCHEMA)
+    except AttributeError:
+        return pkg_resources.files("nbis") / SchemaFiles.CONFIGURATION_SCHEMA
 
 
 @pytest.fixture(scope="session", name="pkg_schema")

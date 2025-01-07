@@ -2,14 +2,20 @@
 
 import logging
 
-import pkg_resources
+try:
+    import pkg_resources
+except ImportError:
+    from importlib import resources as pkg_resources
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 
 logger = logging.getLogger(__name__)
 
+try:
+    template_path = pkg_resources.resource_filename("nbis", "templates")
+except AttributeError:
+    template_path = pkg_resources.files("nbis") / "templates"
 
-template_path = pkg_resources.resource_filename("nbis", "templates")
 file_loader = FileSystemLoader(template_path)
 env = Environment(loader=file_loader)
 

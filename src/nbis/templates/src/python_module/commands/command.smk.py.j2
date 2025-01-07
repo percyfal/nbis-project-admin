@@ -1,30 +1,15 @@
 
 
 @main.command(context_settings={"ignore_unknown_options": True}, help="{{ command }}")
-@profile_opt(default_profile="local")
-@jobs_opt()
+@profile_option(default="local")
+@no_profile_option()
+@jobs_option()
 {% if test -%}
-  @test_opt()
+  @test_option()
 {% endif -%}
 @click.argument("snakemake_args", nargs=-1, type=click.UNPROCESSED)
-@pass_environment
-def {{ command }}(env, profile, jobs{% if test %}, test{% endif %}, snakemake_args):
+def {{ command }}(profile, jobs{% if test %}, test{% endif %}, snakemake_args):
     """Command docstring"""
-    options = list(snakemake_args) + ["-j", str(jobs)]
-    no_profile = False
+    smk_options = list(snakemake_args) + jobs + profile
     snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
-{% if test %}
-    if test:
-        options.extend([
-            "--config",
-            "samples=resources/test/samples.tsv",
-            "__test__=True",
-        ])
-        no_profile = True
-{% endif %}
-    if profile:
-        prof = get_profile(profile, env.config)
-        if not no_profile:
-            options.extend(["--profile", prof])
-
-    wrappers.snakemake(options=" ".join(options), snakefile=snakefile, targets="")
+    wrappers.snakemake(options=" ".join(smk_options), snakefile=snakefile, targets="")

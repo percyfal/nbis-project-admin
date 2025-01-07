@@ -6,9 +6,13 @@ import logging
 import sys
 
 import click
-import pkg_resources
+try:
+    import pkg_resources
+except ImportError:
+    from importlib import resources as pkg_resources
 import toml
 
+import nbis
 from nbis.cli import pass_environment
 from nbis.config import Config
 from nbis.config import SchemaFiles
@@ -75,9 +79,12 @@ def example(env, configuration):
     }
     kwargs = {}
     schema = get_schema(conf_map[configuration])
-    schemafile = pkg_resources.resource_filename(
-        "nbis", str(getattr(SchemaFiles, conf_map[configuration]))
-    )
+    try:
+        schemafile = pkg_resources.resource_filename(
+            "nbis", str(getattr(SchemaFiles, conf_map[configuration]))
+        )
+    except AttributeError:
+        schemafile = pkg_resources.files(nbis) / "schemas" / conf_map[configuration]
 
     required = schema.schema.get("required", None)
     if configuration == "main":
