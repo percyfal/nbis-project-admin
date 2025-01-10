@@ -184,6 +184,17 @@ def directory_option():
     )
 
 
+def report_option() -> Callable[[FC], FC]:
+    """Add snakemake report option"""
+    func = click.option(
+        "--report",
+        help=("generate snakemake report"),
+        is_flag=True,
+        default=False,
+    )
+    return func
+
+
 def format_snakemake_help(smkfile, *, default=None):
     """Return docstring from snakemake file.
 

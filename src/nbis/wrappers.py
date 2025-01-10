@@ -21,8 +21,10 @@ class Wrapper:  # pylint: disable=too-few-public-methods
         raise NotImplementedError
 
 
-def snakemake(targets=None, options=None, snakefile=None):
+def snakemake(*, targets=None, options=None, snakefile=None):
     """Run snakemake workflows."""
+    if isinstance(options, list):
+        options = " ".join(options)
     cmdlist = [
         "snakemake",
         f"{'-s ' + str(snakefile) if snakefile else ''}",
