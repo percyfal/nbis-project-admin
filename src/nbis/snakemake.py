@@ -256,14 +256,14 @@ def directory_option(
     )
 
 
-def envmodules_config_option(
+def envmodules_configfile_option(
     default: str = None,
-    envmodules_config: str = "envmodules.yaml",
+    envmodules_configfile: str = "envmodules.yaml",
     expose_value: bool = True,
 ) -> Callable[[FC], FC]:
     """Add snakemake envmodules yaml config file option."""
 
-    def envmodules_config_callback(
+    def envmodules_configfile_callback(
         ctx: click.core.Context,  # pylint: disable=unused-argument
         param: click.core.Option,  # pylint: disable=unused-argument
         value: str,
@@ -284,9 +284,9 @@ def envmodules_config_option(
         except AttributeError:
             value = None
         if value is not None:
-            configfile = Path(value) / envmodules_config
+            configfile = Path(value) / envmodules_configfile
         else:
-            configfile = Path(envmodules_config)
+            configfile = Path(envmodules_configfile)
         if not configfile.exists():
             logger.warning("envmodules config file %s does not exist", configfile)
             return []
@@ -296,7 +296,7 @@ def envmodules_config_option(
         "--envmodules-configfile",
         help=("Specify environment modules configuration file."),
         default=default,
-        callback=envmodules_config_callback,
+        callback=envmodules_configfile_callback,
         expose_value=expose_value,
         type=click.Path(exists=True, file_okay=True, dir_okay=False),
     )
