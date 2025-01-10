@@ -12,6 +12,12 @@ from nbis.env import Environment
 logger = logging.getLogger(__name__)
 
 
+def snakemake_argument_list() -> Callable[[FC], FC]:
+    """Add snakemake argument list."""
+
+    return click.argument("snakemake_args", nargs=-1, type=click.UNPROCESSED)
+
+
 def get_profile(uri, config):
     """Retrieve snakemake profile from config"""
     try:

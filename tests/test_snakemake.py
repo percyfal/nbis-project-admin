@@ -5,7 +5,23 @@ import click
 from nbis.snakemake import no_profile_option
 from nbis.snakemake import profile_option
 from nbis.snakemake import report_option
+from nbis.snakemake import snakemake_argument_list
 from nbis.snakemake import test_option
+
+
+def test_snakemake_args(runner):
+    """Test snakemake args."""
+
+    @click.command(context_settings={"ignore_unknown_options": True})
+    @profile_option()
+    @snakemake_argument_list()
+    def cmd(profile, snakemake_args):
+        print(profile, list(snakemake_args))
+
+    ret = runner.invoke(cmd, [])
+    assert ret.stdout == "['--profile', 'local'] []\n"
+    ret = runner.invoke(cmd, ["--dry-run", "--printshellcmds"])
+    assert ret.stdout == "['--profile', 'local'] ['--dry-run', '--printshellcmds']\n"
 
 
 class TestProfileOption:
