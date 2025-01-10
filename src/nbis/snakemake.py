@@ -2,6 +2,7 @@
 
 import logging
 import re
+from pathlib import Path
 from typing import Callable
 
 import click
@@ -218,14 +219,86 @@ def test_option(
     )
 
 
-def directory_option():
+def directory_option(
+    default: str = None,
+    expose_value: bool = True,
+) -> Callable[[FC], FC]:
     """Add snakemake directory option"""
+
+    def directory_callback(
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: str,
+    ) -> str:
+        """Directory callback"""
+        env = ctx.ensure_object(Environment)
+        if value is None:
+            try:
+                value = env.home
+            except AttributeError:
+                pass
+        if value is None:
+            return []
+        return ["--directory", str(value)]
+
     return click.option(
-        "--directory/-d",
+        "-d",
+        "--directory",
         help=(
             "Specify working directory (relative paths in the snakefile will "
-            "use this as their origin). (default: project directory)"
+            "use this as their origin). (default: project directory). Will fallback"
+            "on project environment home directory if available."
         ),
+        default=default,
+        callback=directory_callback,
+        expose_value=expose_value,
+        type=click.Path(exists=True, file_okay=False, dir_okay=True),
+    )
+
+
+def envmodules_config_option(
+    default: str = None,
+    envmodules_config: str = "envmodules.yaml",
+    expose_value: bool = True,
+) -> Callable[[FC], FC]:
+    """Add snakemake envmodules yaml config file option."""
+
+    def envmodules_config_callback(
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: str,
+    ) -> str:
+        """Envmodules config callback."""
+        env = ctx.ensure_object(Environment)
+        try:
+            directory = ctx.params.get("directory", env.home)
+        except AttributeError:
+            directory = None
+        if value is not None:
+            configfile = value
+            if directory is not None:
+                configfile = Path(directory) / value
+            return ["--configfile", str(configfile)]
+        try:
+            value = env.home
+        except AttributeError:
+            value = None
+        if value is not None:
+            configfile = Path(value) / envmodules_config
+        else:
+            configfile = Path(envmodules_config)
+        if not configfile.exists():
+            logger.warning("envmodules config file %s does not exist", configfile)
+            return []
+        return ["--configfile", str(configfile)]
+
+    return click.option(
+        "--envmodules-configfile",
+        help=("Specify environment modules configuration file."),
+        default=default,
+        callback=envmodules_config_callback,
+        expose_value=expose_value,
+        type=click.Path(exists=True, file_okay=True, dir_okay=False),
     )
 
 
