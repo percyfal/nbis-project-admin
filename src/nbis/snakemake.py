@@ -12,6 +12,12 @@ from nbis.env import Environment
 logger = logging.getLogger(__name__)
 
 
+def snakemake_argument_list() -> Callable[[FC], FC]:
+    """Add snakemake argument list."""
+
+    return click.argument("snakemake_args", nargs=-1, type=click.UNPROCESSED)
+
+
 def get_profile(uri, config):
     """Retrieve snakemake profile from config"""
     try:
@@ -26,16 +32,21 @@ def get_profile(uri, config):
 
 
 def profile_option(
-        default: str = "local", expose_value: bool = True
+    default: str = "local", expose_value: bool = True
 ) -> Callable[[FC], FC]:
     """Add profile option with callback."""
 
     def profile_callback(
-        ctx: click.core.Context, param: click.core.Option, value: str
-    ) -> str:  # pylint: disable=unused-argument
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: str,
+    ) -> str:
         """Profile callback."""
         env = ctx.ensure_object(Environment)
         if ctx.params.get("no_profile"):
+            return []
+        is_report = ctx.params.get("report", [])
+        if len(is_report) > 0:
             return []
         if value is None:
             value = default
@@ -68,15 +79,16 @@ def verbose_option(expose_value: bool = False) -> Callable[[FC], FC]:
     """Add verbose option with callback."""
 
     def verbose_callback(
-        ctx: click.core.Context, param: click.core.Option, value: int
-    ) -> int:  # pylint: disable=unused-argument
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: int,
+    ) -> int:
         """Verbose callback."""
         log_level = max(3 - value, 0) * 10
         logging.basicConfig(
             level=log_level,
             format=(
-                "%(asctime)s; %(levelname)s "
-                "[%(name)s:%(funcName)s]: %(message)s"
+                "%(asctime)s; %(levelname)s " "[%(name)s:%(funcName)s]: %(message)s"
             ),
         )
         return log_level
@@ -98,8 +110,10 @@ def cores_option(default=None) -> Callable[[FC], FC]:
     """Add cores option."""
 
     def cores_callback(
-        ctx: click.core.Context, param: click.core.Option, value: int
-    ) -> int:  # pylint: disable=unused-argument
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: int,
+    ) -> int:
         """Cores callback."""
         if value is None:
             return []
@@ -112,7 +126,7 @@ def cores_option(default=None) -> Callable[[FC], FC]:
         "-c",
         "--cores",
         help="number of cores",
-        default=None,
+        default=default,
         callback=cores_callback,
         type=int,
     )
@@ -122,8 +136,10 @@ def jobs_option(default=None) -> Callable[[FC], FC]:
     """Add jobs option."""
 
     def jobs_callback(
-        ctx: click.core.Context, param: click.core.Option, value: int
-    ) -> int:  # pylint: disable=unused-argument
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: int,
+    ) -> int:
         """Jobs callback."""
         if value is None:
             return []
@@ -142,34 +158,63 @@ def jobs_option(default=None) -> Callable[[FC], FC]:
     )
 
 
-def threads_option() -> Callable[[FC], FC]:
+def threads_option(default=None) -> Callable[[FC], FC]:
     """Add threads option."""
+
+    def threads_callback(
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: int,
+    ) -> int:
+        """Threads callback."""
+        if value is None:
+            return []
+        if value < 1:
+            logging.error("Threads must be greater than 0")
+            raise ValueError("Threads must be greater than 0")
+        return ["--threads", str(value)]
 
     return click.option(
         "-t",
         "--threads",
         help="number of threads",
-        default=1,
+        default=default,
+        callback=threads_callback,
         type=click.IntRange(
             1,
         ),
     )
 
 
-def test_option() -> Callable[[FC], FC]:
-    """Add test option"""
+def test_option(
+    config: list[str] = None,
+    options: list[str] = None,
+    test_profile: str = None,
+) -> Callable[[FC], FC]:
+    """Add test option with callback."""
 
     def test_callback(
-        ctx: click.core.Context, param: click.core.Option, value: int
-    ) -> int:  # pylint: disable=unused-argument
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: int,
+    ) -> int:
         """Callback for test option"""
+        ret = []
         if value:
-            return ["--config", "__test__=True"]
-        return []
+            if options:
+                ret = ret + options
+            if test_profile:
+                ret = ret + ["--profile", test_profile]
+            ret = ret + ["--config", "__test__=True"]
+            if config:
+                ret = ret + config
+        return ret
 
     return click.option(
-        "--test", is_flag=True, help="run workflow on small test data set",
-        callback=test_callback
+        "--test",
+        is_flag=True,
+        help="run workflow on small test data set",
+        callback=test_callback,
     )
 
 
@@ -184,13 +229,28 @@ def directory_option():
     )
 
 
-def report_option() -> Callable[[FC], FC]:
+def report_option(
+    report_file: str = "report.html",
+) -> Callable[[FC], FC]:
     """Add snakemake report option"""
+
+    def report_callback(
+        ctx: click.core.Context,  # pylint: disable=unused-argument
+        param: click.core.Option,  # pylint: disable=unused-argument
+        value: bool,
+    ) -> int:
+        """Callback for report option"""
+        ret = []
+        if value:
+            ret = ["--report", report_file]
+        return ret
+
     func = click.option(
         "--report",
         help=("generate snakemake report"),
         is_flag=True,
         default=False,
+        callback=report_callback,
     )
     return func
 
