@@ -120,12 +120,12 @@ commands:
     git add -f .
     uv pip install -e . --no-deps
     project_foo
-    project_foo admin config init
-    project_foo admin add template -t quarto
-    project_foo admin add tool my_tool
+    nbis-admin config init
+    nbis-admin add template -t quarto
+    nbis-admin add tool my_tool
     touch src/project_foo/tools/__init__.py
-    project_foo admin smk init
-    project_foo admin smk add
+    nbis-admin smk init
+    nbis-admin smk add
     git add . _quarto.yml src/project_foo/tools/my_tool.py
     pre-commit
     project_foo
@@ -153,9 +153,7 @@ ignore = ["N806"]
 
 [tool.ruff.lint.isort]
 # so it knows to group first-party stuff last
-known-first-party = ["tseda"]
-
-
+known-first-party = ["nbis"]
 
 [dependency-groups]
 dev = [

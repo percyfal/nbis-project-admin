@@ -18,16 +18,6 @@ The CLI can then be accessed through the PROJECT_NAME command, which
 by default is equal to the PROJECT_DIRECTORY name:
 
     PROJECT_NAME
-
-nbis-admin subcommands are available via the subcommand 'admin':
-
-    PROJECT_NAME admin
-
-which allows for easy access to administration commands for adding
-templates to the project. The advantage of accessing the admin
-commands here is that they will automatically apply the project
-settings and context to execution.
-
 """
 
 import logging
@@ -159,8 +149,3 @@ def main(  # pylint: disable=too-many-arguments
     command_dir.mkdir(exist_ok=True, parents=True)
     command_init = command_dir / "__init__.py"
     command_init.touch()
-    templates.add_template(
-        command_dir / "admin.py",
-        "src/python_module/commands/admin.py.j2",
-        **data,
-    )

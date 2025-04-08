@@ -15,7 +15,6 @@ expected = [
     "project_foo/src/project_foo/__init__.py",
     "project_foo/src/project_foo/cli.py",
     "project_foo/src/project_foo/commands/__init__.py",
-    "project_foo/src/project_foo/commands/admin.py",
 ]
 
 
