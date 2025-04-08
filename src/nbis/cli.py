@@ -2,12 +2,10 @@
 
 import logging
 import os
-import pathlib
 
 import click
 
 from nbis import decorators
-from nbis.config import load_config
 from nbis.env import Environment
 
 from . import __version__
@@ -50,10 +48,10 @@ class NbisCLI(click.MultiCommand):
     name="nbis-admin",
 )
 @click.version_option(version=__version__)
-@click.option("--config-file", help="configuration file", type=click.Path(exists=True))
+@decorators.config_file_option()
 @decorators.debug_option()
 @pass_environment
-def cli(env, config_file):
+def cli(env):
     """nbis-admin: administration utilities for nbis projects"""
     logging.basicConfig(
         level=logging.INFO,
@@ -61,11 +59,3 @@ def cli(env, config_file):
     )
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)
-    env.config = load_config(data={"project_name": "nbis-admin"})
-    if config_file is None:
-        env.home = pathlib.Path(os.curdir).absolute()
-    else:
-        config_file = pathlib.Path(config_file).absolute()
-        env.home = config_file.parent
-        if config_file.exists():
-            env.config = load_config(file=config_file)
