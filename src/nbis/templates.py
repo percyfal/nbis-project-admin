@@ -6,8 +6,7 @@ try:
     import pkg_resources
 except ImportError:
     from importlib import resources as pkg_resources
-from jinja2 import Environment
-from jinja2 import FileSystemLoader
+from jinja2 import Environment, FileSystemLoader
 
 logger = logging.getLogger(__name__)
 

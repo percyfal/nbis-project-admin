@@ -1,10 +1,3 @@
-[build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm>=6.4"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools_scm]
-write_to = "src/{{ python_module }}/_version.py"
-
 [project]
 name = "{{ python_module }}"
 description = "{{ description }}"
@@ -23,26 +16,60 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics"
 ]
 dependencies = [
-    'importlib-metadata; python_version>="3.7"',
     "nbis-project-admin @ git+https://github.com/percyfal/nbis-project-admin.git@main"
 ]
 dynamic = ["version"]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[dependency-groups]
+dev = [
+    "pylint>=3.3.6",
+    "pyright>=1.1.398",
+    "pytest>=8.3.5",
+]
 
-[tool.setuptools.dynamic]
-version = {attr = "{{ python_module }}.__version__"}
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/{{ python_module }}/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ python_module }}"]
 
 [project.scripts]
 {{ python_module }} = "{{ python_module }}.cli:cli"
 
 [tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -q"
+minversion = "7.0"
+addopts = "-ra -q --doctest-modules"
+pythonpath = [
+    "src",
+]
 testpaths = [
     "tests",
 ]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.pyright]
+venvPath = "."          # uv installs the venv in the current dir
+venv = ".venv"          #       in a folder called `.venv`
+include = ["src"]
+pythonVersion = "3.11"  # if library, specify the _lowest_ you support
+reportMissingTypeStubs = false
+reportAttributeAccessIssue = false
+reportCallIssue = false
+reportOptionalMemberAccess = false
+reportAssignmentType = false
+
 
 [tool.tox]
 legacy_tox_ini = """
@@ -59,3 +86,25 @@ deps =
     wheel
 commands = pytest
 """
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.format]
+docstring-code-format=true
+
+[tool.ruff.lint]
+select = [
+  "A",    # warn about shadowing built-ins
+  "E",    # style stuff, whitespaces
+  "F",    # important pyflakes lints
+  "I",    # import sorting
+  "N",    # naming
+  "T100", # breakpoints
+]
+ignore = ["N806"]
+
+[tool.ruff.lint.isort]
+# so it knows to group first-party stuff last
+known-first-party = ["tseda"]

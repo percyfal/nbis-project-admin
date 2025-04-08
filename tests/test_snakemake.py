@@ -2,11 +2,13 @@
 
 import click
 
-from nbis.snakemake import no_profile_option
-from nbis.snakemake import profile_option
-from nbis.snakemake import report_option
-from nbis.snakemake import snakemake_argument_list
-from nbis.snakemake import test_option
+from nbis.snakemake import (
+    no_profile_option,
+    profile_option,
+    report_option,
+    snakemake_argument_list,
+    test_option,
+)
 
 
 def test_snakemake_args(runner):

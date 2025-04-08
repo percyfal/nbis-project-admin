@@ -3,9 +3,7 @@
 import typing as t
 
 import click
-from click.core import Command
-from click.core import Context
-from click.core import Parameter
+from click.core import Command, Context, Parameter
 from click.decorators import option
 
 from nbis.env import Environment
@@ -23,7 +21,9 @@ def debug_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], FC]:
     """
 
     def callback(
-        ctx: Context, param: Parameter, value: bool  # pylint: disable=unused-argument
+        ctx: Context,
+        param: Parameter,  # pylint: disable=unused-argument
+        value: bool,  # pylint: disable=unused-argument
     ) -> None:
         if not value or ctx.resilient_parsing:
             return

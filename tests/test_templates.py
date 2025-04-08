@@ -28,7 +28,10 @@ def test_running_slides_template(tmp_path):
             author="John Doe",
             filename=fn,
             css=[pkg_resources.resource_filename("nbis", "resources/nbis.css")],
-            csl="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa, pylint: disable=line-too-long
+            csl=(
+                "https://raw.githubusercontent.com/citation-style-language/"
+                "styles/master/apa.csl"
+            ),
             in_header=pkg_resources.resource_filename(
                 "nbis", "resources/nbisfooter.html"
             ),

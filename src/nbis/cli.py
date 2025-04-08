@@ -1,6 +1,4 @@
-"""Console script for nbis based on click.
-
-"""
+"""Console script for nbis based on click."""
 
 import logging
 import os
@@ -46,7 +44,10 @@ class NbisCLI(click.MultiCommand):
 
 
 @click.command(
-    cls=NbisCLI, context_settings=CONTEXT_SETTINGS, help=__doc__, name="nbis-admin"
+    cls=NbisCLI,
+    context_settings=CONTEXT_SETTINGS,
+    help=__doc__,
+    name="nbis-admin",
 )
 @click.version_option(version=__version__)
 @click.option("--config-file", help="configuration file", type=click.Path(exists=True))
@@ -55,7 +56,8 @@ class NbisCLI(click.MultiCommand):
 def cli(env, config_file):
     """nbis-admin: administration utilities for nbis projects"""
     logging.basicConfig(
-        level=logging.INFO, format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s"
+        level=logging.INFO,
+        format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s",
     )
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)
