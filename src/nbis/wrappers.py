@@ -51,7 +51,11 @@ def rmarkdown(path, output_dir=None):
     if output_dir is not None:
         render_args += [f'output_dir="{str(output_dir)}"']
     render = ",".join(render_args)
-    cmdlist = ["R", "-e", f"'library(rmarkdown); rmarkdown::render({str(render)})'"]
+    cmdlist = [
+        "R",
+        "-e",
+        f"'library(rmarkdown); rmarkdown::render({str(render)})'",
+    ]
     cmd = " ".join(cmdlist)
     try:
         subprocess.run(cmd, shell=True, check=True)

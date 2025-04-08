@@ -8,9 +8,7 @@ import logging
 import click
 from nbis import wrappers
 from nbis.cli import pass_environment
-from nbis.snakemake import jobs_option
-from nbis.snakemake import no_profile_option
-from nbis.snakemake import profile_option
+from nbis.snakemake import jobs_option, no_profile_option, profile_option
 {% if test -%}
   from nbis.snakemake import test_option
 {% endif %}

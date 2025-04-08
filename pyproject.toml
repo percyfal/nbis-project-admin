@@ -57,6 +57,18 @@ filterwarnings = [
     "ignore::DeprecationWarning",
 ]
 
+[tool.pyright]
+venvPath = "."          # uv installs the venv in the current dir
+venv = ".venv"          #       in a folder called `.venv`
+include = ["src"]
+pythonVersion = "3.11"  # if library, specify the _lowest_ you support
+reportMissingTypeStubs = false
+reportAttributeAccessIssue = false
+reportCallIssue = false
+reportOptionalMemberAccess = false
+reportAssignmentType = false
+
+
 
 [tool.tox]
 legacy_tox_ini = """
@@ -94,6 +106,7 @@ setenv =
 deps =
     build
     pre-commit
+    pyright
     pytest
     pytest-coverage
     pytest-shutil
@@ -121,13 +134,35 @@ commands:
 """
 
 [tool.ruff]
-exclude = []
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.format]
+docstring-code-format=true
+
+[tool.ruff.lint]
+select = [
+  "A",    # warn about shadowing built-ins
+  "E",    # style stuff, whitespaces
+  "F",    # important pyflakes lints
+  "I",    # import sorting
+  "N",    # naming
+  "T100", # breakpoints
+]
+ignore = ["N806"]
+
+[tool.ruff.lint.isort]
+# so it knows to group first-party stuff last
+known-first-party = ["tseda"]
+
+
 
 [dependency-groups]
 dev = [
     "jupyter>=1.1.1",
     "jupyter-book>=1.0.4.post1",
     "pylint>=3.3.6",
+    "pyright>=1.1.398",
     "pytest>=8.3.5",
     "snakemake>=9.1.9",
     "tox>=4.25.0",

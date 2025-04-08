@@ -4,16 +4,15 @@ import io
 import sys
 
 import jsonschema
+
 try:
-  import pkg_resources
+    import pkg_resources
 except ImportError:
-  from importlib import resources as pkg_resources
+    from importlib import resources as pkg_resources
 import pytest
 from ruamel.yaml import YAML
 
-from nbis.config import Config
-from nbis.config import Schema
-from nbis.config import SchemaFiles
+from nbis.config import Config, Schema, SchemaFiles
 
 _SCHEMA = """$schema: "http://json-schema.org/draft/2020-12/schema#"
 

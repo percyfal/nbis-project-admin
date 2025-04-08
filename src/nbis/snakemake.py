@@ -88,9 +88,7 @@ def verbose_option(expose_value: bool = False) -> Callable[[FC], FC]:
         log_level = max(3 - value, 0) * 10
         logging.basicConfig(
             level=log_level,
-            format=(
-                "%(asctime)s; %(levelname)s " "[%(name)s:%(funcName)s]: %(message)s"
-            ),
+            format=("%(asctime)s; %(levelname)s [%(name)s:%(funcName)s]: %(message)s"),
         )
         return log_level
 
@@ -246,8 +244,8 @@ def directory_option(
         "--directory",
         help=(
             "Specify working directory (relative paths in the snakefile will "
-            "use this as their origin). (default: project directory). Will fallback"
-            "on project environment home directory if available."
+            "use this as their origin). (default: project directory). Will "
+            "fallback on project environment home directory if available."
         ),
         default=default,
         callback=directory_callback,
@@ -339,8 +337,10 @@ def format_snakemake_help(smkfile, *, default=None):
 
     Use in command function:
 
-        @cli.command(context_settings=dict(ignore_unknown_options=True),
-                    help=format_snakemake_help(config.SNAKEMAKE_ROOT / smkfile))
+        @cli.command(
+            context_settings=dict(ignore_unknown_options=True),
+            help=format_snakemake_help(config.SNAKEMAKE_ROOT / smkfile)
+        )
     """
     with open(smkfile, encoding="utf-8") as fh:
         file_contents = "".join(fh.readlines())

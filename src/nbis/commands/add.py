@@ -56,22 +56,32 @@ def main():
 
 @main.command()
 @click.option(
-    "slide_type", "--type", type=click.Choice(["quarto", "rmarkdown"]), default="quarto"
+    "slide_type",
+    "--type",
+    type=click.Choice(["quarto", "rmarkdown"]),
+    default="quarto",
 )
 @click.option("--show", is_flag=True, help="show rendered template")
 @click.option("--title", help="title", default="title")
 @click.option("--subtitle", help="subtitle", default="subtitle")
 @click.option("--author", help="author")
 @click.option(
-    "--assets", help="assets location relative to document", default="../assets"
+    "--assets",
+    help="assets location relative to document",
+    default="../assets",
 )
 @click.option(
-    "--bibliography", help="bibliography", default="../../resources/bibliography.bib"
+    "--bibliography",
+    help="bibliography",
+    default="../../resources/bibliography.bib",
 )
 @click.option(
     "--csl",
     help="csl",
-    default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa, pylint: disable=line-too-long
+    default=(
+        "https://raw.githubusercontent.com/citation-style-language/"
+        "styles/master/apa.csl"
+    ),
 )
 @click.option(
     "--name",
@@ -109,15 +119,22 @@ def running_slides(env, slide_type, show, **kw):
 @click.option("--subtitle", help="subtitle", default="subtitle")
 @click.option("--author", help="author")
 @click.option(
-    "--assets", help="assets location relative to document", default="../assets"
+    "--assets",
+    help="assets location relative to document",
+    default="../assets",
 )
 @click.option(
-    "--bibliography", help="bibliography", default="../../resources/bibliography.bib"
+    "--bibliography",
+    help="bibliography",
+    default="../../resources/bibliography.bib",
 )
 @click.option(
     "--csl",
     help="csl",
-    default="https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl",  # noqa, pylint: disable=line-too-long
+    default=(
+        "https://raw.githubusercontent.com/"
+        "citation-style-language/styles/master/apa.csl"
+    ),
 )
 @click.option(
     "--name",
@@ -268,9 +285,7 @@ def pcommand_group(env, command_group, path, show):
 @click.option("--show", is_flag=True, help="show rendered template")
 @click.option("--standalone", is_flag=True, help="make standalone command file")
 @pass_environment
-def pcommand(
-    env, command, group, path, show, standalone
-):  # pylint: disable=too-many-arguments
+def pcommand(env, command, group, path, show, standalone):  # pylint: disable=too-many-arguments
     """Render COMMAND to project CLI command group
 
     Add a subcommand to a command group or make standalone command

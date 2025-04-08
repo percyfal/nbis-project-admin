@@ -9,10 +9,10 @@ import logging
 import pprint
 import types
 from collections import OrderedDict
-from typing import Any
-from typing import Mapping
+from typing import Any, Mapping
 
 import jsonschema
+
 try:
     import pkg_resources
 except ImportError:
@@ -46,7 +46,7 @@ def validate_bytes(data: bytes | None) -> None:
     """Validate that data is bytes."""
     if data is not None and not isinstance(data, bytes):
         raise TypeError(
-            f"If no encoding is set metadata should be bytes, found {type(data)}"
+            (f"If no encoding is set metadata should be bytes, found {type(data)}")
         )
 
 

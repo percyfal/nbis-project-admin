@@ -1,11 +1,10 @@
-"""Configuration administration utilities.
-
-"""
+"""Configuration administration utilities."""
 
 import logging
 import sys
 
 import click
+
 try:
     import pkg_resources
 except ImportError:
@@ -14,9 +13,7 @@ import toml
 
 import nbis
 from nbis.cli import pass_environment
-from nbis.config import Config
-from nbis.config import SchemaFiles
-from nbis.config import get_schema
+from nbis.config import Config, SchemaFiles, get_schema
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +88,7 @@ def example(env, configuration):
         kwargs = {"project_name": env.home.name}
 
     print()
-    print(f"#\n# Showing example configuration for schema {conf_map[configuration]}")
+    print((f"#\n# Showing example configuration for schema {conf_map[configuration]}"))
     print(f"# See schema file {schemafile} for more details.\n#")
     if required is not None:
         print(f"# Required fields: {','.join(required)}\n#")

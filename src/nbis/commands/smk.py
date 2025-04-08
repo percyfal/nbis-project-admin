@@ -24,7 +24,8 @@ click option:
     @click.option("--directory/-d", default="some/path")
     @click.pass_context
     def run(ctx, profile, jobs, snakemake_args, directory):
-        options = list(snakemake_args) + ['-j', str(jobs), '--directory', directory]
+        options = list(snakemake_args) +
+            ['-j', str(jobs), '--directory', directory]
 
 The option --quarto will add a rule to run quarto based on a
 specialized template.
@@ -36,8 +37,7 @@ import logging
 import click
 
 from nbis.cli import pass_environment
-from nbis.templates import add_template
-from nbis.templates import render_template
+from nbis.templates import add_template, render_template
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
@@ -59,9 +59,9 @@ def add_group_smk_py(env, group, **kw):
 def add_command_smk_py(env, group, **kw):
     """Add snakemake python command file"""
     pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
-    assert (
-        f"def {kw['command']}(" not in pyfile.read_text()
-    ), f"{kw['command']} already defined"
+    assert f"def {kw['command']}(" not in pyfile.read_text(), (
+        f"{kw['command']} already defined"
+    )
     kw["group"] = group
     command = "quarto" if kw["quarto"] else "command"
     with open(pyfile, "a", encoding="utf-8") as fh:
@@ -159,7 +159,8 @@ def add_samples_schema_yaml(env):
         / "samples.schema.yaml"
     )
     add_template(
-        sampleschema, "src/python_module/workflow/schemas/samples.schema.yaml.j2"
+        sampleschema,
+        "src/python_module/workflow/schemas/samples.schema.yaml.j2",
     )
 
 
@@ -216,7 +217,10 @@ def main():
 @click.option("group", "--group", default="smk", help="snakemake command group name")
 @click.option("command", "--command", default="run", help="snakemake command to add")
 @click.option(
-    "quarto", "--quarto", is_flag=True, help="add quarto snakeamake code and command"
+    "quarto",
+    "--quarto",
+    is_flag=True,
+    help="add quarto snakeamake code and command",
 )
 @click.pass_context
 def add(ctx, group, **kw):
@@ -252,7 +256,8 @@ def init(env):
     """Initialize configuration files.
 
     Install minimal config, sample and schema files. Will install
-    config/config.yaml, resources/samples.tsv, src/project_name/snakemake/config.py,
+    config/config.yaml, resources/samples.tsv,
+    src/project_name/snakemake/config.py,
     schemas/config.schema.yaml and schemas/samples.schema.yaml.
     """
     add_config_py(env)
