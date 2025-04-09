@@ -57,22 +57,15 @@ logger = logging.getLogger(__name__)
     type=click.Choice(["MIT", "BSD-3-Clause"]),
     default=None,
 )
-@click.option(
-    "--config-file",
-    help="configuration file name. Defaults to PROJECT_NAME.yaml.",
-    default=None,
-)
 @click.option("--author", help="author name")
 @click.pass_context
-def main(  # pylint: disable=too-many-arguments
+def main(
     ctx,
     project_directory,
     description,
     project_name,
     repo_name,
-    open_source_license,
-    author,
-    config_file,
+    **kw,
 ):
     """Main init command"""
     logger.debug("Running %s subcommand.", __shortname__)
@@ -82,8 +75,6 @@ def main(  # pylint: disable=too-many-arguments
     if repo_name is None:
         repo_name = project_name
     python_module = repo_name
-    if config_file is None:
-        config_file = p / f"{python_module}.yaml"
     data = {
         "project_directory": str(p.name),
         "repo_name": repo_name,
@@ -91,9 +82,9 @@ def main(  # pylint: disable=too-many-arguments
         "python_module": python_module,
         "description": description,
         "version": ctx.obj.version,
-        "open_source_license": open_source_license,
-        "config_file": config_file,
-        "author": author,
+        "open_source_license": kw.get("open_source_license"),
+        "config_file": ctx.obj.config.get("config_file", p / f"{python_module}.yaml"),
+        "author": kw.get("author"),
     }
 
     pdir = pathlib.Path(project_directory)
@@ -102,50 +93,28 @@ def main(  # pylint: disable=too-many-arguments
 
     setup = pdir / "setup.cfg"
     setup.touch()
-    templates.add_template(pdir / "README.md", "README.md.j2", **data)
-    templates.add_template(pdir / "pyproject.toml", "pyproject.toml.j2", **data)
-    templates.add_template(
-        pdir / ".pre-commit-config.yaml",
-        ".pre-commit-config.yaml.j2",
+    templates.multi_add(
+        pdir,
+        files=[
+            "README.md",
+            "pyproject.toml",
+            ".gitignore",
+            ".pre-commit-config.yaml",
+            ".markdownlint.yaml",
+        ],
         **data,
     )
-    templates.add_template(
-        pdir / ".markdownlint.yaml",
-        ".markdownlint.yaml.j2",
+    templates.init_py_module(
+        pdir,
+        module=python_module,
+        files=["__init__.py", "cli.py", "env.py", "config.py"],
         **data,
     )
-    templates.add_template(
-        pdir / ".prettierrc.yml",
-        ".prettierrc.yml.j2",
+    templates.init_py_module(pdir, module=python_module, submodule="commands", **data)
+    templates.init_py_module(
+        pdir,
+        module=python_module,
+        submodule="core",
+        files=["options.py", "snakemake.py", "wrappers.py"],
         **data,
     )
-    templates.add_template(
-        pdir / ".editorconfig",
-        ".editorconfig.j2",
-        **data,
-    )
-    templates.add_template(
-        pdir / ".prettierignore",
-        ".prettierignore.j2",
-        **data,
-    )
-    templates.add_template(
-        pdir / ".gitignore",
-        ".gitignore.j2",
-        **data,
-    )
-    templates.add_template(
-        pdir / "src" / python_module / "__init__.py",
-        "src/python_module/__init__.py.j2",
-        **data,
-    )
-    templates.add_template(
-        pdir / "src" / python_module / "cli.py",
-        "src/python_module/cli.py.j2",
-        **data,
-    )
-
-    command_dir = pdir / "src" / python_module / "commands"
-    command_dir.mkdir(exist_ok=True, parents=True)
-    command_init = command_dir / "__init__.py"
-    command_init.touch()
