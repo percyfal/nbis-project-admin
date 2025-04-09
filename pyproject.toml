@@ -119,6 +119,7 @@ commands:
     git init -b main .
     git add -f .
     uv pip install -e . --no-deps
+    uv add snakemake
     project_foo
     nbis-admin config init
     nbis-admin add template -t quarto

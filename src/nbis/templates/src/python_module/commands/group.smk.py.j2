@@ -6,12 +6,13 @@ Main entry point to run snakemake workflows.
 import logging
 
 import click
-from nbis import wrappers
-from nbis.cli import pass_environment
-from nbis.snakemake import jobs_option, no_profile_option, profile_option
+
+from {{ project_name }}.cli import pass_environment
+from {{ project_name }}.core import wrappers
+from {{ project_name }}.core.snakemake import jobs_option, no_profile_option, profile_option
 {% if test -%}
-  from nbis.snakemake import test_option
-{% endif %}
+  from {{ project_name }}.core.snakemake import test_option
+{% endif -%}
 from {{ project_name }}.snakemake import config
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]

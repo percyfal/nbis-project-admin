@@ -3,18 +3,21 @@
 from nbis.cli import cli
 
 expected = [
-    "project_foo/.editorconfig",
     "project_foo/.gitignore",
     "project_foo/.markdownlint.yaml",
     "project_foo/.pre-commit-config.yaml",
-    "project_foo/.prettierignore",
-    "project_foo/.prettierrc.yml",
     "project_foo/README.md",
     "project_foo/setup.cfg",
     "project_foo/pyproject.toml",
     "project_foo/src/project_foo/__init__.py",
     "project_foo/src/project_foo/cli.py",
+    "project_foo/src/project_foo/config.py",
+    "project_foo/src/project_foo/core/__init__.py",
+    "project_foo/src/project_foo/core/options.py",
+    "project_foo/src/project_foo/core/snakemake.py",
+    "project_foo/src/project_foo/core/wrappers.py",
     "project_foo/src/project_foo/commands/__init__.py",
+    "project_foo/src/project_foo/env.py",
 ]
 
 
