@@ -6,6 +6,7 @@ expected = [
     "project_foo/.gitignore",
     "project_foo/.markdownlint.yaml",
     "project_foo/.pre-commit-config.yaml",
+    "project_foo/.pylintrc",
     "project_foo/README.md",
     "project_foo/setup.cfg",
     "project_foo/pyproject.toml",

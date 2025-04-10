@@ -44,7 +44,7 @@ def profile_option(
     ) -> str:
         """Profile callback."""
         env = ctx.ensure_object(Environment)
-        if ctx.params.get("no_profile"):
+        if ctx.params.get("_no_profile"):
             return []
         is_report = ctx.params.get("report", [])
         if len(is_report) > 0:
@@ -68,6 +68,7 @@ def no_profile_option() -> Callable[[FC], FC]:
 
     return click.option(
         "--no-profile",
+        "_no_profile",
         help="Do not use a profile",
         is_flag=True,
         expose_value=True,
