@@ -130,8 +130,8 @@ commands:
     git add . _quarto.yml src/project_foo/tools/my_tool.py
     pre-commit
     project_foo
+    project_foo smk
     nbis-admin --version
-
 """
 
 [tool.ruff]
