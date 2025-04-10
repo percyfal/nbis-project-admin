@@ -1,0 +1,59 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description: |
+  Project admin configuration file. The configuration file is loaded
+  by the CLI to provide global access to configuration options and
+  settings across commands.
+
+properties:
+  project_name:
+    description: project name
+    default: project
+    type: string
+  confluence:
+    description: Confluence configuration (WIP).
+    type: object
+    default: {}
+    properties:
+      url:
+        description: Confluence url.
+        type: [string, "null"]
+        default: null
+  docs:
+    description: Documentation configuration
+    type: object
+    default: {}
+    properties:
+      src:
+        description: Documentation source directory.
+        type: string
+        default: docs
+  webexport:
+    description: Webexport configuration (WIP).
+    type: object
+    default: {}
+    properties:
+      url:
+        description: |
+          Webexport url. All directories located in the docs directory
+          will be synced to this url.
+        type: [string, "null"]
+        default: null
+      include:
+        description: |
+          List of directories, relative to the documentation source
+          directory, to include in webexport.
+  bibliography:
+    description: Bibliography file
+    type: string
+    default: references/bibliography.bib
+  snakemake_profiles:
+    description: |
+      Key-value dictionary of snakemake profiles. The values
+      correspond to uris pointing to the profile location
+    type: [object, "null"]
+    patternProperties:
+      '[0-9a-zA-Z\-_]+':
+        type: string
+        format: uri
+        description: full path to snakemake profile

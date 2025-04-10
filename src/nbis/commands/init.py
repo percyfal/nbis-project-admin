@@ -110,6 +110,14 @@ def main(
         files=["__init__.py", "cli.py", "env.py", "config.py"],
         **data,
     )
+    templates.init_py_module(
+        pdir,
+        module=python_module,
+        submodule="schemas",
+        init=False,
+        files=["config.schema.yaml", "profile.schema.yaml"],
+        **data,
+    )
     templates.init_py_module(pdir, module=python_module, submodule="commands", **data)
     templates.init_py_module(
         pdir,
