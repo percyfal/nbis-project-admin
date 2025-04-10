@@ -8,7 +8,7 @@
   @test_option()
 {% endif -%}
 @click.argument("snakemake_args", nargs=-1, type=click.UNPROCESSED)
-def {{ command }}(profile, jobs{% if test %}, test{% endif %}, snakemake_args):
+def {{ command }}(profile, _no_profile, jobs{% if test %}, test{% endif %}, snakemake_args):
     """Command docstring"""
     smk_options = list(snakemake_args) + jobs + profile
     snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"

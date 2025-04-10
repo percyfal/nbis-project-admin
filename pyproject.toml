@@ -119,7 +119,7 @@ commands:
     git init -b main .
     git add -f .
     uv pip install -e . --no-deps
-    uv add snakemake
+    uv pip install snakemake pandas
     project_foo
     nbis-admin config init
     nbis-admin add template -t quarto
@@ -131,6 +131,7 @@ commands:
     pre-commit
     project_foo
     project_foo smk
+    project_foo smk run --no-profile
     nbis-admin --version
 """
 

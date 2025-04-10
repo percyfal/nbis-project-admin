@@ -101,6 +101,7 @@ def main(
             ".gitignore",
             ".pre-commit-config.yaml",
             ".markdownlint.yaml",
+            ".pylintrc",
         ],
         **data,
     )
