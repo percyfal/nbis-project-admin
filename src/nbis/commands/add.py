@@ -169,7 +169,7 @@ def diary(env, doc_type, show, **kw):
         )
         click.echo(t)
     else:
-        _add_doc_and_assets(outdir, ext, template="diary", **kw)
+        _add_doc_and_assets(outdir, ext, template_name="diary", **kw)
 
 
 @main.command()

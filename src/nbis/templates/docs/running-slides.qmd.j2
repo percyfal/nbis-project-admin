@@ -17,7 +17,8 @@ format:
 #| cache: FALSE
 library(ggplot2)
 library(viridis)
-bw <- theme_bw(base_size=24) %+replace% theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+bw <- theme_bw(base_size=24) %+replace%
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
 theme_set(bw)
 knitr::knit_hooks$set(inline = function(x) {
                       prettyNum(x, big.mark=" ")
@@ -25,10 +26,9 @@ knitr::knit_hooks$set(inline = function(x) {
 ```
 
 # Section 1
-
-
-{% if bibliography -%}
+{% if bibliography %}
 ## Refs {% raw %}{.unnumbered .unlisted}{% endraw %}
+
 ::: {% raw %}{ #refs }{% endraw %}
 :::
-{% endif %}
+{%- endif -%}
