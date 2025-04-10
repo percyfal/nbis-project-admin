@@ -18,6 +18,8 @@ expected = [
     "project_foo/src/project_foo/core/wrappers.py",
     "project_foo/src/project_foo/commands/__init__.py",
     "project_foo/src/project_foo/env.py",
+    "project_foo/src/project_foo/schemas/config.schema.yaml",
+    "project_foo/src/project_foo/schemas/profile.schema.yaml",
 ]
 
 
