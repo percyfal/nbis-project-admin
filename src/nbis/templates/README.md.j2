@@ -21,17 +21,37 @@
 # Installation
 
 This repo was initialized with nbis-admin version {{ version }}.
-The repo has to be under source control, whereafter it can be
-installed:
+The repo has to be under source control
 
     git init
     git add -f .
-    python -m pip install -e .
+    git commit -m "Initial commit"
 
-This will install the python module `{{ project_name }}`
-which can be invoked as
+whereafter it can be installed with `pixi` as:
 
-    {{ project_name }}
+    pixi init
+    pixi r {{ project_name }}
+
+This will install and invoke the python module `{{ project_name }}`.
+To access `{{ project_name }}` as a "normal" command, you can activate
+the `pixi` environment with `pixi shell`.
+
+It is recommended that Python dependencies be added to
+`pyproject.toml` with the command `uv add --no-sync package` and that
+the environment subsequently be updated with `pixi update`.
+
+## Project diary
+
+The command `nbis-admin add diary` will add a documentation directory
+with a `diary` subfolder for keeping track of project notes. Likewise,
+`nbis-admin add running-slides` adds a `Revealjs` template.
+
+## Publication branch
+
+Upon publication the code base should be cleaned up and any
+documentation removed. This can easiest be achieved by generating an
+orphan branch (e.g., `git switch --orphan publication`) and
+cherry-picking relevant code from `main`.
 
 ## Project organization
 

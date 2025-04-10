@@ -128,11 +128,12 @@ commands:
     nbis-admin smk init
     nbis-admin smk add
     git add . _quarto.yml src/project_foo/tools/my_tool.py
-    pre-commit
     project_foo
     project_foo smk
     project_foo smk run --no-profile
     nbis-admin --version
+    nbis-admin add diary
+    pre-commit
 """
 
 [tool.ruff]
