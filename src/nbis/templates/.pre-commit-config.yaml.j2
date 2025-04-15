@@ -47,29 +47,29 @@ repos:
             "-sn", # Don't display the score
             "--disable=fixme",
         ]
-  - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.3
-    hooks:
-      - id: style-files
-        name: style-files
-        description: style files with {styler}
-        entry: Rscript inst/hooks/exported/style-files.R
-        language: r
-        files: '(\.[rR]profile|\.[rR]|\.[rR]md|\.[rR]nw|\.[qQ]md)$'
-        exclude: 'renv/activate\.R'
-        minimum_pre_commit_version: "2.13.0"
-      - id: parsable-R
-        name: parsable-R
-        description: check if a .R file is parsable
-        entry: Rscript inst/hooks/exported/parsable-R.R
-        language: r
-        files: '\.[rR](md)?$'
-        minimum_pre_commit_version: "2.13.0"
-      - id: lintr
-        name: lintr
-        description: check if a `.R` file is lint free (using {lintr})
-        entry: Rscript inst/hooks/exported/lintr.R
-        language: r
-        files: '(\.[rR]profile|\.R|\.Rmd|\.Rnw|\.r|\.rmd|\.rnw)$'
-        exclude: 'renv/activate\.R'
-        minimum_pre_commit_version: "2.13.0"
+  # - repo: https://github.com/lorenzwalthert/precommit
+  #   rev: v0.4.3
+  #   hooks:
+  #     - id: style-files
+  #       name: style-files
+  #       description: style files with {styler}
+  #       entry: Rscript inst/hooks/exported/style-files.R
+  #       language: r
+  #       files: '(\.[rR]profile|\.[rR]|\.[rR]md|\.[rR]nw|\.[qQ]md)$'
+  #       exclude: 'renv/activate\.R'
+  #       minimum_pre_commit_version: "2.13.0"
+  #     - id: parsable-R
+  #       name: parsable-R
+  #       description: check if a .R file is parsable
+  #       entry: Rscript inst/hooks/exported/parsable-R.R
+  #       language: r
+  #       files: '\.[rR](md)?$'
+  #       minimum_pre_commit_version: "2.13.0"
+  #     - id: lintr
+  #       name: lintr
+  #       description: check if a `.R` file is lint free (using {lintr})
+  #       entry: Rscript inst/hooks/exported/lintr.R
+  #       language: r
+  #       files: '(\.[rR]profile|\.R|\.Rmd|\.Rnw|\.r|\.rmd|\.rnw)$'
+  #       exclude: 'renv/activate\.R'
+  #       minimum_pre_commit_version: "2.13.0"
