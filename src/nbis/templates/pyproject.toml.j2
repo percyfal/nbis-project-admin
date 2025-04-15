@@ -48,9 +48,6 @@ version-file = "src/{{ python_module }}/_version.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/{{ python_module }}"]
 
-[tool.hatch.build.hooks.vcs]
-version-file = "src/{{ python_module }}/_version.py"
-
 [project.scripts]
 {{ python_module }} = "{{ python_module }}.cli:cli"
 
