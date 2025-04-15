@@ -130,7 +130,7 @@ commands:
     git add . _quarto.yml src/project_foo/tools/my_tool.py
     project_foo
     project_foo smk
-    project_foo smk run --no-profile
+    project_foo smk run --no-profile --cores 1
     nbis-admin --version
     nbis-admin add diary
     pre-commit
