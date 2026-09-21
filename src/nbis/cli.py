@@ -43,21 +43,25 @@ class NbisCLI(click.MultiCommand):
         return mod.main
 
 
-@click.command(
+@click.group(
     cls=NbisCLI,
     context_settings=CONTEXT_SETTINGS,
     help=__doc__,
     name="nbis-admin",
+    invoke_without_command=True,
 )
 @click.version_option(version=__version__)
 @decorators.config_file_option()
 @decorators.debug_option()
+@click.pass_context
 @pass_environment
-def cli(env):
+def cli(env, ctx):
     """nbis-admin: administration utilities for nbis projects"""
     logging.basicConfig(
         level=logging.INFO,
         format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s",
     )
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)

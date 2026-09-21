@@ -46,20 +46,24 @@ class {{ ProjectName }}Cli(click.MultiCommand):
         return mod.main
 
 
-@click.command(
+@click.group(
     cls={{ ProjectName }}Cli,
     context_settings=CONTEXT_SETTINGS,
     help=__doc__,
     name="{{ project_name }}",
+    invoke_without_command=True,
 )
 @click.version_option(version=__version__)
 @options.config_file_option()
 @options.debug_option()
+@click.pass_context
 @pass_environment
-def cli(env):
+def cli(env, ctx):
     """CLI docstring for {{ project_name }}"""
     logging.basicConfig(
         level=logging.INFO, format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s"
     )
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)

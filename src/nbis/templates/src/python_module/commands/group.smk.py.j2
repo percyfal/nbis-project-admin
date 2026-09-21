@@ -21,9 +21,16 @@ __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 logger = logging.getLogger(__name__)
 
 
-@click.group(help=__doc__, name=__shortname__)
+@click.group(
+    help=__doc__,
+    name=__shortname__,
+    invoke_without_command=True
+)
+@click.pass_context
 @pass_environment
-def main(env):
+def main(env, ctx):
     """Main CLI entry point."""
     logger.debug("Running %s", __shortname__)
     logger.debug("Project home: %s", env.home)
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())

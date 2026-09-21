@@ -55,14 +55,12 @@ version-file = "src/nbis/_version.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/nbis"]
 
-
-
 [project.scripts]
 nbis-admin = "nbis.cli:cli"
 
 [tool.pytest]
 minversion = "9.0"
-addopts = "-ra -q --doctest-modules"
+addopts = ["-ra", "-q", "--doctest-modules"]
 pythonpath = [
     "src"
 ]
@@ -78,70 +76,53 @@ venvPath = ".pixi/envs"
 venv = "dev"
 
 [tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = py311,py312,py313
+env_list = ["py311", "py312", "py313"]
 isolated_build = true
 
-[gh-actions]
-python =
-    3.11: py311
-    3.12: py312
-    3.13: py313
+[tool.tox.env.test]
+change_dir = "tests"
+deps = [
+     "pytest",
+     "pytest-cov",
+     "pytest-shutil",
+     "pytest-git"
+]
+commands = [["pytest", "--basetemp={env_tmp_dir}", "{posargs}"]]
 
-[testenv:test]
-changedir = tests
-deps =
-    pytest
-    pytest-coverage
-    pytest-shutil
-    pytest-git
-    pytest-runner
-    pip>=22.1.0
-    wheel
-commands =
-    pytest --basetemp="{envtmpdir}" {posargs}
-
-[testenv:project]
-allowlist_externals =
-    git
-    touch
-    uv
-changedir = {envtmpdir}/project_foo
-setenv =
-    SKIP = lint
-deps =
-    build
-    pre-commit
-    pyright
-    pytest
-    pytest-coverage
-    pytest-shutil
-    pytest-git
-    pytest-runner
-    pip>=22.1.0
-    wheel
-commands =
-    nbis-admin init .
-    git init -b main .
-    git add -f .
-    uv pip install -e . --no-deps
-    uv pip install snakemake pandas
-    project_foo
-    nbis-admin config init
-    nbis-admin add template -t quarto
-    nbis-admin add tool my_tool
-    touch src/project_foo/tools/__init__.py
-    nbis-admin smk init
-    nbis-admin smk add
-    git add . _quarto.yml src/project_foo/tools/my_tool.py
-    project_foo
-    project_foo smk
-    project_foo smk run --no-profile --cores 1
-    nbis-admin --version
-    nbis-admin add diary
-    pre-commit
-"""
+[tool.tox.env.project]
+allowlist_externals = ["git", "touch", "uv"]
+changedir = "{envtmpdir}/project_foo"
+set_env = { SKIP = "lint" }
+deps = [
+     "build",
+     "pre-commit",
+     "pyright",
+     "pytest",
+     "pytest-cov",
+     "pytest-shutil",
+     "pytest-git"
+]
+commands = [
+         ["nbis-admin",  "init", "."],
+         ["git", "init", "-b", "main", "."],
+         ["git", "add", "-f", "."],
+         ["uv", "pip", "install", "-e", ".", "--no-deps"],
+         ["uv", "pip", "install", "snakemake", "pandas"],
+         ["project_foo"],
+         ["project_foo", "--help"],
+         ["nbis-admin", "config", "init"],
+         ["nbis-admin", "add", "template", "-t", "quarto"],
+         ["nbis-admin", "add", "tool", "my_tool"],
+         ["touch", "src/project_foo/tools/__init__.py"],
+         ["nbis-admin", "smk", "init"],
+         ["nbis-admin", "smk", "add"],
+         ["git", "add", ".", "_quarto.yml", "src/project_foo/tools/my_tool.py"],
+         ["project_foo"],
+         ["project_foo", "smk"],
+         ["project_foo", "smk", "run", "--no-profile", "--cores",  "1"],
+         ["nbis-admin", "--version"],
+         ["nbis-admin", "add", "diary"]
+         ]
 
 [tool.ruff]
 target-version = "py312"

@@ -9,7 +9,7 @@ from nbis.cli import cli
 def test_cli(runner):
     """Test CLI."""
     result = runner.invoke(cli, [])
-    assert not result.exception
+    assert result.exit_code == 0
     assert (
         re.search(
             r"--debug\s+Print debugging information.\n\s+"
