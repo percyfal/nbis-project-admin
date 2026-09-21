@@ -39,4 +39,4 @@ def pyproject(project_foo):
 @pytest.fixture(scope="function")
 def runner():
     """Base client runner."""
-    return CliRunner(mix_stderr=False)
+    return CliRunner()
