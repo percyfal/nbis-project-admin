@@ -1,43 +1,39 @@
 [project]
 name = "nbis_project_admin"
-authors = [
-    {name = "Per Unneberg", email = "per.unneberg@scilifelab.se"},
-]
+authors = [{ name = "Per Unneberg", email = "per.unneberg@scilifelab.se" }]
 description = "NBIS project admin"
 readme = "README.md"
 keywords = ["bioinformatics"]
-license = {text = "MIT"}
+license = { text = "MIT" }
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Environment :: Console",
-    "Intended Audience :: Science/Research",
-    "Natural Language :: English",
-    "Programming Language :: Python :: 3",
-    "Topic :: Scientific/Engineering :: Bio-Informatics"
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
-    'click>=8.0',
-    "pypandoc>=1.15",
-    "jinja2>=3.1.6",
-    "toml>=0.10.2",
-    "ruamel-yaml>=0.18.10",
-    "jsonschema>=4.23.0",
+  'click>=8.0',
+  "pypandoc>=1.15",
+  "jinja2>=3.1.6",
+  "toml>=0.10.2",
+  "ruamel-yaml>=0.18.10",
+  "jsonschema>=4.23.0",
 ]
 dynamic = ["version"]
 
 [dependency-groups]
 dev = [
-    "jupyter>=1.1.1",
-    "jupyter-book>=1.0.4.post1",
-    "pylint>=3.3.6",
-    "pyright>=1.1.398",
-    "pytest>=8.3.5",
-    "snakemake>=9.1.9",
-    "tox>=4.25.0",
+  "jupyter>=1.1.1",
+  "jupyter-book>=1.0.4.post1",
+  "pylint>=3.3.6",
+  "pyright>=1.1.398",
+  "pytest>=8.3.5",
+  "snakemake>=9.1.9",
+  "tox>=4.25.0",
 ]
-lint = [
-     "pytest>=8.3.5",
-]
+lint = ["pytest>=8.3.5"]
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
@@ -61,15 +57,9 @@ nbis-admin = "nbis.cli:cli"
 [tool.pytest]
 minversion = "9.0"
 addopts = ["-ra", "-q", "--doctest-modules"]
-pythonpath = [
-    "src"
-]
-testpaths = [
-    "tests",
-]
-filterwarnings = [
-    "ignore::DeprecationWarning",
-]
+pythonpath = ["src"]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.basedpyright]
 venvPath = ".pixi/envs"
@@ -81,12 +71,7 @@ isolated_build = true
 
 [tool.tox.env.test]
 change_dir = "tests"
-deps = [
-     "pytest",
-     "pytest-cov",
-     "pytest-shutil",
-     "pytest-git"
-]
+deps = ["pytest", "pytest-cov", "pytest-shutil", "pytest-git"]
 commands = [["pytest", "--basetemp={env_tmp_dir}", "{posargs}"]]
 
 [tool.tox.env.project]
@@ -94,42 +79,126 @@ allowlist_externals = ["git", "touch", "uv"]
 changedir = "{envtmpdir}/project_foo"
 set_env = { SKIP = "lint" }
 deps = [
-     "build",
-     "pre-commit",
-     "pyright",
-     "pytest",
-     "pytest-cov",
-     "pytest-shutil",
-     "pytest-git"
+  "build",
+  "pre-commit",
+  "pyright",
+  "pytest",
+  "pytest-cov",
+  "pytest-shutil",
+  "pytest-git",
 ]
 commands = [
-         ["nbis-admin",  "init", "."],
-         ["git", "init", "-b", "main", "."],
-         ["git", "add", "-f", "."],
-         ["uv", "pip", "install", "-e", ".", "--no-deps"],
-         ["uv", "pip", "install", "snakemake", "pandas"],
-         ["project_foo"],
-         ["project_foo", "--help"],
-         ["nbis-admin", "config", "init"],
-         ["nbis-admin", "add", "template", "-t", "quarto"],
-         ["nbis-admin", "add", "tool", "my_tool"],
-         ["touch", "src/project_foo/tools/__init__.py"],
-         ["nbis-admin", "smk", "init"],
-         ["nbis-admin", "smk", "add"],
-         ["git", "add", ".", "_quarto.yml", "src/project_foo/tools/my_tool.py"],
-         ["project_foo"],
-         ["project_foo", "smk"],
-         ["project_foo", "smk", "run", "--no-profile", "--cores",  "1"],
-         ["nbis-admin", "--version"],
-         ["nbis-admin", "add", "diary"]
-         ]
+  [
+    "nbis-admin",
+    "init",
+    ".",
+  ],
+  [
+    "git",
+    "init",
+    "-b",
+    "main",
+    ".",
+  ],
+  [
+    "git",
+    "add",
+    "-f",
+    ".",
+  ],
+  [
+    "uv",
+    "pip",
+    "install",
+    "-e",
+    ".",
+    "--no-deps",
+  ],
+  [
+    "uv",
+    "pip",
+    "install",
+    "snakemake",
+    "pandas",
+  ],
+  [
+    "project_foo",
+  ],
+  [
+    "project_foo",
+    "--help",
+  ],
+  [
+    "nbis-admin",
+    "config",
+    "init",
+  ],
+  [
+    "nbis-admin",
+    "add",
+    "template",
+    "-t",
+    "quarto",
+  ],
+  [
+    "nbis-admin",
+    "add",
+    "tool",
+    "my_tool",
+  ],
+  [
+    "touch",
+    "src/project_foo/tools/__init__.py",
+  ],
+  [
+    "nbis-admin",
+    "smk",
+    "init",
+  ],
+  [
+    "nbis-admin",
+    "smk",
+    "add",
+  ],
+  [
+    "git",
+    "add",
+    ".",
+    "_quarto.yml",
+    "src/project_foo/tools/my_tool.py",
+  ],
+  [
+    "project_foo",
+  ],
+  [
+    "project_foo",
+    "smk",
+  ],
+  [
+    "project_foo",
+    "smk",
+    "run",
+    "--no-profile",
+    "--cores",
+    "1",
+  ],
+  [
+    "nbis-admin",
+    "--version",
+  ],
+  [
+    "nbis-admin",
+    "add",
+    "diary",
+  ],
+]
 
 [tool.ruff]
 target-version = "py312"
 line-length = 88
 
 [tool.ruff.format]
-docstring-code-format=true
+docstring-code-format = true
 
 [tool.ruff.lint]
 select = [

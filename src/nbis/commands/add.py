@@ -26,18 +26,20 @@ __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 def _add_doc_and_assets(outdir, ext, template_name="running-slides", **kw):
     assets = outdir / kw["assets"]
     path = outdir / f"index.{ext}"
-    www = assets / "www"
+    static = assets / "static"
     css = assets / "css"
     logos = assets / "logos"
     if not outdir.exists():
         outdir.mkdir(parents=True)
-    if not www.exists():
-        www.mkdir(parents=True)
+    if not static.exists():
+        static.mkdir(parents=True)
         css.mkdir()
         logos.mkdir()
     templates.add_template(path, f"docs/{template_name}.{ext}.j2", **kw)
-    templates.add_template(www / "title-slide.html", "docs/assets/www/title-slide.html")
-    templates.add_template(www / "tikzfig.tex", "docs/assets/www/tikzfig.tex")
+    templates.add_template(
+        static / "title-slide.html", "docs/assets/static/title-slide.html"
+    )
+    templates.add_template(static / "tikzfig.tex", "docs/assets/static/tikzfig.tex")
     templates.add_template(
         logos / "nbis-scilifelab.svg", "docs/assets/logos/nbis-scilifelab.svg"
     )
