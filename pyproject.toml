@@ -25,6 +25,20 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+    "jupyter-book>=1.0.4.post1",
+    "pylint>=3.3.6",
+    "pyright>=1.1.398",
+    "pytest>=8.3.5",
+    "snakemake>=9.1.9",
+    "tox>=4.25.0",
+]
+lint = [
+     "pytest>=8.3.5",
+]
+
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
@@ -41,11 +55,13 @@ version-file = "src/nbis/_version.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/nbis"]
 
+
+
 [project.scripts]
 nbis-admin = "nbis.cli:cli"
 
-[tool.pytest.ini_options]
-minversion = "7.0"
+[tool.pytest]
+minversion = "9.0"
 addopts = "-ra -q --doctest-modules"
 pythonpath = [
     "src"
@@ -57,18 +73,9 @@ filterwarnings = [
     "ignore::DeprecationWarning",
 ]
 
-[tool.pyright]
-venvPath = "."          # uv installs the venv in the current dir
-venv = ".venv"          #       in a folder called `.venv`
-include = ["src"]
-pythonVersion = "3.11"  # if library, specify the _lowest_ you support
-reportMissingTypeStubs = false
-reportAttributeAccessIssue = false
-reportCallIssue = false
-reportOptionalMemberAccess = false
-reportAssignmentType = false
-
-
+[tool.basedpyright]
+venvPath = ".pixi/envs"
+venv = "dev"
 
 [tool.tox]
 legacy_tox_ini = """
@@ -114,7 +121,7 @@ deps =
     pytest-runner
     pip>=22.1.0
     wheel
-commands:
+commands =
     nbis-admin init .
     git init -b main .
     git add -f .
@@ -158,13 +165,45 @@ ignore = ["N806"]
 # so it knows to group first-party stuff last
 known-first-party = ["nbis"]
 
-[dependency-groups]
-dev = [
-    "jupyter>=1.1.1",
-    "jupyter-book>=1.0.4.post1",
-    "pylint>=3.3.6",
-    "pyright>=1.1.398",
-    "pytest>=8.3.5",
-    "snakemake>=9.1.9",
-    "tox>=4.25.0",
-]
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+nbis_project_admin = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
+lint = { features = ["lint"], solve-group = "default" }
+
+[tool.pixi.tasks]
+
+[tool.pixi.feature.lint.tasks]
+actionlint = { cmd = "actionlint", env = { SHELLCHECK_OPTS = "-e SC2086" } }
+lint = { cmd = "pre-commit run --all-files --hook-stage=manual", description = "Run all linters and formatters on all code" }
+pre-commit-install = "pre-commit install --install-hooks -t=pre-commit -t=pre-push"
+pre-commit-install-minimal = "pre-commit install -t=pre-commit"
+pre-commit-run = "pre-commit run --all-files"
+ruff-format = "ruff format --force-exclude"
+ruff-lint = "ruff check --fix --exit-non-zero-on-fix --force-exclude"
+shell-format = "shfmt --write --indent=4 --simplify --binary-next-line"
+toml-format = { cmd = "taplo fmt", env = { RUST_LOG = "warn" } }
+toml-lint = "taplo lint --verbose **/pyproject.toml"
+typecheck-python = "mypy"
+typos = "typos --write-changes --force-exclude"
+
+[tool.pixi.feature.lint.dependencies]
+pre-commit = "*"
+pre-commit-hooks = "*"
+ruff = "*"
+typos = "*"
+actionlint = "*"
+go-shfmt = "*"
+taplo = "*"
+pylint = ">=3.3.8,<4"
+
+[tool.pixi.dependencies]
+r-base = ">=4.5.3,<4.6"
+r-bookdown = ">=0.47,<0.48"
+r-rmarkdown = ">=2.32,<3"

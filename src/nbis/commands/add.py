@@ -285,7 +285,7 @@ def pcommand_group(env, command_group, path, show):
 @click.option("--show", is_flag=True, help="show rendered template")
 @click.option("--standalone", is_flag=True, help="make standalone command file")
 @pass_environment
-def pcommand(env, command, group, path, show, standalone):  # pylint: disable=too-many-arguments
+def pcommand(env, command, group, path, show, standalone):  # pylint: disable=too-many-arguments, too-many-positional-arguments
     """Render COMMAND to project CLI command group
 
     Add a subcommand to a command group or make standalone command

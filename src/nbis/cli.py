@@ -28,7 +28,8 @@ class NbisCLI(click.MultiCommand):
     module = "nbis.commands"
     cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
 
-    def list_commands(self, ctx):
+    def list_commands(self, ctx):  # pylint: disable=unused-argument
+        """List available commands"""
         data = []
         for filename in os.listdir(self.cmd_folder):
             if filename.endswith(".py") and not filename.startswith("__"):
@@ -36,7 +37,8 @@ class NbisCLI(click.MultiCommand):
         data.sort()
         return data
 
-    def get_command(self, ctx, cmd_name):
+    def get_command(self, ctx, cmd_name):  # pylint: disable=unused-argument
+        """Get requested command"""
         mod = __import__(f"{self.module}.{cmd_name}", None, None, ["main"])
         return mod.main
 
