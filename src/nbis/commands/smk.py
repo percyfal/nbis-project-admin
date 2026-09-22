@@ -9,9 +9,10 @@ Thereafter, snakemake commands or command groups can be added as
 
     PROJECT_NAME admin smk add --group smk --command run
 
-which will add a snakefile src/snakemake/commands/smk-run.smk and a
-CLI command file src/PROJECT_NAME/commands/smk.py. Once installed, the
-snakemake file can be run as
+which will add a snakefile
+src/{module}/workflows/smk/commands/smk-run.smk and a CLI command file
+src/PROJECT_NAME/commands/smk.py. Once installed, the snakemake file
+can be run as
 
     PROJECT_NAME smk run
 
@@ -42,6 +43,8 @@ from nbis.templates import add_template, render_template
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
 logger = logging.getLogger(__name__)
+
+ENGINE = "smk"
 
 
 def add_group_smk_py(env, group, **kw):
@@ -78,14 +81,14 @@ def add_command_smk(env, group, command, **kw):
         / "src"
         / env.config.project_name
         / "workflow"
-        / "snakemake"
+        / ENGINE
         / "commands"
         / f"{group}-{command}.smk"
     )
     command_template = "quarto" if kw["quarto"] else "command"
     add_template(
         smkfile,
-        f"src/python_module/workflow/snakemake/commands/{command_template}.smk.j2",
+        f"src/python_module/workflow/{ENGINE}/commands/{command_template}.smk.j2",
         project_name=env.config.project_name,
         command=command,
         test=kw["test"],
@@ -101,13 +104,13 @@ def add_test_config(env, group, command):
         / "src"
         / env.config.project_name
         / "workflow"
-        / "snakemake"
+        / ENGINE
         / "commands"
         / f"test-{group}-{command}-config.smk"
     )
     add_template(
         smkfile,
-        "src/python_module/workflow/snakemake/commands/test-config.smk.j2",
+        f"src/python_module/workflow/{ENGINE}/commands/test-config.smk.j2",
     )
 
 
@@ -118,13 +121,13 @@ def add_test_smk_setup(env, group, command):
         / "src"
         / env.config.project_name
         / "workflow"
-        / "snakemake"
+        / ENGINE
         / "commands"
         / f"test-{group}-{command}-setup.smk"
     )
     add_template(
         smkfile,
-        "src/python_module/workflow/snakemake/commands/test-setup.smk.j2",
+        f"src/python_module/workflow/{ENGINE}/commands/test-setup.smk.j2",
         command=command,
     )
 
@@ -142,10 +145,13 @@ def add_config_schema_yaml(env):
         / "src"
         / env.config.project_name
         / "workflow"
+        / ENGINE
         / "schemas"
         / "config.schema.yaml"
     )
-    add_template(confschema, "src/python_module/workflow/schemas/config.schema.yaml.j2")
+    add_template(
+        confschema, f"src/python_module/workflow/{ENGINE}/schemas/config.schema.yaml.j2"
+    )
 
 
 def add_samples_schema_yaml(env):
@@ -155,12 +161,13 @@ def add_samples_schema_yaml(env):
         / "src"
         / env.config.project_name
         / "workflow"
+        / ENGINE
         / "schemas"
         / "samples.schema.yaml"
     )
     add_template(
         sampleschema,
-        "src/python_module/workflow/schemas/samples.schema.yaml.j2",
+        f"src/python_module/workflow/{ENGINE}/schemas/samples.schema.yaml.j2",
     )
 
 
@@ -176,12 +183,12 @@ def add_local_profile(env):
     add_template(localprofile, "config/local/profile.yaml.j2")
 
 
-def add_config_py(env, wf="snakemake"):
+def add_config_py(env):
     """Add python configuration module"""
-    configfile = env.home / "src" / env.config.project_name / wf / "config.py"
+    configfile = env.home / "src" / env.config.project_name / ENGINE / "config.py"
     add_template(
         configfile,
-        f"src/python_module/{wf}/config.py.j2",
+        f"src/python_module/{ENGINE}/config.py.j2",
         project_name=env.config.project_name,
     )
 
@@ -214,7 +221,7 @@ def main():
     is_flag=True,
     help=("Add local snakemake profile"),
 )
-@click.option("group", "--group", default="smk", help="snakemake command group name")
+@click.option("group", "--group", default=ENGINE, help="snakemake command group name")
 @click.option("command", "--command", default="run", help="snakemake command to add")
 @click.option(
     "quarto",
@@ -231,7 +238,7 @@ def add(ctx, group, **kw):
 
     """
     env = ctx.obj
-    configfile = env.home / "src" / env.config.project_name / "snakemake" / "config.py"
+    configfile = env.home / "src" / env.config.project_name / ENGINE / "config.py"
     if not configfile.exists():
         logger.error(
             "No snakemake configuration module available. "

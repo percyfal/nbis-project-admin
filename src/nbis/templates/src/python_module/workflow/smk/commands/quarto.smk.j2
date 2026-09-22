@@ -1,9 +1,16 @@
+import os
 import re
 import sys
+import socket
 from pathlib import Path
 from snakemake.utils import validate
 import pandas as pd
-from {{ project_name }}.snakemake.config import SchemaFiles
+from {{ project_name }}.smk.config import SchemaFiles
+
+
+envvars:
+    "QUARTO_IMAGE",
+    "TEXINPUTS"
 
 
 ##############################
@@ -22,18 +29,10 @@ wildcard_constraints:
     data="data",
     interim="data/interim",
     reports="reports",
-    sample=f"({'|'.join(samples.SM.tolist())})",
 
 
 # Define main ALL target
 ALL = []
-{%- if test %}
-
-
-if config.get("__test__") is True:
-
-    include: "test-{{ group }}-{{ command }}-config.smk"
-{% endif %}
 
 
 rule all:
@@ -44,11 +43,18 @@ rule all:
 ##############################
 # Atomic rules
 ##############################
-{%- if test %}
-##############################
-# TEST rules
-##############################
-if config.get("__test__") is True:
-
-    include: "test-{{ group }}-{{ command }}-setup.smk"
-{% endif -%}
+rule quarto_render:
+    output:
+        "docs/{prefix}.html",
+    input:
+        "docs/{prefix}.qmd",
+    params:
+        root_dir=Path(os.curdir).absolute(),
+    log:
+        "logs/docs/{prefix}.html.log",
+    conda:
+        "../envs/{{ project_name }}.yaml"
+    container:
+        os.environ.get("QUARTO_IMAGE")
+    shell:
+        "quarto render {input} --execute-dir {params.root_dir}; > {log} 2>&1"
