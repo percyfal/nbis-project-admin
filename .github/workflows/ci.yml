@@ -32,5 +32,10 @@ jobs:
       - name: Run tests
         run: uv run pytest
 
+      - name: Diagnostic — check package data
+        run: |
+          uv pip install --system build
+          python -m build --wheel --outdir /tmp/wheel
+          unzip -l /tmp/wheel/*.whl | grep -E "(templates|\.j2|\.gitignore|\.pre-commit)" | head -50
       - name: Run tox to test installation of project
         run: python -m tox p -e project
