@@ -7,7 +7,7 @@ try:
     import pkg_resources
 except ImportError:
     from importlib import resources as pkg_resources
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 logger = logging.getLogger(__name__)
 
@@ -38,16 +38,21 @@ def add_template(filename, template, **kwargs):
     if filename.exists():
         logger.warning("%s already exists; skipping", filename)
         return
+
+    filename.parent.mkdir(exist_ok=True, parents=True)
+
     try:
-        if not filename.parent.exists():
-            filename.parent.mkdir(exist_ok=True, parents=True)
-        with open(filename, "w", encoding="utf-8") as fh:
-            template = env.get_template(template)
-            fh.write(template.render(**kwargs))
-            fh.write("\n")
-    except FileNotFoundError:
-        logger.error("Make sure parent directory exists: %s", filename)
+        if template.endswith(".j2"):
+            content = env.get_template(template).render(**kwargs)
+        else:
+            content, _, _ = env.loader.get_source(env, template)
+    except TemplateNotFound:
+        logger.error("Template not found: %s", template)
         raise
+
+    if not content.endswith("\n"):
+        content += "\n"
+    filename.write_text(content, encoding="utf-8")
 
 
 def render_template(template, **kw):

@@ -62,9 +62,9 @@ def add_group_smk_py(env, group, **kw):
 def add_command_smk_py(env, group, **kw):
     """Add snakemake python command file"""
     pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
-    assert f"def {kw['command']}(" not in pyfile.read_text(), (
-        f"{kw['command']} already defined"
-    )
+    if f"def {kw['command']}(" in pyfile.read_text():
+        logger.warning("%s already defined; skipping", kw["command"])
+        return
     kw["group"] = group
     command = "quarto" if kw["quarto"] else "command"
     with open(pyfile, "a", encoding="utf-8") as fh:

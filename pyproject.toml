@@ -166,6 +166,11 @@ commands = [
     "add",
   ],
   [
+    "nbis-admin",
+    "smk",
+    "add",
+  ],
+  [
     "git",
     "add",
     ".",

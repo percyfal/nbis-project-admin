@@ -29,14 +29,18 @@ def _add_doc_and_assets(outdir, ext, template_name="running-slides", **kw):
     static = assets / "static"
     css = assets / "css"
     logos = assets / "logos"
+    filters = assets / "filters"
     if not outdir.exists():
         outdir.mkdir(parents=True)
     if not static.exists():
         static.mkdir(parents=True)
-        css.mkdir()
+    if not css.exists():
+        css.mkdir(parents=True)
         logos.mkdir()
     templates.add_template(path, f"docs/{template_name}.{ext}.j2", **kw)
-    templates.add_template(path, assets / "detailed-cite.lua.j2")
+    templates.add_template(
+        filters / "detailed-cite.lua", "docs/assets/filters/detailed-cite.lua"
+    )
     templates.add_template(
         static / "title-slide.html", "docs/assets/static/title-slide.html"
     )
