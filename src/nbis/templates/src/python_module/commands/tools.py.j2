@@ -8,8 +8,9 @@ import logging
 import os
 
 import click
-from {{ project_us }}.cli import CONTEXT_SETTINGS
-from {{ project_us }}.cli import {{ project_cc }}Cli
+
+{% set ProjectName = project_name.replace("_", " ").title().replace(" ", "") -%}
+from {{ project_name }}.cli import CONTEXT_SETTINGS, {{ ProjectName }}Cli
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 

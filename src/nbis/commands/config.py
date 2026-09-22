@@ -1,18 +1,19 @@
-"""Configuration administration utilities.
-
-"""
+"""Configuration administration utilities."""
 
 import logging
 import sys
 
 import click
-import pkg_resources
+
+try:
+    import pkg_resources
+except ImportError:
+    from importlib import resources as pkg_resources
 import toml
 
+import nbis
 from nbis.cli import pass_environment
-from nbis.config import Config
-from nbis.config import SchemaFiles
-from nbis.config import get_schema
+from nbis.config import Config, SchemaFiles, get_schema
 
 logger = logging.getLogger(__name__)
 
@@ -75,16 +76,19 @@ def example(env, configuration):
     }
     kwargs = {}
     schema = get_schema(conf_map[configuration])
-    schemafile = pkg_resources.resource_filename(
-        "nbis", str(getattr(SchemaFiles, conf_map[configuration]))
-    )
+    try:
+        schemafile = pkg_resources.resource_filename(
+            "nbis", str(getattr(SchemaFiles, conf_map[configuration]))
+        )
+    except AttributeError:
+        schemafile = pkg_resources.files(nbis) / "schemas" / conf_map[configuration]
 
     required = schema.schema.get("required", None)
     if configuration == "main":
         kwargs = {"project_name": env.home.name}
 
     print()
-    print(f"#\n# Showing example configuration for schema {conf_map[configuration]}")
+    print((f"#\n# Showing example configuration for schema {conf_map[configuration]}"))
     print(f"# See schema file {schemafile} for more details.\n#")
     if required is not None:
         print(f"# Required fields: {','.join(required)}\n#")

@@ -44,7 +44,7 @@ directories that are easily installable as python packages and provide
 a command-line interface (CLI) to scripts and workflows. Templates can
 be added that add subcommands and workflow commands to the CLI.
 
-To start setting up a project issue
+To setup a project, issue
 
     nbis-admin init project_name
 

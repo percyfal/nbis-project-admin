@@ -1,9 +1,9 @@
 """Snakemake configuration."""
 
-from nbis.config import Schema
 from ruamel.yaml import YAML
 
 from {{ project_name }}.cli import PKG_DIR
+from {{ project_name }}.config import Schema
 
 WORKFLOW_ROOT = PKG_DIR / "workflow"
 SNAKEMAKE_ROOT = WORKFLOW_ROOT / "snakemake"

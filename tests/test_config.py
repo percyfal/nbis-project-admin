@@ -5,8 +5,7 @@ import re
 import pytest
 
 from nbis.cli import cli
-from nbis.config import Config
-from nbis.config import PropertyDict
+from nbis.config import Config, PropertyDict
 
 
 @pytest.fixture(name="data")

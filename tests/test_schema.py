@@ -4,13 +4,15 @@ import io
 import sys
 
 import jsonschema
-import pkg_resources
+
+try:
+    import pkg_resources
+except ImportError:
+    from importlib import resources as pkg_resources
 import pytest
 from ruamel.yaml import YAML
 
-from nbis.config import Config
-from nbis.config import Schema
-from nbis.config import SchemaFiles
+from nbis.config import Config, Schema, SchemaFiles
 
 _SCHEMA = """$schema: "http://json-schema.org/draft/2020-12/schema#"
 
@@ -58,7 +60,10 @@ webexport:
 @pytest.fixture(scope="session", name="pkg_schemafile")
 def fpkg_schemafile():
     """Pkg schemafile fixture"""
-    return pkg_resources.resource_filename("nbis", SchemaFiles.CONFIGURATION_SCHEMA)
+    try:
+        return pkg_resources.resource_filename("nbis", SchemaFiles.CONFIGURATION_SCHEMA)
+    except AttributeError:
+        return pkg_resources.files("nbis") / SchemaFiles.CONFIGURATION_SCHEMA
 
 
 @pytest.fixture(scope="session", name="pkg_schema")

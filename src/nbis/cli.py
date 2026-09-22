@@ -1,15 +1,11 @@
-"""Console script for nbis based on click.
-
-"""
+"""Console script for nbis based on click."""
 
 import logging
 import os
-import pathlib
 
 import click
 
 from nbis import decorators
-from nbis.config import load_config
 from nbis.env import Environment
 
 from . import __version__
@@ -46,24 +42,20 @@ class NbisCLI(click.MultiCommand):
 
 
 @click.command(
-    cls=NbisCLI, context_settings=CONTEXT_SETTINGS, help=__doc__, name="nbis-admin"
+    cls=NbisCLI,
+    context_settings=CONTEXT_SETTINGS,
+    help=__doc__,
+    name="nbis-admin",
 )
 @click.version_option(version=__version__)
-@click.option("--config-file", help="configuration file", type=click.Path(exists=True))
+@decorators.config_file_option()
 @decorators.debug_option()
 @pass_environment
-def cli(env, config_file):
+def cli(env):
     """nbis-admin: administration utilities for nbis projects"""
     logging.basicConfig(
-        level=logging.INFO, format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s"
+        level=logging.INFO,
+        format="%(levelname)s [%(name)s:%(funcName)s]: %(message)s",
     )
     if env.debug:
         logging.getLogger().setLevel(logging.DEBUG)
-    env.config = load_config(data={"project_name": "nbis-admin"})
-    if config_file is None:
-        env.home = pathlib.Path(os.curdir).absolute()
-    else:
-        config_file = pathlib.Path(config_file).absolute()
-        env.home = config_file.parent
-        if config_file.exists():
-            env.config = load_config(file=config_file)
