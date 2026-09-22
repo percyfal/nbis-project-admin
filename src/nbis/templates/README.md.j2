@@ -2,15 +2,9 @@
 
 <!--
 [![PyPI](https://img.shields.io/pypi/v/{{ repo_name }}.svg)](https://pypi.python.org/pypi/{{ repo_name }})
-  -->
-
-<!--
 [![CI](https://github.com/NBISweden/{{ project_name }}/actions/workflows/ci.yml/badge.svg)](https://github.com/NBISweden/{{ project_name }}/actions/workflows/ci.yml)
-  -->
-
-<!--
 [![BioConda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/recipes/{{ repo_name }}/README.html)
-  -->
+-->
 
 <!-- markdownlint-enable -->
 
@@ -18,54 +12,15 @@
 
 {{ description }}
 
-# Installation
+Make sure to add a project configuration file
 
-This repo was initialized with nbis-admin version {{ version }}.
-The repo has to be under source control
-
-    git init
-    git add -f .
-    git commit -m "Initial commit"
-
-whereafter it can be installed with `pixi` as:
+## Installation
 
     pixi init
     pixi r {{ project_name }}
 
-This will install and invoke the python module `{{ project_name }}`.
-To access `{{ project_name }}` as a "normal" command, you can activate
-the `pixi` environment with `pixi shell`.
+## Documentation
 
-It is recommended that Python dependencies be added to
-`pyproject.toml` with the command `uv add --no-sync package` and that
-the environment subsequently be updated with `pixi update`.
-
-## Project diary
-
-The command `nbis-admin add diary` will add a documentation directory
-with a `diary` subfolder for keeping track of project notes. Likewise,
-`nbis-admin add running-slides` adds a `Revealjs` template.
-
-## Publication branch
-
-Upon publication the code base should be cleaned up and any
-documentation removed. This can easiest be achieved by generating an
-orphan branch (e.g., `git switch --orphan publication`) and
-cherry-picking relevant code from `main`.
-
-## Project organization
-
-<!-- markdownlint-disable -->
-
-```text
-{{ '%-40s%s' | format(project_directory + "/", "<- top-level project folder") }}
-|
-├── README.md
-├── pyproject.toml
-├── setup.cfg
-└── src                                 <- source code
-    └── {{ '%-32s%s' | format(project_name, "<- python module code") }}
-        └── commands                    <- python module commands
-```
-
-<!-- markdownlint-enable -->
+- Project documentation: `docs/`
+- Contributing / development setup: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Codebase overview: [`docs/architecture.md`](docs/architecture.md)

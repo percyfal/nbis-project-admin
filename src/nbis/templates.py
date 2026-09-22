@@ -69,7 +69,6 @@ def multi_add(pdir, *, subdir=None, files=None, **kwargs):
     if not pdir.exists():
         pdir.mkdir(exist_ok=True, parents=True)
     for f in files:
-        print(pdir, f, subdir)
         tpl = Path(subdir) / f if subdir else f
         add_template(pdir / f, f"{tpl}.j2", **kwargs)
 

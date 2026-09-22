@@ -91,17 +91,18 @@ def main(
     if not pdir.exists():
         pdir.mkdir()
 
-    setup = pdir / "setup.cfg"
-    setup.touch()
     templates.multi_add(
         pdir,
         files=[
             "README.md",
+            "CONTRIBUTING.md",
             "pyproject.toml",
             ".gitignore",
             ".pre-commit-config.yaml",
             ".markdownlint.yaml",
             ".pylintrc",
+            "docs/architecture.md",
+            "docs/_quarto.yml",
         ],
         **data,
     )

@@ -1,0 +1,44 @@
+# Contributing to {{ project_name }}
+
+This repo was initialized with nbis-admin version {{ version }}.
+
+## Development setup
+
+The repo must be under source control:
+
+    git init
+    git add -f .
+    git commit -m "Initial commit"
+
+Set up the environment with pixi:
+
+    pixi init
+    pixi shell
+
+## Managing dependencies
+
+Add Python dependencies to `pyproject.toml`:
+
+    pixi add --pypi <package>       # for PyPI packages
+    pixi add <package>              # for conda-forge packages
+
+Prefer conda-forge when the package is available there; fall back to
+PyPI otherwise.
+
+## Extending the project
+
+- `nbis-admin add diary` — adds `docs/diary/` for project notes
+- `nbis-admin add running-slides` — adds a RevealJS slide template
+- `nbis-admin add tool <name>` — scaffold a new CLI tool
+- `nbis-admin smk add <name>` — add a Snakemake workflow
+
+See `nbis-admin --help` for the full list.
+
+## Publication
+
+Before publication, clean up the codebase and remove development
+documentation. The easiest approach:
+
+    git switch --orphan publication
+
+Then cherry-pick the relevant code from `main`.

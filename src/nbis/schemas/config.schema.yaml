@@ -46,7 +46,7 @@ properties:
   bibliography:
     description: Bibliography file
     type: string
-    default: references/bibliography.bib
+    default: docs/references/bibliography.bib
   snakemake_profiles:
     description: |
       Key-value dictionary of snakemake profiles. The values

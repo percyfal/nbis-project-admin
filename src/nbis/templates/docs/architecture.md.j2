@@ -1,0 +1,76 @@
+# Architecture
+
+`{{ project_name }}` combines a Python CLI with Snakemake workflows
+and Quarto documentation. This document maps each directory to its
+purpose so you can navigate the codebase without guessing. Note that
+some directories are optional and may be added by specific templates
+after project initialisation.
+
+## Repository root
+
+Top-level files that configure the project as a whole.
+
+- `README.md` -- Project overview and quick-start install instructions
+  for end users.
+- `CONTRIBUTING.md` -- Developer setup, dependency management, and
+  guidance on extending the project with `nbis-admin`.
+- `pyproject.toml` -- Python package metadata, dependencies (managed
+  via `pixi`), and CLI entry points.
+- `pixi.lock` -- Locked, cross-platform environment specification.
+  Commit this; do not edit by hand.
+- `{{ project_name }}.yaml` -- Project-specific configuration read by
+  the `{{ project_name }}` CLI at runtime. Edit this to change
+  project-level settings such as Snakemake profiles and documentation
+  configuration.
+- `.gitignore`, `.pre-commit-config.yaml`, `.markdownlint.yaml`,
+  `.editorconfig`, `.prettierrc.yml` — Tooling configuration for
+  version control, code style, and formatting.
+
+## `data`
+
+Project data, organised freely. Some recommendations:
+
+- `data/external` -- for external data sources such as annotation files and sequence references
+- `data/interim` -- for transient data
+
+## `docs`
+
+Project documentation files in markdown (`.md`) or Quarto (`.qmd`)
+format.
+
+- `docs/diary` -- diary in HTML format
+- `docs/running_slides` -- running slides in Revealjs format
+- `docs/assets` -- document assets
+
+## `results`
+
+Main project results. Free organization.
+
+## `src/{{ python_module }}`
+
+Main entry point for Python source code that operates the CLI and
+subcommands. The subcommands live in `commands` and can be listed by
+typing:
+
+    {{ project_name }}
+
+The `smk` subcommand is defined in `commands/smk.py` and provides
+wrappers to access individual workflows (see next section):
+
+    {{ project_name }} smk main
+
+This command runs workflow `main` defined in
+`src/{{ python_module }}/workflows/smk/main.smk`
+
+## `src/{{ python_module }}/workflows/smk`
+
+Snakemake workflow files, organised following best practices.
+
+## Workflow-related directories
+
+- `.snakemake` -- Snakemake run history and cluster logs
+- `benchmarks` -- Snakemake benchmarks
+- `config` -- Snakemake and Nextflow configuration files.
+- `logs` -- Snakemake logs
+- `notebooks` -- Notebooks (e.g., Jupyter) for one-shot analyses.
+- `resources` -- sample sheets and sample set definition files.
