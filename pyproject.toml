@@ -135,6 +135,11 @@ commands = [
   ],
   [
     "nbis-admin",
+    "config",
+    "example",
+  ],
+  [
+    "nbis-admin",
     "add",
     "template",
     "-t",

@@ -98,7 +98,7 @@ Initialize configuration files for Snakemake analyses.
 Creates:
 
 - `src/{module}/smk/config.py`
-- `src/{module}/config/local/config.yaml`
+- `src/{module}/config/smk/profiles/local/config.yaml`
 - `src/{module}/config/config.yaml`
 - `src/{module}/workflow/smk/schemas/config.schema.yaml`
 - `src/{module}/workflow/smk/schemas/samples.schema.yaml`

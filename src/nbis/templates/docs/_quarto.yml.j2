@@ -1,4 +1,7 @@
+# -*- yaml -*-
 project:
+  type: website
+  output-dir: _site
   render:
     - diary/index.qmd
   resources:
@@ -15,8 +18,9 @@ from: markdown+emoji
 {% endif -%}
 
 format:
-  revealjs:
+  nbis-quarto-revealjs:
     theme:
+      - default
       - {{ assets|default('assets') }}/css/nbis.scss
     date: last-modified
     date-format: "DD-MMM-YYYY"
@@ -37,16 +41,11 @@ format:
     margin: 0.1
     navigation-mode: vertical
     reference-location: margin
-    template-partials:
-      - {{ assets|default('assets') }}/static/title-slide.html
-    title-slide-attributes:
-      data-background-image: "{{ assets|default('assets') }}/logos/nbis-scilifelab.svg"
-      data-background-size: 500px
-      data-background-position: top left
+    ultitle: true
 
-  html:
+  nbis-course-html:
     theme:
-      - {{ assets|default('assets') }}/css/nbis.scss
+      - default
     date: last-modified
     date-format: "DD-MMM-YYYY"
     toc: true
@@ -54,6 +53,8 @@ format:
     code-line-numbers: false
     lightbox:
       match: auto
+    mermaid:
+      theme: neutral
   confluence-html:
     theme:
       - {{ assets|default('assets') }}/css/nbis.scss
@@ -72,13 +73,27 @@ execute:
   autodep: true
   eval: true
   error: true
-opts:
-  knitr:
+
+knitr:
+  opts_chunk:
     code-fold: true
     tidy: true
     fig-format: svg
+    comment-char: "#>"
+    engine.opts:
+      dvisvgm.opts: --font-format=woff
+      template: assets/www/tikzfig.tex
+
 # Install extensions:
 # quarto add quarto-ext/fontawesome
+# quarto add percyfal/nbis-quarto-revealjs
+# quarto add percyfal/nbis-course-quarto
 # and uncomment
+#revealjsplugins:
+#  - nbishome
 #filters:
 #  - fontawesome
+#  - nbis-course
+#  - assets/detailed-cite.lua
+#extensions:
+#  - nbis-quarto

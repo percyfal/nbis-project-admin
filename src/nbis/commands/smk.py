@@ -179,8 +179,8 @@ def add_samples_tsv(env):
 
 def add_local_profile(env):
     """Add local snakemake profile"""
-    localprofile = env.home / "config" / "local" / "config.yaml"
-    add_template(localprofile, "config/local/profile.yaml.j2")
+    localprofile = env.home / "config" / ENGINE / "profiles" / "local" / "config.yaml"
+    add_template(localprofile, f"config/{ENGINE}/profiles/local/profile.yaml.j2")
 
 
 def add_config_py(env):
