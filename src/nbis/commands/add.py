@@ -36,6 +36,7 @@ def _add_doc_and_assets(outdir, ext, template_name="running-slides", **kw):
         css.mkdir()
         logos.mkdir()
     templates.add_template(path, f"docs/{template_name}.{ext}.j2", **kw)
+    templates.add_template(path, assets / "detailed-cite.lua.j2")
     templates.add_template(
         static / "title-slide.html", "docs/assets/static/title-slide.html"
     )

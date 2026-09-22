@@ -5,7 +5,7 @@ from nbis.cli import cli
 expected_init = [
     "project_foo/pyproject.toml",
     "project_foo/src/nbis-admin/smk/config.py",
-    "project_foo/config/local/config.yaml",
+    "project_foo/config/smk/profiles/local/config.yaml",
     "project_foo/config/config.yaml",
     "project_foo/src/nbis-admin/workflow/smk/schemas/config.schema.yaml",
     "project_foo/src/nbis-admin/workflow/smk/schemas/samples.schema.yaml",
