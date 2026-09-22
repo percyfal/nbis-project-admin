@@ -28,15 +28,17 @@ def _add_doc_and_assets(outdir, ext, template_name="running-slides", **kw):
     path = outdir / f"index.{ext}"
     static = assets / "static"
     css = assets / "css"
-    logos = assets / "logos"
+    logos = assets / "images" / "logos"
     filters = assets / "filters"
-    if not outdir.exists():
-        outdir.mkdir(parents=True)
-    if not static.exists():
-        static.mkdir(parents=True)
-    if not css.exists():
-        css.mkdir(parents=True)
-        logos.mkdir()
+    render_templates = assets / "templates"
+
+    outdir.mkdir(exist_ok=True, parents=True)
+    static.mkdir(exist_ok=True, parents=True)
+    css.mkdir(exist_ok=True, parents=True)
+    logos.mkdir(exist_ok=True, parents=True)
+    filters.mkdir(exist_ok=True, parents=True)
+    render_templates.mkdir(exist_ok=True, parents=True)
+
     templates.add_template(path, f"docs/{template_name}.{ext}.j2", **kw)
     templates.add_template(
         filters / "detailed-cite.lua", "docs/assets/filters/detailed-cite.lua"
@@ -44,9 +46,8 @@ def _add_doc_and_assets(outdir, ext, template_name="running-slides", **kw):
     templates.add_template(
         static / "title-slide.html", "docs/assets/static/title-slide.html"
     )
-    templates.add_template(static / "tikzfig.tex", "docs/assets/static/tikzfig.tex")
     templates.add_template(
-        logos / "nbis-scilifelab.svg", "docs/assets/logos/nbis-scilifelab.svg"
+        render_templates / "tikzfig.tex", "docs/assets/templates/tikzfig.tex"
     )
     templates.add_template(css / "nbis.scss", "docs/assets/css/nbis.scss")
 

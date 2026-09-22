@@ -10,7 +10,7 @@ project:
 author: "{{ author }}"
 institute: NBIS
 {% if bibliography -%}
-  bibliography: {{ bibliography|default('assets/bibliography.bib') }}
+  bibliography: {{ bibliography|default('references/bibliography.bib') }}
 {% endif %}
 from: markdown+emoji
 {% if csl -%}
@@ -82,7 +82,7 @@ knitr:
     comment-char: "#>"
     engine.opts:
       dvisvgm.opts: --font-format=woff
-      template: assets/www/tikzfig.tex
+      template: assets/templates/tikzfig.tex
 
 # Install extensions:
 # quarto add quarto-ext/fontawesome
