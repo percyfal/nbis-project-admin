@@ -13,7 +13,7 @@ from {{ project_name }}.core.snakemake import jobs_option, no_profile_option, pr
 {% if test -%}
   from {{ project_name }}.core.snakemake import test_option
 {% endif -%}
-from {{ project_name }}.snakemake import config
+from {{ project_name }}.smk import config
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 

@@ -97,11 +97,11 @@ Initialize configuration files for Snakemake analyses.
 
 Creates:
 
-- `src/{module}/snakemake/config.py`
+- `src/{module}/smk/config.py`
 - `src/{module}/config/local/config.yaml`
 - `src/{module}/config/config.yaml`
-- `src/{module}/workflow/schemas/config.schema.yaml`
-- `src/{module}/workflow/schemas/samples.schema.yaml`
+- `src/{module}/workflow/smk/schemas/config.schema.yaml`
+- `src/{module}/workflow/smk/schemas/samples.schema.yaml`
 - `resources/samples.tsv`
 
 ## Template: `smk add`
@@ -111,4 +111,4 @@ Add Snakefile and Python helper code.
 Creates:
 
 - `src/{module}/commands/{command}.py`
-- `src/{module}/workflow/snakemake/commands/{command}.smk`
+- `src/{module}/workflow/smk/commands/{command}.smk`

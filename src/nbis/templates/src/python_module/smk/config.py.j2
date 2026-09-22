@@ -6,14 +6,15 @@ from {{ project_name }}.cli import PKG_DIR
 from {{ project_name }}.config import Schema
 
 WORKFLOW_ROOT = PKG_DIR / "workflow"
-SNAKEMAKE_ROOT = WORKFLOW_ROOT / "snakemake"
+SNAKEMAKE_ENGINE = "smk"
+SNAKEMAKE_ROOT = WORKFLOW_ROOT / SNAKEMAKE_ENGINE
 
 
 class SchemaFiles:  # pylint: disable=too-few-public-methods
     """SchemaFiles class"""
 
-    CONFIGURATION_SCHEMA = WORKFLOW_ROOT / "schemas" / "config.schema.yaml"
-    SAMPLES_SCHEMA = WORKFLOW_ROOT / "schemas" / "samples.schema.yaml"
+    CONFIGURATION_SCHEMA = SNAKEMAKE_ROOT / "schemas" / "config.schema.yaml"
+    SAMPLES_SCHEMA = SNAKEMAKE_ROOT / "schemas" / "samples.schema.yaml"
 
 
 def get_schema(schema="CONFIGURATION_SCHEMA"):
