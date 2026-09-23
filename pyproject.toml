@@ -152,6 +152,11 @@ commands = [
     "my_tool",
   ],
   [
+    "nbis-admin",
+    "add",
+    "quarto",
+  ],
+  [
     "touch",
     "src/project_foo/tools/__init__.py",
   ],
@@ -200,6 +205,11 @@ commands = [
     "nbis-admin",
     "add",
     "diary",
+  ],
+  [
+    "project_foo",
+    "quarto",
+    "--help",
   ],
 ]
 

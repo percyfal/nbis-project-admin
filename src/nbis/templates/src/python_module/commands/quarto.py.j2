@@ -1,0 +1,78 @@
+"""Render Quarto project."""
+
+import contextlib
+import logging
+import os
+import shutil
+import subprocess
+
+import click
+
+from {{ project_name }}.cli import pass_environment
+from {{ project_name }}.core import wrappers
+from {{ project_name }}.core.snakemake import jobs_option, no_profile_option, profile_option
+from {{ project_name }}.smk import config
+
+__shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
+
+logger = logging.getLogger(__name__)
+
+
+@contextlib.contextmanager
+def cd(path):
+    """Context manager for changing the current working directory."""
+    cwd = os.getcwd()
+    try:
+        os.chdir(path)
+        yield
+    finally:
+        os.chdir(cwd)
+
+
+@click.group(help=__doc__, name=__shortname__)
+@pass_environment
+def main(env):
+    """Main CLI entry point for rendering Quarto documentation."""
+    logger.debug("Running %s", __shortname__)
+    logger.debug("Project home: %s", env.home)
+
+
+@main.command()
+@click.argument("quarto_args", nargs=-1, type=click.UNPROCESSED)
+@click.option(
+    "--workdir", type=click.Path(exists=True), help="Working directory", default="docs"
+)
+@click.option("--port", type=int, help="Port for preview", default=33343)
+@pass_environment
+def preview(env, quarto_args, workdir, port):
+    """Preview Quarto project."""
+    options = " ".join(quarto_args)
+    if "QUARTO_IMAGE" not in os.environ and "QUARTO_IMAGE" in env.dotenv:
+        os.environ["QUARTO_IMAGE"] = env.dotenv["QUARTO_IMAGE"]
+    if shutil.which("quarto") is None:
+        cmd = [
+            "apptainer",
+            "exec",
+            "--home",
+            os.path.abspath(env.home),
+            os.environ["QUARTO_IMAGE"],
+            "bash",
+            "-c",
+            f"'set -euo pipefail; quarto preview {options} --no-browser --port {port}'",
+        ]
+    else:
+        cmd = [
+            "quarto",
+            "preview",
+            "--no-browser",
+            "--port",
+            str(port),
+        ]
+    with cd(workdir):
+        logger.info("Running %s", " ".join(cmd))
+        logger.info("Preview running at http://localhost:%d", port)
+        logger.info("To stop the preview, press Ctrl+C")
+        logger.info("")
+        logger.info("For port forwarding to client localhost, on client run:")
+        logger.info("ssh -L %d:localhost:%d %s -N -f", port, port, env.hostname)
+        subprocess.run(" ".join(cmd), check=True, shell=True)
