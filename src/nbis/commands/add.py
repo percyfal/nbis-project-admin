@@ -17,6 +17,8 @@ from nbis import templates
 from nbis.cli import pass_environment
 from nbis.config import Config
 
+from .smk import add_config_py as add_smk_config_py
+
 logger = logging.getLogger(__name__)
 
 
@@ -319,3 +321,22 @@ def pcommand(env, command, group, path, show, standalone):  # pylint: disable=to
             path.write_text(data, encoding="utf-8")
         else:
             logger.warning("Command %s already defined in %s; skipping", command, path)
+
+
+@main.command(name="quarto")
+@pass_environment
+def quarto(env, **kw) -> None:
+    """Render Quarto command file
+
+    Add Quarto subcommand for rendering Quarto project documentation
+    in docs/.
+    """
+    tpl = "src/python_module/commands/quarto.py.j2"
+    path = env.home / "src" / env.config.project_name / "commands" / "quarto.py"
+    kw["project_name"] = env.config.project_name
+    t = templates.render_template(tpl, **kw)
+    add_smk_config_py(env)
+    if not path.exists():
+        path.write_text(t, encoding="utf-8")
+    else:
+        logger.warning("Quarto command %s exists; skipping", path)
