@@ -137,3 +137,6 @@ tox = "*"
 [tool.pixi.feature.dev.tasks]
 lint = "pre-commit run --all-files"
 lint-install = "pre-commit install --install-hooks -t=pre-commit -t=push"
+
+[tool.pixi.pypi-dependencies]
+{{ project_name }} = { path = ".", editable = true }
