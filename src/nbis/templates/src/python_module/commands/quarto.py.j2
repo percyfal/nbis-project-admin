@@ -9,9 +9,6 @@ import subprocess
 import click
 
 from {{ project_name }}.cli import pass_environment
-from {{ project_name }}.core import wrappers
-from {{ project_name }}.core.snakemake import jobs_option, no_profile_option, profile_option
-from {{ project_name }}.smk import config
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 

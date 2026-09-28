@@ -21,11 +21,7 @@ __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 logger = logging.getLogger(__name__)
 
 
-@click.group(
-    help=__doc__,
-    name=__shortname__,
-    invoke_without_command=True
-)
+@click.group(help=__doc__, name=__shortname__, invoke_without_command=True)
 @click.pass_context
 @pass_environment
 def cli(env, ctx):
