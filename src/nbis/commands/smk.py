@@ -7,14 +7,14 @@ To enable, first run the command
 
 Thereafter, snakemake commands or command groups can be added as
 
-    PROJECT_NAME admin smk add --group smk --command run
+    PROJECT_NAME admin smk add analysis --command run
 
-which will add a snakefile
-src/{module}/workflows/smk/commands/smk-run.smk and a CLI command file
-src/PROJECT_NAME/commands/smk.py. Once installed, the snakemake file
+which will add a Snakefile
+src/{module}/workflows/smk/commands/analysis/run.smk and a CLI command file
+src/PROJECT_NAME/commands/smk/analysis.py. Once installed, the snakemake file
 can be run as
 
-    PROJECT_NAME smk run
+    PROJECT_NAME smk analysis run
 
 Edit the CLI command file to add specific settings for a given
 command. For instance, one may want to set a default directory in
@@ -47,12 +47,26 @@ logger = logging.getLogger(__name__)
 ENGINE = "smk"
 
 
-def add_group_smk_py(env, group, **kw):
+def add_group_smk_py_init(env):
     """Add snakemake python command group file"""
-    pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
+    pyfile = (
+        env.home / "src" / env.config.project_name / "commands" / "smk" / "__init__.py"
+    )
     add_template(
         pyfile,
-        "src/python_module/commands/group.smk.py.j2",
+        "src/python_module/commands/smk/__init__.py.j2",
+        project_name=env.config.project_name,
+    )
+
+
+def add_group_smk_py(env, group, **kw):
+    """Add snakemake python command group file"""
+    pyfile = (
+        env.home / "src" / env.config.project_name / "commands" / "smk" / f"{group}.py"
+    )
+    add_template(
+        pyfile,
+        "src/python_module/commands/smk/group.py.j2",
         project_name=env.config.project_name,
         command=group,
         test=kw["test"],
@@ -61,7 +75,9 @@ def add_group_smk_py(env, group, **kw):
 
 def add_command_smk_py(env, group, **kw):
     """Add snakemake python command file"""
-    pyfile = env.home / "src" / env.config.project_name / "commands" / f"{group}.py"
+    pyfile = (
+        env.home / "src" / env.config.project_name / "commands" / "smk" / f"{group}.py"
+    )
     if f"def {kw['command']}(" in pyfile.read_text():
         logger.warning("%s already defined; skipping", kw["command"])
         return
@@ -69,7 +85,7 @@ def add_command_smk_py(env, group, **kw):
     command = "quarto" if kw["quarto"] else "command"
     with open(pyfile, "a", encoding="utf-8") as fh:
         fh.write(
-            render_template(f"src/python_module/commands/{command}.smk.py.j2", **kw)
+            render_template(f"src/python_module/commands/smk/{command}.py.j2", **kw)
         )
         fh.write("\n")
 
@@ -83,9 +99,10 @@ def add_command_smk(env, group, command, **kw):
         / "workflow"
         / ENGINE
         / "commands"
-        / f"{group}-{command}.smk"
+        / group
+        / f"{command}.smk"
     )
-    command_template = "quarto" if kw["quarto"] else "command"
+    command_template = "quarto.command" if kw["quarto"] else "command"
     add_template(
         smkfile,
         f"src/python_module/workflow/{ENGINE}/commands/{command_template}.smk.j2",
@@ -106,7 +123,8 @@ def add_test_config(env, group, command):
         / "workflow"
         / ENGINE
         / "commands"
-        / f"test-{group}-{command}-config.smk"
+        / group
+        / f"test-{command}-config.smk"
     )
     add_template(
         smkfile,
@@ -123,7 +141,8 @@ def add_test_smk_setup(env, group, command):
         / "workflow"
         / ENGINE
         / "commands"
-        / f"test-{group}-{command}-setup.smk"
+        / group
+        / f"test-{command}-setup.smk"
     )
     add_template(
         smkfile,
@@ -200,6 +219,7 @@ def main():
 
 
 @main.command()
+@click.argument("group", required=True, type=str)
 @click.option(
     "test",
     "--add-test",
@@ -221,7 +241,6 @@ def main():
     is_flag=True,
     help=("Add local snakemake profile"),
 )
-@click.option("group", "--group", default=ENGINE, help="snakemake command group name")
 @click.option("command", "--command", default="run", help="snakemake command to add")
 @click.option(
     "quarto",
@@ -248,6 +267,7 @@ def add(ctx, group, **kw):
         return
     if kw["quarto"]:
         kw["command"] = "quarto"
+    add_group_smk_py_init(env)
     add_group_smk_py(env, group, **kw)
     add_command_smk_py(env, group, **kw)
     command = kw.pop("command")

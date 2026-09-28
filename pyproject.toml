@@ -169,11 +169,7 @@ commands = [
     "nbis-admin",
     "smk",
     "add",
-  ],
-  [
-    "nbis-admin",
-    "smk",
-    "add",
+    "main",
   ],
   [
     "git",
@@ -192,6 +188,7 @@ commands = [
   [
     "project_foo",
     "smk",
+    "main",
     "run",
     "--no-profile",
     "--cores",

@@ -31,13 +31,13 @@ def cd(path):
 
 @click.group(help=__doc__, name=__shortname__)
 @pass_environment
-def main(env):
+def cli(env):
     """Main CLI entry point for rendering Quarto documentation."""
     logger.debug("Running %s", __shortname__)
     logger.debug("Project home: %s", env.home)
 
 
-@main.command()
+@cli.command()
 @click.argument("quarto_args", nargs=-1, type=click.UNPROCESSED)
 @click.option(
     "--workdir", type=click.Path(exists=True), help="Working directory", default="docs"
