@@ -106,21 +106,6 @@ commands = [
     "-f",
     ".",
   ],
-  # [
-  #   "uv",
-  #   "pip",
-  #   "install",
-  #   "-e",
-  #   ".",
-  #   "--no-deps",
-  # ],
-  # [
-  #   "uv",
-  #   "pip",
-  #   "install",
-  #   "snakemake",
-  #   "pandas",
-  # ],
   [
     "pixi",
     "run",
