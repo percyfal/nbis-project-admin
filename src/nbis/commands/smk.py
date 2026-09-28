@@ -83,11 +83,12 @@ def add_command_smk_py(env, group, **kw):
         return
     kw["group"] = group
     command = "quarto" if kw["quarto"] else "command"
+
     with open(pyfile, "a", encoding="utf-8") as fh:
+        fh.write("\n")
         fh.write(
             render_template(f"src/python_module/commands/smk/{command}.py.j2", **kw)
         )
-        fh.write("\n")
 
 
 def add_command_smk(env, group, command, **kw):

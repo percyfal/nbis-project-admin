@@ -1,16 +1,14 @@
 """Main entry point for Snakemake workflows."""
 
-import logging
-import os
-import pathlib
 import importlib
+import logging
+import pathlib
 
 import click
 
+from {{ project_name }} import __version__
 from {{ project_name }}.core import options
 from {{ project_name }}.env import Environment
-
-from {{ project_name }} import __version__
 
 {% if author -%}
   __author__ = "{{ author }}"
@@ -22,6 +20,7 @@ CONTEXT_SETTINGS = {"auto_envvar_prefix": "{{ project_name.upper() }}", "show_de
 
 pass_environment = click.make_pass_decorator(Environment, ensure=True)
 
+
 class SnakemakeCli(click.Group):
     """Custom click group for Snakemake commands."""
 
@@ -32,8 +31,9 @@ class SnakemakeCli(click.Group):
 
     def list_commands(self, ctx):
         return sorted(
-          f.stem for f in self._cmd_folder.iterdir()
-          if f.suffix == ".py" and not f.name.startswith("_")
+            f.stem
+            for f in self._cmd_folder.iterdir()
+            if f.suffix == ".py" and not f.name.startswith("_")
         )
 
     def get_command(self, ctx, cmd_name):

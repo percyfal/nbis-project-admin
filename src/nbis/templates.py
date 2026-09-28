@@ -3,21 +3,17 @@
 import logging
 from pathlib import Path
 
-try:
-    import pkg_resources
-except ImportError:
-    from importlib import resources as pkg_resources
-from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+from jinja2 import Environment, PackageLoader, TemplateNotFound
 
 logger = logging.getLogger(__name__)
 
-try:
-    template_path = pkg_resources.resource_filename("nbis", "templates")
-except AttributeError:
-    template_path = pkg_resources.files("nbis") / "templates"
-
-file_loader = FileSystemLoader(template_path)
-env = Environment(loader=file_loader)
+_loader = PackageLoader("nbis", "templates")
+env = Environment(
+    loader=_loader,
+    keep_trailing_newline=True,
+    trim_blocks=False,
+    lstrip_blocks=False,
+)
 
 INDIVIDUAL_TEMPLATES = {
     "pyproject.toml": "pyproject.toml.j2",
@@ -34,35 +30,35 @@ INDIVIDUAL_TEMPLATES = {
 
 def add_template(filename, template, **kwargs):
     """Generic function to render template to filename"""
-    logger.info("Installing %s", filename)
+    logger.info("Installing %s to %s", template, filename)
     if filename.exists():
         logger.warning("%s already exists; skipping", filename)
         return
-
     filename.parent.mkdir(exist_ok=True, parents=True)
 
     try:
         if template.endswith(".j2"):
             content = env.get_template(template).render(**kwargs)
         else:
-            content, _, _ = env.loader.get_source(env, template)
+            content, _, _ = _loader.get_source(env, template)
     except TemplateNotFound:
         logger.error("Template not found: %s", template)
         raise
 
-    if not content.endswith("\n"):
-        content += "\n"
+    content = content.rstrip() + "\n"
     filename.write_text(content, encoding="utf-8")
 
 
 def render_template(template, **kw):
     """Generic function to render template"""
     template = env.get_template(template)
-    return template.render(**kw)
+    return template.render(**kw).rstrip() + "\n"
 
 
 def multi_add(pdir, *, subdir=None, files=None, **kwargs):
     """Add multiple templates to directory"""
+    if files is None:
+        raise ValueError("files must be provided")
     if subdir is not None:
         pdir = pdir / subdir
     logger.info("Adding %s to %s", files, pdir)

@@ -8,33 +8,25 @@ keywords = ["bioinformatics"]
     license: {text = "{{ open_source_license }}"}
 {% endif -%}
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Environment :: Console",
-    "Intended Audience :: Science/Research",
-    "Natural Language :: English",
-    "Programming Language :: Python :: 3",
-    "Topic :: Scientific/Engineering :: Bio-Informatics"
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
-    'click>=8.0',
-    "pypandoc>=1.15",
-    "jinja2>=3.1.6",
-    "toml>=0.10.2",
-    "ruamel-yaml>=0.18.10",
-    "jsonschema>=4.23.0",
+  'click>=8.0',
+  "pypandoc>=1.15",
+  "jinja2>=3.1.6",
+  "toml>=0.10.2",
+  "ruamel-yaml>=0.18.10",
+  "jsonschema>=4.23.0",
 ]
 dynamic = ["version"]
 
 [dependency-groups]
-dev = [
-    "pylint>=3.3.6",
-    "pyright>=1.1.398",
-    "pytest>=8.3.5",
-    "tox>=4.25.0",
-]
-lint = [
-     "pytest>=8.3.5",
-]
+dev = ["basedpyright>=1.40.1", "pytest>=8.3.5", "tox>=4.25.0"]
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
@@ -58,32 +50,21 @@ packages = ["src/{{ python_module }}"]
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra -q --doctest-modules"
-pythonpath = [
-    "src",
-]
-testpaths = [
-    "tests",
-]
-filterwarnings = [
-    "ignore::DeprecationWarning",
-]
+pythonpath = ["src"]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.basedpyright]
 venvPath = ".pixi/envs"
 venv = "dev"
+typeCheckingMode = "standard"
 
 [tool.tox]
 env_list = ["py311", "py312", "py313"]
 isolated_build = true
 
-
 [tool.tox.env.test]
-deps = [
-    "pytest",
-    "pytest-cov",
-    "pip>=22.1.0",
-    "wheel"
-]
+deps = ["pytest", "pytest-cov", "pip>=22.1.0", "wheel"]
 commands = [["pytest"]]
 
 
@@ -92,7 +73,7 @@ target-version = "py312"
 line-length = 88
 
 [tool.ruff.format]
-docstring-code-format=true
+docstring-code-format = true
 
 [tool.ruff.lint]
 select = [
@@ -116,7 +97,6 @@ platforms = ["linux-64"]
 [tool.pixi.environments]
 default = { solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }
-lint = { features = ["lint"], solve-group = "default" }
 quarto = { features = ["quarto"], solve-group = "default" }
 
 [tool.pixi.tasks]
@@ -145,29 +125,15 @@ cmd = """
   "$(git remote get-url webexport)/" ;
   """
 
-[tool.pixi.feature.lint.tasks]
-actionlint = { cmd = "actionlint", env = { SHELLCHECK_OPTS = "-e SC2086" } }
-lint = { cmd = "pre-commit run --all-files --hook-stage=manual", description = "Run all linters and formatters on all code" }
-pre-commit-install = "pre-commit install --install-hooks -t=pre-commit -t=pre-push"
-pre-commit-install-minimal = "pre-commit install -t=pre-commit"
-pre-commit-run = "pre-commit run --all-files"
-ruff-format = "ruff format --force-exclude"
-ruff-lint = "ruff check --fix --exit-non-zero-on-fix --force-exclude"
-shell-format = "shfmt --write --indent=4 --simplify --binary-next-line"
-toml-format = { cmd = "taplo fmt", env = { RUST_LOG = "warn" } }
-toml-lint = "taplo lint --verbose **/pyproject.toml"
-typecheck-python = "mypy"
-typos = "typos --write-changes --force-exclude"
-
 [tool.pixi.feature.quarto.tasks]
 qpreview = "recrate quarto preview"
 
-[tool.pixi.feature.lint.dependencies]
+[tool.pixi.feature.dev.dependencies]
+basedpyright = "*"
 pre-commit = "*"
-pre-commit-hooks = "*"
-ruff = "*"
-typos = "*"
-actionlint = "*"
-go-shfmt = "*"
-taplo = "*"
-pylint = ">=3.3.8,<4"
+pytest = "*"
+tox = "*"
+
+[tool.pixi.feature.dev.tasks]
+lint = "pre-commit run --all-files"
+lint-install = "pre-commit install --install-hooks -t=pre-commit -t=push"
