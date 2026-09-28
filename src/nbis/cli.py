@@ -22,7 +22,7 @@ pass_environment = click.make_pass_decorator(Environment, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
 
 
-class NbisCLI(click.MultiCommand):
+class NbisCLI(click.Group):
     """NBIS CLI multicommand"""
 
     module = "nbis.commands"

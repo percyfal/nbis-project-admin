@@ -17,5 +17,5 @@ logger = logging.getLogger(__name__)
 
 @click.group(help=__doc__, name=__shortname__)
 @click.pass_context
-def main(ctx):
+def cli(ctx):
     logger.info(f"Running {__shortname__} subcommand")

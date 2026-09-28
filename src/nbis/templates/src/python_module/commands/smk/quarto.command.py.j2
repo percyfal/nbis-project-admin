@@ -12,7 +12,7 @@ def {{ command }}(env, profile, no_profile, jobs, snakemake_args):
     options = list(snakemake_args) + jobs + profile
     if shutil.which("quarto") is None:
         options += ["--use-singularity"]
-    snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
+    snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}" / "{{ command }}.smk"
     options.extend(["--directory", str(env.home)])
     if "QUARTO_IMAGE" not in os.environ and "QUARTO_IMAGE" in env.dotenv:
         os.environ["QUARTO_IMAGE"] = env.dotenv["QUARTO_IMAGE"]

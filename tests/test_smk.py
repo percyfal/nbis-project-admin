@@ -15,8 +15,9 @@ expected_init = [
 
 expected_add = [
     "project_foo/pyproject.toml",
-    "project_foo/src/nbis-admin/workflow/smk/commands/smk-run.smk",
-    "project_foo/src/nbis-admin/commands/smk.py",
+    "project_foo/src/nbis-admin/workflow/smk/commands/analysis/run.smk",
+    "project_foo/src/nbis-admin/commands/smk/__init__.py",
+    "project_foo/src/nbis-admin/commands/smk/analysis.py",
 ]
 
 
@@ -36,7 +37,9 @@ def test_smk_add(runner, pyproject):
     config.parent.mkdir(parents=True)
     config.touch()
     result = runner.invoke(cli, ["smk", "add"])
+    assert result.exception
+    result = runner.invoke(cli, ["smk", "add", "analysis"])
+    assert not result.exception
     config.unlink()
     files = [str(p.relative_to(out.parent)) for p in out.rglob("*") if p.is_file()]
-    assert not result.exception
     assert sorted(files) == sorted(expected_add)

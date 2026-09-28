@@ -1,6 +1,6 @@
 
 
-@main.command(context_settings={"ignore_unknown_options": True}, help="{{ command }}")
+@cli.command(context_settings={"ignore_unknown_options": True}, help="{{ command }}")
 @profile_option(default="local")
 @no_profile_option()
 @jobs_option()
@@ -11,5 +11,5 @@
 def {{ command }}(profile, _no_profile, jobs{% if test %}, test{% endif %}, snakemake_args):
     """Command docstring"""
     smk_options = list(snakemake_args) + jobs + profile
-    snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}-{{ command }}.smk"
+    snakefile = config.SNAKEMAKE_ROOT / "commands" / "{{ group }}" / "{{ command }}.smk"
     wrappers.snakemake(options=" ".join(smk_options), snakefile=snakefile, targets="")
