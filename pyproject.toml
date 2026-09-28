@@ -67,7 +67,7 @@ deps = ["pytest", "pytest-cov", "pytest-shutil", "pytest-git"]
 commands = [["pytest", "--basetemp={env_tmp_dir}", "{posargs}"]]
 
 [tool.tox.env.project]
-allowlist_externals = ["git", "touch", "uv"]
+allowlist_externals = ["git", "touch", "uv", "pixi"]
 changedir = "{envtmpdir}/project_foo"
 set_env = { SKIP = "lint" }
 deps = [
@@ -97,6 +97,11 @@ commands = [
     "add",
     "-f",
     ".",
+  ],
+  [
+    "pixi",
+    "run",
+    "project_foo",
   ],
   [
     "uv",
