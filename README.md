@@ -53,7 +53,6 @@ This will install templates with the following structure:
     project_name/
     ├── README.md
     ├── pyproject.toml
-    ├── setup.cfg
     └── src
         └── project_name
             ├── __init__.py
@@ -63,12 +62,12 @@ This will install templates with the following structure:
                 └── admin.py
 
 To activate the CLI, cd to the project directory, add it to version
-control, and install in editable mode:
+control, and launch `pixi shell` to install in editable mode:
 
     cd project_name
     git init
     git add -f .
-    python -m pip install -e .
+    pixi shell
 
 Executing the command `project_name` will expose the available
 commands:
@@ -112,16 +111,18 @@ facilitate administration, there is a command to add CLI commands:
 ### Adding snakemake commands
 
 The following command will initialize support for snakemake commands
-(`smk` subcommand) and add a command called `run`:
+for a command group `analysis` accessible via the `smk` subcommand and
+add a command called `run`:
 
     project_name admin smk init
-    project_name admin smk add --command run
+    project_name admin smk add analysis --command run
 
-The `smk` subcommand provides wrappers to run template snakemake files
-that were installed above (`run` in this case). The help to
-`project_name smk run --help` is
+The `smk` subcommand provides access to installed subcommands which in
+turn provide wrappers to run template snakemake files that were
+installed above (`run` in this case). The help to `project_name smk
+analysis run --help` is
 
-    Usage: project_foo smk run [OPTIONS] [SNAKEMAKE_ARGS]...
+    Usage: project_foo smk analysis run [OPTIONS] [SNAKEMAKE_ARGS]...
 
       run help
 
@@ -132,6 +133,6 @@ that were installed above (`run` in this case). The help to
       -j, --jobs INTEGER  snakemake jobs  [default: 1]
       --help              Show this message and exit.
 
-Any additional options will be passed along to the snakemake workflow
-that resides in the directory `src/project_name/workflows/snakemake`,
+Any additional options will be passed along to the snakemake workflows
+that resides in the directory `src/project_name/workflows/smk`,
 relative to the project home.

@@ -123,6 +123,8 @@ quarto = { features = ["quarto"], solve-group = "default" }
 pc = "pixi run lint"
 preview = "pixi run qpreview"
 
+[tool.pixi.pypi-dependencies]
+{{ project_name }} = { path = ".", editable = true }
 
 [tool.pixi.tasks.sync-from-hpc]
 args = [{ "arg" = "opts", default = "" }]

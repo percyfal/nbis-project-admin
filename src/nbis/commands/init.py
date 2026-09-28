@@ -2,7 +2,7 @@
 
 Initialize a python project with a CLI in PROJECT_DIRECTORY.
 Initialization will add a bare minimum of files needed to setup a
-python project, including pyproject.toml, setup.cfg and src directory
+python project, including pyproject.toml and src directory
 containing module to run a CLI.
 
 To activate the CLI, after initialization the newly created project
@@ -12,7 +12,7 @@ must be put under version control and installed:
     cd PROJECT_DIRECTORY
     git init
     git add -f .
-    python -m pip install -e .
+    pixi shell
 
 The CLI can then be accessed through the PROJECT_NAME command, which
 by default is equal to the PROJECT_DIRECTORY name:

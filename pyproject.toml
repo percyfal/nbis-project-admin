@@ -75,7 +75,7 @@ deps = ["pytest", "pytest-cov", "pytest-shutil", "pytest-git"]
 commands = [["pytest", "--basetemp={env_tmp_dir}", "{posargs}"]]
 
 [tool.tox.env.project]
-allowlist_externals = ["git", "touch", "uv"]
+allowlist_externals = ["git", "touch", "uv", "pixi"]
 changedir = "{envtmpdir}/project_foo"
 set_env = { SKIP = "lint" }
 deps = [
@@ -106,25 +106,29 @@ commands = [
     "-f",
     ".",
   ],
+  # [
+  #   "uv",
+  #   "pip",
+  #   "install",
+  #   "-e",
+  #   ".",
+  #   "--no-deps",
+  # ],
+  # [
+  #   "uv",
+  #   "pip",
+  #   "install",
+  #   "snakemake",
+  #   "pandas",
+  # ],
   [
-    "uv",
-    "pip",
-    "install",
-    "-e",
-    ".",
-    "--no-deps",
-  ],
-  [
-    "uv",
-    "pip",
-    "install",
-    "snakemake",
-    "pandas",
-  ],
-  [
+    "pixi",
+    "run",
     "project_foo",
   ],
   [
+    "pixi",
+    "run",
     "project_foo",
     "--help",
   ],
@@ -179,13 +183,19 @@ commands = [
     "src/project_foo/tools/my_tool.py",
   ],
   [
+    "pixi",
+    "run",
     "project_foo",
   ],
   [
+    "pixi",
+    "run",
     "project_foo",
     "smk",
   ],
   [
+    "pixi",
+    "run",
     "project_foo",
     "smk",
     "main",
@@ -204,6 +214,8 @@ commands = [
     "diary",
   ],
   [
+    "pixi",
+    "run",
     "project_foo",
     "quarto",
     "--help",
