@@ -14,7 +14,7 @@ from collections import OrderedDict
 from typing import Any, Mapping
 
 import jsonschema
-from importlib import files, as_file
+from importlib.resources import files, as_file
 
 import ruamel.yaml
 from ruamel.yaml import YAML
@@ -88,9 +88,9 @@ class Schema:
         """Return a copy of the schema."""
         return copy.deepcopy(self._schema)
 
-    def asdict(self) -> Mapping[str, Any] | None:
-        """Return the schema as a dictionary."""
-        return self.schema
+    def asdict(self) -> Mapping[str, Any]:
+        """Return a shallow copy of the schema as a dictionary."""
+        return self._schema or {}
 
     def validate(self, row: Any) -> dict:
         """Validate a configuration row (dict) against this schema."""
@@ -110,8 +110,10 @@ class Schema:
 
         :rtype: dict
         """
+        from ruamel.yaml.comments import CommentedMap
+
         if comments:
-            properties = ruamel.yaml.comments.CommentedMap()
+            properties = CommentedMap()
         else:
             raise NotImplementedError
 
@@ -121,7 +123,9 @@ class Schema:
         except IndexError:
             pass
 
-        def update_properties(props, section, level):
+        def update_properties(
+            props: CommentedMap, section: Any, level: int
+        ) -> CommentedMap:
             if isinstance(section, str):
                 return None
             if not isinstance(section, dict):
@@ -162,18 +166,11 @@ class Schema:
 
 def get_schema(schema="CONFIGURATION_SCHEMA"):
     """Get schema from file."""
-    try:
-        schemafile = files(
-            "{{ python_module }}", str(getattr(SchemaFiles, schema))
-        )
-    except AttributeError:
-        schemafile = files("{{ python_module }}") / str(
-            getattr(SchemaFiles, schema)
-        )
+    schemafile = files("{{ python_module }}") / getattr(SchemaFiles, schema)
     with as_file(schemafile) as path:
         with open(path, encoding="utf-8") as fh:
-            schema = YAML().load(fh)
-    return Schema(schema)
+            data = YAML().load(fh)
+    return Schema(data)
 
 
 def load_config(file=None, data=None, schema="CONFIGURATION_SCHEMA", validate=True):
