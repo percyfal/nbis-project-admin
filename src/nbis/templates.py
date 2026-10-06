@@ -75,9 +75,6 @@ def init_py_module(pdir, *, module, submodule=None, files=None, init=True, **kwa
         module = Path(module) / submodule
     module_dir = pdir / "src" / module
     logger.info("Initializing %s in %s", module, pdir)
-    if module_dir.exists():
-        logger.info("%s exists; skipping", module)
-        return
     module_dir.mkdir(exist_ok=True, parents=True)
     if init:
         if files is None or "__init__.py" not in files:
