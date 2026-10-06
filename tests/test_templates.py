@@ -1,11 +1,8 @@
 """Test templates."""
 
 import os
+from importlib.resources import files
 
-try:
-    import pkg_resources
-except ImportError:
-    from importlib import resources as pkg_resources
 import pytest
 
 from nbis import wrappers
@@ -27,14 +24,12 @@ def test_running_slides_template(tmp_path):
             subtitle="Awesome stuff",
             author="John Doe",
             filename=fn,
-            css=[pkg_resources.resource_filename("nbis", "resources/nbis.css")],
+            css=[files("nbis") / "resources/nbis.css"],
             csl=(
                 "https://raw.githubusercontent.com/citation-style-language/"
                 "styles/master/apa.csl"
             ),
-            in_header=pkg_resources.resource_filename(
-                "nbis", "resources/nbisfooter.html"
-            ),
+            in_header=files("nbis") / "resources/nbisfooter.html",
             libraries=[],
         )
     )

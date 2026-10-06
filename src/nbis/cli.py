@@ -2,6 +2,7 @@
 
 import logging
 import os
+from importlib import import_module
 
 import click
 
@@ -19,7 +20,6 @@ logger = logging.getLogger(__name__)
 CONTEXT_SETTINGS = {"auto_envvar_prefix": "NBIS_ADMIN", "show_default": True}
 
 pass_environment = click.make_pass_decorator(Environment, ensure=True)
-cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "commands"))
 
 
 class NbisCLI(click.Group):
@@ -39,8 +39,17 @@ class NbisCLI(click.Group):
 
     def get_command(self, ctx, cmd_name):  # pylint: disable=unused-argument
         """Get requested command"""
-        mod = __import__(f"{self.module}.{cmd_name}", None, None, ["main"])
-        return mod.main
+        try:
+            mod = import_module(f"{self.module}.{cmd_name}")
+        except ImportError as e:
+            logger.warning("Could not import command %s: %s", cmd_name, e)
+            return None
+        if hasattr(mod, "cli"):
+            return getattr(mod, "cli")
+        if hasattr(mod, "main"):
+            return getattr(mod, "main")
+        logger.warning("No cli or main found in command %s", cmd_name)
+        return None
 
 
 @click.group(

@@ -2,16 +2,11 @@
 
 import logging
 import sys
+from importlib.resources import files
 
 import click
-
-try:
-    import pkg_resources
-except ImportError:
-    from importlib import resources as pkg_resources
 import toml
 
-import nbis
 from nbis.cli import pass_environment
 from nbis.config import Config, SchemaFiles, get_schema
 
@@ -75,15 +70,15 @@ def example(env, configuration):
         "profile": "SNAKEMAKE_PROFILE_SCHEMA",
     }
     kwargs = {}
-    schema = get_schema(conf_map[configuration])
-    try:
-        schemafile = pkg_resources.resource_filename(
-            "nbis", str(getattr(SchemaFiles, conf_map[configuration]))
-        )
-    except AttributeError:
-        schemafile = pkg_resources.files(nbis) / "schemas" / conf_map[configuration]
+    schema_key = conf_map[configuration]
+    schema_obj = get_schema(schema_key)
+    schemafile = files("nbis") / getattr(SchemaFiles, schema_key)
 
-    required = schema.schema.get("required", None)
+    required = (
+        schema_obj.schema.get("required", None)
+        if schema_obj.schema is not None
+        else None
+    )
     if configuration == "main":
         kwargs = {"project_name": env.home.name}
 
@@ -94,5 +89,5 @@ def example(env, configuration):
         print(f"# Required fields: {','.join(required)}\n#")
     print()
 
-    Config.from_schema(schema, file=sys.stdout, example=True, **kwargs)
+    Config.from_schema(schema_obj, file=sys.stdout, example=True, **kwargs)
     print()
