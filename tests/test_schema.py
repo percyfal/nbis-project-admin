@@ -2,13 +2,8 @@
 
 import io
 import sys
+from importlib.resources import files
 
-import jsonschema
-
-try:
-    import pkg_resources
-except ImportError:
-    from importlib import resources as pkg_resources
 import pytest
 from ruamel.yaml import YAML
 
@@ -60,10 +55,7 @@ webexport:
 @pytest.fixture(scope="session", name="pkg_schemafile")
 def fpkg_schemafile():
     """Pkg schemafile fixture"""
-    try:
-        return pkg_resources.resource_filename("nbis", SchemaFiles.CONFIGURATION_SCHEMA)
-    except AttributeError:
-        return pkg_resources.files("nbis") / SchemaFiles.CONFIGURATION_SCHEMA
+    return files("nbis") / SchemaFiles.CONFIGURATION_SCHEMA.value
 
 
 @pytest.fixture(scope="session", name="pkg_schema")
@@ -114,5 +106,7 @@ def test_schema(tmp_path, schema):
 def test_validation_error(schema):
     """Test validation error."""
     cfg = Config.from_schema(schema, project_name=123)
-    with pytest.raises(jsonschema.exceptions.ValidationError):
+    from jsonschema.exceptions import ValidationError
+
+    with pytest.raises(ValidationError):
         schema.validate(cfg)

@@ -9,15 +9,12 @@ import logging
 import pprint
 import types
 from collections import OrderedDict
+from enum import StrEnum
+from importlib.resources import as_file, files
 from typing import Any, Mapping
 
-import jsonschema
-
-try:
-    import pkg_resources
-except ImportError:
-    from importlib import resources as pkg_resources
-import ruamel.yaml
+from jsonschema import validators
+from jsonschema.exceptions import SchemaError
 from ruamel.yaml import YAML
 
 logger = logging.getLogger(__name__)
@@ -27,7 +24,7 @@ class ConfigError(Exception):
     """Base class for exceptions in this module."""
 
 
-class SchemaFiles:  # pylint: disable=too-few-public-methods
+class SchemaFiles(StrEnum):
     """Class for storing schema file names."""
 
     CONFIGURATION_SCHEMA = "schemas/config.schema.yaml"
@@ -36,9 +33,7 @@ class SchemaFiles:  # pylint: disable=too-few-public-methods
 
 # Need jsonschema>=4 for Draft202012Validator, but jupyter-book
 # depends on jsonschema<4
-DefaultSchemaValidator = jsonschema.validators.extend(
-    jsonschema.validators.Draft7Validator
-)
+DefaultSchemaValidator = validators.extend(validators.Draft7Validator)
 
 
 # Allow null schema; from tskit.metadata
@@ -68,7 +63,7 @@ class Schema:
         else:
             try:
                 DefaultSchemaValidator(schema)
-            except jsonschema.exceptions.SchemaError as ve:
+            except SchemaError as ve:
                 logger.error(ve)
                 raise
             self._string = json.dumps(schema, sort_keys=True, separators=(",", ":"))
@@ -89,15 +84,15 @@ class Schema:
         """Return a copy of the schema."""
         return copy.deepcopy(self._schema)
 
-    def asdict(self) -> Mapping[str, Any] | None:
-        """Return the schema as a dictionary."""
-        return self.schema
+    def asdict(self) -> Mapping[str, Any]:
+        """Return a shallow copy of the schema as a dictionary."""
+        return self._schema or {}
 
     def validate(self, row: Any) -> dict:
         """Validate a configuration row (dict) against this schema."""
         try:
             self._validate_row(row)
-        except jsonschema.exceptions.SchemaError as ve:
+        except SchemaError as ve:
             logger.error(ve)
             raise
         return row
@@ -111,8 +106,10 @@ class Schema:
 
         :rtype: dict
         """
+        from ruamel.yaml.comments import CommentedMap
+
         if comments:
-            properties = ruamel.yaml.comments.CommentedMap()
+            properties = CommentedMap()
         else:
             raise NotImplementedError
 
@@ -122,16 +119,18 @@ class Schema:
         except IndexError:
             pass
 
-        def update_properties(props, section, level):
+        def update_properties(
+            props: CommentedMap, section: Any, level: int
+        ) -> CommentedMap:
             if isinstance(section, str):
-                return None
+                return props
             if not isinstance(section, dict):
-                return None
+                return props
             for k, v in section.items():
                 if isinstance(v, dict):
                     desc = v.get("description", "")
                     if "properties" in v.keys():
-                        props[k] = ruamel.yaml.comments.CommentedMap()
+                        props[k] = CommentedMap()
                         props[k] = update_properties(
                             props[k], v["properties"], level=level + 1
                         )
@@ -161,17 +160,13 @@ class Schema:
         return properties
 
 
-def get_schema(schema="CONFIGURATION_SCHEMA"):
+def get_schema(schema: str = "CONFIGURATION_SCHEMA") -> Schema:
     """Get schema from file."""
-    try:
-        schemafile = pkg_resources.resource_filename(
-            "nbis", str(getattr(SchemaFiles, schema))
-        )
-    except AttributeError:
-        schemafile = pkg_resources.files("nbis") / str(getattr(SchemaFiles, schema))
-    with open(schemafile, encoding="utf-8") as fh:
-        schema = YAML().load(fh)
-    return Schema(schema)
+    schemafile = files("nbis") / getattr(SchemaFiles, schema)
+    with as_file(schemafile) as path:
+        with open(path, encoding="utf-8") as fh:
+            data = YAML().load(fh)
+    return Schema(data)
 
 
 def load_config(file=None, data=None, schema="CONFIGURATION_SCHEMA", validate=True):
