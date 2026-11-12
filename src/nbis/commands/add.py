@@ -167,6 +167,7 @@ def diary(env, doc_type, show, **kw):
     kw.update(
         **{
             "project_name": env.config.project_name,
+            "python_module": env.config.python_module,
             "args": sysargs,
             "date": date.today(),
         }
@@ -187,7 +188,7 @@ def diary(env, doc_type, show, **kw):
     "template_name",
     "--template",
     "-t",
-    type=click.Choice(templates.INDIVIDUAL_TEMPLATES.keys()),
+    type=click.Choice(list(templates.INDIVIDUAL_TEMPLATES)),
 )
 @click.option("--show", is_flag=True, help="show rendered template")
 @click.option(
@@ -227,9 +228,10 @@ def tool(env, tool_name, show, **kw):
     """Add individual tool"""
     logger.info("Adding tool %s", tool_name)
     if kw["name"] is None:
-        kw["name"] = pathlib.Path("src") / env.config.project_name / "tools"
+        kw["name"] = pathlib.Path("src") / env.config.python_module / "tools"
     kw["tool_name"] = tool_name
     kw["project_name"] = env.config.project_name
+    kw["python_module"] = env.config.python_module
     outdir = pathlib.Path(kw["name"])
     tpl = "src/python_module/tools/tool.py.j2"
     tools_tpl = "src/python_module/commands/tools.py.j2"
@@ -240,12 +242,12 @@ def tool(env, tool_name, show, **kw):
     else:
         templates.add_template(path, tpl, **kw)
         cmd_path = (
-            pathlib.Path("src") / env.config.project_name / "commands" / "tools.py"
+            pathlib.Path("src") / env.config.python_module / "commands" / "tools.py"
         )
         templates.add_template(cmd_path, tools_tpl, **kw)
         click.echo(
             f"Add {env.config.project_name}-{tool_name} = "
-            f'"{env.config.project_name}.tools.{tool_name}:cli" to '
+            f'"{env.config.python_module}.tools.{tool_name}:cli" to '
             "pyproject.toml and reinstall"
         )
 
@@ -269,7 +271,7 @@ def pcommand_group(env, command_group, path, show):
         path = (
             env.home
             / "src"
-            / env.config.project_name
+            / env.config.python_module
             / "commands"
             / f"{command_group}.py"
         )
@@ -308,7 +310,7 @@ def pcommand(env, command, group, path, show, standalone):  # pylint: disable=to
     kw = {"command": command}
     mod = group if group is not None else command
     if path is None:
-        path = env.home / "src" / env.config.project_name / "commands" / f"{mod}.py"
+        path = env.home / "src" / env.config.python_module / "commands" / f"{mod}.py"
     else:
         path = pathlib.Path(path)
     t = templates.render_template(tpl, **kw)
@@ -332,8 +334,9 @@ def quarto(env, **kw) -> None:
     in docs/.
     """
     tpl = "src/python_module/commands/quarto.py.j2"
-    path = env.home / "src" / env.config.project_name / "commands" / "quarto.py"
+    path = env.home / "src" / env.config.python_module / "commands" / "quarto.py"
     kw["project_name"] = env.config.project_name
+    kw["python_module"] = env.config.python_module
     t = templates.render_template(tpl, **kw)
     add_smk_config_py(env)
     if not path.exists():
