@@ -1,6 +1,6 @@
 import pandas as pd
 from snakemake.utils import validate
-from {{ project_name }}.smk.config import SchemaFiles
+from {{ python_module }}.smk.config import SchemaFiles
 
 
 configfile: Path("config/config.yaml")

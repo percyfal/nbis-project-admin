@@ -11,7 +11,7 @@ Thereafter, snakemake commands or command groups can be added as
 
 which will add a Snakefile
 src/{module}/workflows/smk/commands/analysis/run.smk and a CLI command file
-src/PROJECT_NAME/commands/smk/analysis.py. Once installed, the snakemake file
+src/PYTHON_MODULE/commands/smk/analysis.py. Once installed, the snakemake file
 can be run as
 
     PROJECT_NAME smk analysis run
@@ -50,24 +50,26 @@ ENGINE = "smk"
 def add_group_smk_py_init(env):
     """Add snakemake python command group file"""
     pyfile = (
-        env.home / "src" / env.config.project_name / "commands" / "smk" / "__init__.py"
+        env.home / "src" / env.config.python_module / "commands" / "smk" / "__init__.py"
     )
     add_template(
         pyfile,
         "src/python_module/commands/smk/__init__.py.j2",
         project_name=env.config.project_name,
+        python_module=env.config.python_module,
     )
 
 
 def add_group_smk_py(env, group, **kw):
     """Add snakemake python command group file"""
     pyfile = (
-        env.home / "src" / env.config.project_name / "commands" / "smk" / f"{group}.py"
+        env.home / "src" / env.config.python_module / "commands" / "smk" / f"{group}.py"
     )
     add_template(
         pyfile,
         "src/python_module/commands/smk/group.py.j2",
         project_name=env.config.project_name,
+        python_module=env.config.python_module,
         command=group,
         test=kw["test"],
     )
@@ -76,7 +78,7 @@ def add_group_smk_py(env, group, **kw):
 def add_command_smk_py(env, group, **kw):
     """Add snakemake python command file"""
     pyfile = (
-        env.home / "src" / env.config.project_name / "commands" / "smk" / f"{group}.py"
+        env.home / "src" / env.config.python_module / "commands" / "smk" / f"{group}.py"
     )
     if f"def {kw['command']}(" in pyfile.read_text():
         logger.warning("%s already defined; skipping", kw["command"])
@@ -96,7 +98,7 @@ def add_command_smk(env, group, command, **kw):
     smkfile = (
         env.home
         / "src"
-        / env.config.project_name
+        / env.config.python_module
         / "workflow"
         / ENGINE
         / "commands"
@@ -108,6 +110,7 @@ def add_command_smk(env, group, command, **kw):
         smkfile,
         f"src/python_module/workflow/{ENGINE}/commands/{command_template}.smk.j2",
         project_name=env.config.project_name,
+        python_module=env.config.python_module,
         command=command,
         test=kw["test"],
         validation=kw["validation"],
@@ -120,7 +123,7 @@ def add_test_config(env, group, command):
     smkfile = (
         env.home
         / "src"
-        / env.config.project_name
+        / env.config.python_module
         / "workflow"
         / ENGINE
         / "commands"
@@ -138,7 +141,7 @@ def add_test_smk_setup(env, group, command):
     smkfile = (
         env.home
         / "src"
-        / env.config.project_name
+        / env.config.python_module
         / "workflow"
         / ENGINE
         / "commands"
@@ -163,7 +166,7 @@ def add_config_schema_yaml(env):
     confschema = (
         env.home
         / "src"
-        / env.config.project_name
+        / env.config.python_module
         / "workflow"
         / ENGINE
         / "schemas"
@@ -179,7 +182,7 @@ def add_samples_schema_yaml(env):
     sampleschema = (
         env.home
         / "src"
-        / env.config.project_name
+        / env.config.python_module
         / "workflow"
         / ENGINE
         / "schemas"
@@ -205,11 +208,12 @@ def add_local_profile(env):
 
 def add_config_py(env):
     """Add python configuration module"""
-    configfile = env.home / "src" / env.config.project_name / ENGINE / "config.py"
+    configfile = env.home / "src" / env.config.python_module / ENGINE / "config.py"
     add_template(
         configfile,
         f"src/python_module/{ENGINE}/config.py.j2",
         project_name=env.config.project_name,
+        python_module=env.config.python_module,
     )
 
 
@@ -258,7 +262,7 @@ def add(ctx, group, **kw):
 
     """
     env = ctx.obj
-    configfile = env.home / "src" / env.config.project_name / ENGINE / "config.py"
+    configfile = env.home / "src" / env.config.python_module / ENGINE / "config.py"
     if not configfile.exists():
         logger.error(
             "No snakemake configuration module available. "
@@ -285,7 +289,7 @@ def init(env):
 
     Install minimal config, sample and schema files. Will install
     config/config.yaml, resources/samples.tsv,
-    src/project_name/snakemake/config.py,
+    src/python_module/snakemake/config.py,
     schemas/config.schema.yaml and schemas/samples.schema.yaml.
     """
     add_config_py(env)
