@@ -56,10 +56,10 @@ def _find_config_file(home: pathlib.Path) -> pathlib.Path | None:
 
     Search order:
 
-    1. ``<home>/<home.name>.yaml``
+    1. ``<home>/{{ project_name }}.yaml``
     2. ``$XDG_CONFIG_HOME/{{ project_name }}/{{ project_name }}.yaml``
     """
-    candidate = home / f"{home.name}.yaml"
+    candidate = home / "{{ project_name }}.yaml"
     if candidate.is_file():
         return candidate
     xdg = pathlib.Path(
@@ -113,7 +113,7 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
     kwargs.setdefault("expose_value", False)
     kwargs.setdefault("is_eager", True)
     kwargs.setdefault(
-        "help", ("Path to project configuration file. Defaults to <DIRNAME>.yaml.")
+        "help", ("Path to project configuration file. Defaults to {{ project_name }}.yaml.")
     )
     kwargs["callback"] = callback
     kwargs["envvar"] = "{{ project_name.upper() }}_CONFIG_FILE"
