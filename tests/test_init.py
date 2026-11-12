@@ -1,4 +1,7 @@
 """Test initialization of project."""
+import ast
+
+import pytest
 
 from nbis.cli import cli
 
@@ -51,3 +54,45 @@ def test_init_curdir(runner, project_foo):
     assert not result.exception
     files = [str(p.relative_to(out.parent)) for p in out.rglob("*") if p.is_file()]
     assert sorted(files) == sorted(expected)
+
+def _imported_roots(path):
+    """Yield the top-level module name of every absolute import in a a file."""
+    tree = ast.parse(path.read_text())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            yield node.module.split(".")[0]
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                yield alias.name.split(".")[0]
+
+@pytest.mark.parametrize(
+    "project_name,repo_name,module",
+    [
+        ("my_project", "my_repo", "my_repo"),
+        ("my-project", "my-repo", "my_repo"),
+    ],
+)
+def test_init_repo_name_differs(runner, tmp_path, project_name, repo_name, module):
+    """Imports in generated code must use the package name, not project name."""
+    out = tmp_path / project_name
+    result = runner.invoke(
+        cli,
+        [
+            "init",
+            str(out),
+            "--project-name",
+            project_name,
+            "--repo-name",
+            repo_name
+        ],
+    )
+    assert not result.exception
+    pkg = out / "src" / module
+    assert pkg.is_dir()
+
+    roots = set()
+    for f in pkg.rglob("*.py"):
+        roots.update(_imported_roots(f))
+    assert module in roots
+    assert project_name not in roots
+    assert project_name.replace("-", "_") not in roots
