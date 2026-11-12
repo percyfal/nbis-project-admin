@@ -25,7 +25,7 @@ CONTEXT_SETTINGS = {"auto_envvar_prefix": "{{ project_name.upper() }}", "show_de
 
 pass_environment = click.make_pass_decorator(Environment, ensure=True)
 
-{% set ProjectName = project_name.replace("_", " ").title().replace(" ", "") %}
+{% set ProjectName = project_name.replace("_", " ").replace("-", " ").title().replace(" ", "") %}
 class {{ ProjectName }}Cli(click.Group):
     """{{ project_name }} CLI class"""
 
