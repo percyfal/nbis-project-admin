@@ -107,3 +107,17 @@ def test_init_console_script_named_after_project(runner, tmp_path):
     pyproject = toml.load(out / "pyproject.toml")
     assert pyproject["project"]["name"] == "my-project"
     assert pyproject["project"]["scripts"] == {"my-project": "my_project.cli:cli"}
+
+
+def test_init_env_var_names_are_valid(runner, tmp_path):
+    """Environment variable names derive from the python module name."""
+    out = tmp_path / "project_foo"
+    result = runner.invoke(cli, ["init", str(out), "--project-name", "my-project"])
+    assert not result.exception
+    pkg = out / "src" / "my_project"
+    options = (pkg / "core" / "options.py").read_text()
+    assert '"MY_PROJECT_CONFIG_FILE"' in options
+    assert '"MY_PROJECT_SNAKEMAKE_DIRECTORY"' in (pkg / "core" / "snakemake.py").read_text()
+    assert '"auto_envvar_prefix": "MY_PROJECT"' in (pkg / "cli.py").read_text()
+    for f in (pkg / "cli.py", pkg / "core" / "options.py", pkg / "core" / "snakemake.py"):
+        assert "MY-PROJECT" not in f.read_text()

@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 PKG_DIR = pathlib.Path(__file__).absolute().parent
-CONTEXT_SETTINGS = {"auto_envvar_prefix": "{{ project_name.upper() }}", "show_default": True}
+CONTEXT_SETTINGS = {"auto_envvar_prefix": "{{ python_module.upper() }}", "show_default": True}
 
 pass_environment = click.make_pass_decorator(Environment, ensure=True)
 

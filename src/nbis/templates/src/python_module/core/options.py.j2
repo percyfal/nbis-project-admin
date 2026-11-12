@@ -99,7 +99,7 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
             else:
                 logger.warning(
                     "No configuration file found. Using defaults only. "
-                    "Use --config-file or set {{ project_name.upper() }}_CONFIG_FILE "
+                    "Use --config-file or set {{ python_module.upper() }}_CONFIG_FILE "
                     "to specify a configuration file."
                 )
             return
@@ -116,7 +116,7 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
         "help", ("Path to project configuration file. Defaults to {{ project_name }}.yaml.")
     )
     kwargs["callback"] = callback
-    kwargs["envvar"] = "{{ project_name.upper() }}_CONFIG_FILE"
+    kwargs["envvar"] = "{{ python_module.upper() }}_CONFIG_FILE"
     return option(*param_decls, **kwargs)
 
 
