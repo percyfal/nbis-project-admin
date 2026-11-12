@@ -22,6 +22,7 @@ by default is equal to the PROJECT_DIRECTORY name:
 
 import logging
 import pathlib
+import re
 
 import click
 
@@ -74,7 +75,7 @@ def main(
         project_name = p.name
     if repo_name is None:
         repo_name = project_name
-    python_module = repo_name
+    python_module = re.sub(r"\W", "_", repo_name)
     data = {
         "project_directory": str(p.name),
         "repo_name": repo_name,
