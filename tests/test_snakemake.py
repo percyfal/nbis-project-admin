@@ -7,8 +7,8 @@ from nbis.snakemake import (
     profile_option,
     report_option,
     snakemake_argument_list,
-    test_option,
 )
+from nbis.snakemake import test_option as smk_test_option
 
 
 def test_snakemake_args(runner):
@@ -96,7 +96,7 @@ class TestTestOption:
         """Test test_option."""
 
         @click.command()
-        @test_option()
+        @smk_test_option()
         def cmd(test):
             print(test)
 
@@ -109,7 +109,7 @@ class TestTestOption:
         """Test test_option with config."""
 
         @click.command()
-        @test_option(config=["foo=bar"])
+        @smk_test_option(config=["foo=bar"])
         def cmd(test):
             print(test)
 
@@ -120,7 +120,7 @@ class TestTestOption:
         """Test test_option with options."""
 
         @click.command()
-        @test_option(options=["--foo", "bar"])
+        @smk_test_option(options=["--foo", "bar"])
         def cmd(test):
             print(test)
 
