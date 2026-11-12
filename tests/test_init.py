@@ -68,12 +68,12 @@ def _imported_roots(path):
 @pytest.mark.parametrize(
     "project_name,repo_name,module",
     [
-        ("my_project", "my_repo", "my_repo"),
-        ("my-project", "my-repo", "my_repo"),
+        ("my_project", "my_repo", "my_project"),
+        ("my-project", "my-repo", "my_project"),
     ],
 )
 def test_init_repo_name_differs(runner, tmp_path, project_name, repo_name, module):
-    """Imports in generated code must use the package name, not project name."""
+    """The python module derives from the project name, not the repo name."""
     out = tmp_path / project_name
     result = runner.invoke(
         cli,
@@ -94,5 +94,5 @@ def test_init_repo_name_differs(runner, tmp_path, project_name, repo_name, modul
     for f in pkg.rglob("*.py"):
         roots.update(_imported_roots(f))
     assert module in roots
-    assert project_name not in roots
-    assert project_name.replace("-", "_") not in roots
+    assert repo_name not in roots
+    assert repo_name.replace("-", "_") not in roots

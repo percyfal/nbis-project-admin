@@ -56,9 +56,9 @@ class {{ ProjectName }}Cli(click.Group):
             logger.warning("Could not import command %s: %s", cmd_name, e)
             return None
         if hasattr(mod, "cli"):
-            return getattr(mod, "cli")
+            return mod.cli
         if hasattr(mod, "main"):
-            return getattr(mod, "main")
+            return mod.main
         logger.warning("No cli or main found in command %s", cmd_name)
         return None
 
