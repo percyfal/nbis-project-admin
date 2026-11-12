@@ -2,8 +2,8 @@
 
 from ruamel.yaml import YAML
 
-from {{ project_name }}.cli import PKG_DIR
-from {{ project_name }}.config import Schema
+from {{ python_module }}.cli import PKG_DIR
+from {{ python_module }}.config import Schema
 
 WORKFLOW_ROOT = PKG_DIR / "workflow"
 SNAKEMAKE_ENGINE = "smk"
