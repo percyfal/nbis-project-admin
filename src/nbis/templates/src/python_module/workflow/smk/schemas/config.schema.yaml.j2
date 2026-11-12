@@ -10,6 +10,29 @@ properties:
       sample definition file
     type: string
     pattern: .+\.(tsv|csv)$
+  pathvars:
+    type: object
+    default: {}
+    description: >-
+      Pathvars definitions
+    properties:
+      interim:
+        type: string
+        format: uri
+        description: Interim results
+        default: data/interim
+      resources:
+        type: string
+        format: uri
+        description: >-
+          Base resources path
+        default: resources
+      results:
+        type: string
+        format: uri
+        description: >-
+          Base results path
+        default: results
 
 # entries that have to be in the config file for successful validation
 required:
