@@ -26,6 +26,20 @@ Top-level files that configure the project as a whole.
   `.editorconfig`, `.prettierrc.yml` — Tooling configuration for
   version control, code style, and formatting.
 
+FIXME: given the new PROJECT_CONFIG_FILE environment variable, the
+workflow can easily be run from wherever. Describe the output of a
+typical analysis, but suggest that separate analysis can live either
+in an `analysis` subdirectory, or in a completely different location,
+as long as the pixi environment is activated. Possible complication:
+how does this tie in with the documentation? Just let the rsyncfiles
+take care of the mapping.
+
+FIXME: Add .envrc with environment variables PROJECT_ANALYSIS,
+PROJECT_SNAKEMAKE_DIRECTORY="../analysis" (see
+src/python_module/core/snakemake.py.j2), and SNAKEMAKE_CONDA_PREFIX
+that points to the root project directory (reusable conda
+environments).
+
 ## `data`
 
 Project data, organised freely. Some recommendations:
