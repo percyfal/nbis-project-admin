@@ -23,20 +23,24 @@ def sanitize_module_name(name: str) -> str:
     return f"_{module}" if module[:1].isdigit() else module
 
 
+def read_project_name(home: pathlib.Path) -> str | None:
+    """Return the project name from ``pyproject.toml`` in HOME, if available."""
+    pyproject = home / "pyproject.toml"
+    if not pyproject.is_file():
+        return None
+    try:
+        return toml.load(pyproject)["project"]["name"]
+    except (KeyError, toml.TomlDecodeError):
+        return None
+
+
 def default_config_file(home: pathlib.Path) -> pathlib.Path:
     """Return the default configuration file for the project in HOME.
 
     The file is named after the project name in ``pyproject.toml``,
     falling back on the directory name if that is unavailable.
     """
-    name = home.name
-    pyproject = home / "pyproject.toml"
-    if pyproject.is_file():
-        try:
-            name = toml.load(pyproject)["project"]["name"]
-        except (KeyError, toml.TomlDecodeError):
-            pass
-    return home / f"{name}.yaml"
+    return home / f"{read_project_name(home) or home.name}.yaml"
 
 
 def _ensure_python_module(config) -> None:
@@ -96,6 +100,10 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
             config_file = default_config_file(ctx.obj.home)
             if config_file.exists():
                 ctx.obj.config = load_config(file=config_file)
+            else:
+                project_name = read_project_name(ctx.obj.home)
+                if project_name:
+                    ctx.obj.config = load_config(data={"project_name": project_name})
             _ensure_python_module(ctx.obj.config)
             return
         ctx.obj.home = pathlib.Path(value).absolute().parent

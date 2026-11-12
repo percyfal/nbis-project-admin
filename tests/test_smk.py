@@ -4,20 +4,20 @@ from nbis.cli import cli
 
 expected_init = [
     "project_foo/pyproject.toml",
-    "project_foo/src/nbis_admin/smk/config.py",
+    "project_foo/src/project_foo/smk/config.py",
     "project_foo/config/smk/profiles/local/config.yaml",
     "project_foo/config/config.yaml",
-    "project_foo/src/nbis_admin/workflow/smk/schemas/config.schema.yaml",
-    "project_foo/src/nbis_admin/workflow/smk/schemas/samples.schema.yaml",
+    "project_foo/src/project_foo/workflow/smk/schemas/config.schema.yaml",
+    "project_foo/src/project_foo/workflow/smk/schemas/samples.schema.yaml",
     "project_foo/resources/samples.tsv",
 ]
 
 
 expected_add = [
     "project_foo/pyproject.toml",
-    "project_foo/src/nbis_admin/workflow/smk/commands/analysis/run.smk",
-    "project_foo/src/nbis_admin/commands/smk/__init__.py",
-    "project_foo/src/nbis_admin/commands/smk/analysis.py",
+    "project_foo/src/project_foo/workflow/smk/commands/analysis/run.smk",
+    "project_foo/src/project_foo/commands/smk/__init__.py",
+    "project_foo/src/project_foo/commands/smk/analysis.py",
 ]
 
 
@@ -33,7 +33,7 @@ def test_smk_init(runner, pyproject):
 def test_smk_add(runner, pyproject):
     """Test adding snakemake commands."""
     out = pyproject
-    config = out / "src" / "nbis_admin" / "smk" / "config.py"
+    config = out / "src" / "project_foo" / "smk" / "config.py"
     config.parent.mkdir(parents=True)
     config.touch()
     result = runner.invoke(cli, ["smk", "add"])

@@ -63,3 +63,16 @@ def test_config_file_named_after_project(runner, tmp_path, monkeypatch):
     result = runner.invoke(cli, ["smk", "init"])
     assert not result.exception
     assert (out / "src" / "my_project" / "smk" / "config.py").exists()
+
+
+def test_no_config_file_uses_pyproject_name(runner, tmp_path, monkeypatch):
+    """Without a config file, the project name is read from pyproject.toml."""
+    out = tmp_path / "some_directory"
+    result = runner.invoke(cli, ["init", str(out), "--project-name", "my-project"])
+    assert not result.exception
+    monkeypatch.chdir(out)
+    assert not (out / "my-project.yaml").exists()  # no config file
+    result = runner.invoke(cli, ["smk", "init"])
+    assert not result.exception
+    assert (out / "src" / "my_project" / "smk" / "config.py").exists()
+    assert not (out / "src" / "nbis_admin").exists()
