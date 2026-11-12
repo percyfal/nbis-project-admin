@@ -11,11 +11,11 @@ import logging
 import pprint
 import types
 from collections import OrderedDict
-from typing import Any, Mapping
+from collections.abc import Mapping
+from importlib.resources import as_file, files
+from typing import Any
 
 import jsonschema
-from importlib.resources import files, as_file
-
 import ruamel.yaml
 from ruamel.yaml import YAML
 
@@ -45,7 +45,7 @@ def validate_bytes(data: bytes | None) -> None:
     """Validate that data is bytes."""
     if data is not None and not isinstance(data, bytes):
         raise TypeError(
-            (f"If no encoding is set metadata should be bytes, found {type(data)}")
+            f"If no encoding is set metadata should be bytes, found {type(data)}"
         )
 
 
@@ -270,9 +270,9 @@ class Config(PropertyDict):
         allvals = []
         for _, v in d.items():
             allvals.append(v)
-        rows = zip(*allvals)
+        rows = zip(*allvals, strict=False)
         for r in rows:
-            dd = dict(zip(d.keys(), r))
+            dd = dict(zip(d.keys(), r, strict=False))
             writer.writerow(dd)
 
     @classmethod

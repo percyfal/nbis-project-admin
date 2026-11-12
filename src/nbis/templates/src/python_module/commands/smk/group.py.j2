@@ -9,7 +9,12 @@ import click
 
 from {{ python_module }}.cli import pass_environment
 from {{ python_module }}.core import wrappers
-from {{ python_module }}.core.snakemake import jobs_option, no_profile_option, profile_option
+from {{ python_module }}.core.snakemake import (
+    directory_option,
+    jobs_option,
+    no_profile_option,
+    profile_option,
+)
 {% if test -%}
   from {{ python_module }}.core.snakemake import test_option
 {% endif -%}

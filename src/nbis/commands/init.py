@@ -22,11 +22,11 @@ by default is equal to the PROJECT_DIRECTORY name:
 
 import logging
 import pathlib
-import re
 
 import click
 
 from nbis import templates
+from nbis.decorators import sanitize_module_name
 
 __shortname__ = __name__.rsplit(".", maxsplit=1)[-1]
 
@@ -75,7 +75,7 @@ def main(
         project_name = p.name
     if repo_name is None:
         repo_name = project_name
-    python_module = re.sub(r"\W", "_", repo_name)
+    python_module = sanitize_module_name(project_name)
     data = {
         "project_directory": str(p.name),
         "repo_name": repo_name,

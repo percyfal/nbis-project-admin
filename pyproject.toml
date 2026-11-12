@@ -188,6 +188,7 @@ commands = [
   [
     "project_foo",
     "tools",
+    "--help",
   ],
   [
     "project_foo",
