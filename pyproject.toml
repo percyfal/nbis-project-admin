@@ -221,6 +221,13 @@ commands = [
     "{envtmpdir}",
     "{envtmpdir}/project_foo/project_foo.yaml",
   ],
+  [
+    "sh",
+    "-c",
+    'unset PROJECT_FOO_CONFIG_FILE; cd "$1" && project_foo 2>&1 | grep "No configuration file found" > /dev/null',
+    "_",
+    "{envtmpdir}",
+  ],
 ]
 
 [tool.ruff]
