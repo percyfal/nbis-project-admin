@@ -6,6 +6,7 @@ import re
 import typing as t
 
 import click
+import toml
 from click.core import Command, Context, Parameter
 from click.decorators import option
 
@@ -20,6 +21,22 @@ def sanitize_module_name(name: str) -> str:
     """Return a valid python module name derived from NAME."""
     module = re.sub(r"\W", "_", name)
     return f"_{module}" if module[:1].isdigit() else module
+
+
+def default_config_file(home: pathlib.Path) -> pathlib.Path:
+    """Return the default configuration file for the project in HOME.
+
+    The file is named after the project name in ``pyproject.toml``,
+    falling back on the directory name if that is unavailable.
+    """
+    name = home.name
+    pyproject = home / "pyproject.toml"
+    if pyproject.is_file():
+        try:
+            name = toml.load(pyproject)["project"]["name"]
+        except (KeyError, toml.TomlDecodeError):
+            pass
+    return home / f"{name}.yaml"
 
 
 def _ensure_python_module(config) -> None:
@@ -76,7 +93,7 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
         ctx.obj.config = load_config(data={"project_name": "nbis-admin"})
         if not value or ctx.resilient_parsing:
             ctx.obj.home = pathlib.Path(os.curdir).absolute()
-            config_file = ctx.obj.home / f"{ctx.obj.home.name}.yaml"
+            config_file = default_config_file(ctx.obj.home)
             if config_file.exists():
                 ctx.obj.config = load_config(file=config_file)
             _ensure_python_module(ctx.obj.config)
@@ -94,7 +111,7 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
     kwargs.setdefault("expose_value", False)
     kwargs.setdefault("is_eager", True)
     kwargs.setdefault(
-        "help", ("Path to project configuration file. Defaults to <DIRNAME>.yaml.")
+        "help", ("Path to project configuration file. Defaults to <PROJECT_NAME>.yaml.")
     )
     kwargs["callback"] = callback
     return option(*param_decls, **kwargs)

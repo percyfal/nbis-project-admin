@@ -84,7 +84,7 @@ def main(
         "description": description,
         "version": ctx.obj.version,
         "open_source_license": kw.get("open_source_license"),
-        "config_file": ctx.obj.config.get("config_file", p / f"{python_module}.yaml"),
+        "config_file": ctx.obj.config.get("config_file", p / f"{project_name}.yaml"),
         "author": kw.get("author"),
     }
 

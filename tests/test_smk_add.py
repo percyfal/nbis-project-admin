@@ -47,3 +47,19 @@ def test_admin_flow_uses_python_module(runner, tmp_path, monkeypatch, name, modu
         roots.update(_imported_roots(f))  # SyntaxError here means an empty module
     assert module in roots
     assert name == module or name not in roots
+
+
+def test_config_file_named_after_project(runner, tmp_path, monkeypatch):
+    """The config file is named after the project, not the directory."""
+    out = tmp_path / "some_directory"
+    result = runner.invoke(cli, ["init", str(out), "--project-name", "my-project"])
+    assert not result.exception
+    monkeypatch.chdir(out)
+    result = runner.invoke(cli, ["config", "init"])
+    assert not result.exception
+    assert (out / "my-project.yaml").exists()
+    assert not (out / "some_directory.yaml").exists()
+    # Fails (placeholder project name) unless the config file is found
+    result = runner.invoke(cli, ["smk", "init"])
+    assert not result.exception
+    assert (out / "src" / "my_project" / "smk" / "config.py").exists()
