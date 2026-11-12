@@ -24,6 +24,7 @@ dependencies = [
   "jsonschema>=4.23.0",
 ]
 dynamic = ["version"]
+requires-python = ">= 3.11,<3.14"
 
 [dependency-groups]
 dev = ["basedpyright>=1.40.1", "pytest>=8.3.5", "tox>=4.25.0"]
@@ -67,9 +68,7 @@ isolated_build = true
 deps = ["pytest", "pytest-cov", "pip>=22.1.0", "wheel"]
 commands = [["pytest"]]
 
-
 [tool.ruff]
-target-version = "py312"
 line-length = 88
 
 [tool.ruff.format]
@@ -78,11 +77,13 @@ docstring-code-format = true
 [tool.ruff.lint]
 select = [
   "A",    # warn about shadowing built-ins
+  "B",    # bugbear
   "E",    # style stuff, whitespaces
   "F",    # important pyflakes lints
   "I",    # import sorting
   "N",    # naming
   "T100", # breakpoints
+  "UP",   # pyupgrade
 ]
 ignore = ["N806"]
 

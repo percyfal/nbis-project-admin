@@ -69,13 +69,14 @@ deps = ["pytest", "pytest-cov", "pytest-shutil", "pytest-git"]
 commands = [["pytest", "--basetemp={env_tmp_dir}", "{posargs}"]]
 
 [tool.tox.env.project]
-allowlist_externals = ["git", "touch", "uv", "pixi"]
+allowlist_externals = ["git", "touch", "uv", "pixi", "sh"]
 changedir = "{envtmpdir}/project_foo"
 set_env = { SKIP = "lint" }
 deps = [
   "build",
   "pre-commit",
   "basedpyright",
+  "ruff",
   "pytest",
   "pytest-cov",
   "pytest-shutil",
@@ -99,11 +100,6 @@ commands = [
     "add",
     "-f",
     ".",
-  ],
-  [
-    "pixi",
-    "run",
-    "project_foo",
   ],
   [
     "uv",
@@ -171,10 +167,15 @@ commands = [
     "main",
   ],
   [
+    "ruff",
+    "check",
+    "src",
+  ],
+  [
     "git",
     "add",
     ".",
-    "_quarto.yml",
+    "docs/_quarto.yml",
     "src/project_foo/tools/my_tool.py",
   ],
   [
@@ -183,6 +184,10 @@ commands = [
   [
     "project_foo",
     "smk",
+  ],
+  [
+    "project_foo",
+    "tools",
   ],
   [
     "project_foo",
@@ -207,6 +212,14 @@ commands = [
     "quarto",
     "--help",
   ],
+  [
+    "sh",
+    "-c",
+    'cd "$1" && PROJECT_FOO_CONFIG_FILE="$2" project_foo smk main run --no-profile --cores 1',
+    "_",
+    "{envtmpdir}",
+    "{envtmpdir}/project_foo/project_foo.yaml",
+  ],
 ]
 
 [tool.ruff]
@@ -219,11 +232,13 @@ docstring-code-format = true
 [tool.ruff.lint]
 select = [
   "A",    # warn about shadowing built-ins
+  "B",    # bugbear
   "E",    # style stuff, whitespaces
   "F",    # important pyflakes lints
   "I",    # import sorting
   "N",    # naming
   "T100", # breakpoints
+  "UP",   # pyupgrade
 ]
 ignore = ["N806"]
 
