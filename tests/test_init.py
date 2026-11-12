@@ -2,6 +2,7 @@
 import ast
 
 import pytest
+import toml
 
 from nbis.cli import cli
 
@@ -96,3 +97,13 @@ def test_init_repo_name_differs(runner, tmp_path, project_name, repo_name, modul
     assert module in roots
     assert repo_name not in roots
     assert repo_name.replace("-", "_") not in roots
+
+
+def test_init_console_script_named_after_project(runner, tmp_path):
+    """The console script is named after the project, pointing at the module."""
+    out = tmp_path / "project_foo"
+    result = runner.invoke(cli, ["init", str(out), "--project-name", "my-project"])
+    assert not result.exception
+    pyproject = toml.load(out / "pyproject.toml")
+    assert pyproject["project"]["name"] == "my-project"
+    assert pyproject["project"]["scripts"] == {"my-project": "my_project.cli:cli"}
