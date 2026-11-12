@@ -6,9 +6,9 @@ import pathlib
 
 import click
 
-from {{ project_name }} import __version__
-from {{ project_name }}.core import options
-from {{ project_name }}.env import Environment
+from {{ python_module }} import __version__
+from {{ python_module }}.core import options
+from {{ python_module }}.env import Environment
 
 {% if author -%}
   __author__ = "{{ author }}"

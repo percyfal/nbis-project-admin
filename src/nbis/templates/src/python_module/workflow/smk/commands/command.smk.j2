@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from snakemake.utils import validate
 import pandas as pd
-from {{ project_name }}.smk.config import SchemaFiles
+from {{ python_module }}.smk.config import SchemaFiles
 
 
 ##############################
@@ -18,10 +18,11 @@ samples = pd.read_table(config["samples"])
 validate(samples, schema=SchemaFiles.SAMPLES_SCHEMA)
 
 
-wildcard_constraints:
+pathvars:
     data="data",
     interim="data/interim",
-    reports="reports",
+
+wildcard_constraints:
     sample=f"({'|'.join(samples.SM.tolist())})",
 
 
