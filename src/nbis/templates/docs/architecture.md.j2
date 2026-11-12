@@ -21,30 +21,49 @@ Top-level files that configure the project as a whole.
 - `{{ project_name }}.yaml` -- Project-specific configuration read by
   the `{{ project_name }}` CLI at runtime. Edit this to change
   project-level settings such as Snakemake profiles and documentation
-  configuration.
+  configuration. See [Configuration lookup](#configuration-lookup).
 - `.gitignore`, `.pre-commit-config.yaml`, `.markdownlint.yaml`,
   `.editorconfig`, `.prettierrc.yml` — Tooling configuration for
   version control, code style, and formatting.
 
-FIXME: given the new PROJECT_CONFIG_FILE environment variable, the
-workflow can easily be run from wherever. Describe the output of a
-typical analysis, but suggest that separate analysis can live either
-in an `analysis` subdirectory, or in a completely different location,
-as long as the pixi environment is activated. Possible complication:
-how does this tie in with the documentation? Just let the rsyncfiles
-take care of the mapping.
+## Configuration lookup
 
-FIXME: Add .envrc with environment variables PROJECT_ANALYSIS,
-PROJECT_SNAKEMAKE_DIRECTORY="../analysis" (see
-src/python_module/core/snakemake.py.j2), and SNAKEMAKE_CONDA_PREFIX
-that points to the root project directory (reusable conda
-environments).
+The CLI looks for its configuration file in this order:
+
+1. the `--config-file` option
+2. the `{{ python_module.upper() }}_CONFIG_FILE` environment variable
+3. `{{ project_name }}.yaml` in the current directory
+4. `$XDG_CONFIG_HOME/{{ project_name }}/{{ project_name }}.yaml`
+   (`~/.config` if `XDG_CONFIG_HOME` is unset)
+
+If no file is found, the CLI warns and uses default settings.
+
+With options 1 and 2, the directory containing the file becomes the
+project home, and Snakemake runs there (`--directory`). With 3 and 4
+the project home is the current directory. A workflow can therefore
+be run from anywhere:
+
+    {{ python_module.upper() }}_CONFIG_FILE=/path/to/{{ project_name }}.yaml \
+        {{ project_name }} smk main run
+
+The snakemake working directory can also be set with the environment
+variable {{ python_module.upper() }}_SNAKEMAKE_DIRECTORY.
+Consequently, separate analyses can live in an `analysis` subdirectory
+or in a completely different location, as long as the pixi environment
+is activated.
+
+For improved reproducibility, you can add an .envrc with environment
+variables {{ python_module.upper() }}_CONFIG_FILE and
+{{ python_module.upper() }}_SNAKEMAKE_DIRECTORY set. In addition,
+set SNAKEMAKE_CONDA_PREFIX to point to the root project directory,
+allowing for reusable conda environments.
 
 ## `data`
 
 Project data, organised freely. Some recommendations:
 
-- `data/external` -- for external data sources such as annotation files and sequence references
+- `data/external` -- for external data sources such as annotation
+  files and sequence references
 - `data/interim` -- for transient data
 
 ## `docs`
@@ -68,15 +87,16 @@ typing:
 
     {{ project_name }}
 
-The `smk` subcommand is defined in `commands/smk.py` and provides
-wrappers to access individual workflows (see next section):
+The `smk` subcommand is defined in `commands/smk/__init__.py`, with
+one file per workflow group (for example `commands/smk/main.py`). It
+provides wrappers to access individual workflows (see next section):
 
-    {{ project_name }} smk main
+    {{ project_name }} smk main run
 
 This command runs workflow `main` defined in
-`src/{{ python_module }}/workflows/smk/main.smk`
+`src/{{ python_module }}/workflow/smk/commands/main/run.smk`
 
-## `src/{{ python_module }}/workflows/smk`
+## `src/{{ python_module }}/workflow/smk`
 
 Snakemake workflow files, organised following best practices.
 
