@@ -29,3 +29,14 @@ def test_config_init(runner, pyproject):
     assert not result.exception
     p = out / "project_foo.yaml"
     assert re.search(r"project_name: project_foo", p.read_text())
+
+
+def test_config_example_uses_pyproject_name(runner, tmp_path, monkeypatch):
+    """The example configuration uses the project name from pyproject.toml."""
+    out = tmp_path / "some_directory"
+    out.mkdir()
+    (out / "pyproject.toml").write_text('[project]\nname = "my-project"\n')
+    monkeypatch.chdir(out)
+    result = runner.invoke(cli, ["config", "example"])
+    assert not result.exception
+    assert re.search(r"project_name: my-project", result.output)
