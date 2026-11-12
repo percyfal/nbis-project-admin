@@ -2,6 +2,7 @@
 
 import os
 import pathlib
+import re
 import typing as t
 
 import click
@@ -13,6 +14,18 @@ from nbis.env import Environment
 
 F = t.TypeVar("F", bound=t.Callable[..., t.Any])
 FC = t.TypeVar("FC", t.Callable[..., t.Any], Command)
+
+
+def sanitize_module_name(name: str) -> str:
+    """Return a valid python module name derived from NAME."""
+    module = re.sub(r"\W", "_", name)
+    return f"_{module}" if module[:1].isdigit() else module
+
+
+def _ensure_python_module(config) -> None:
+    """Derive ``python_module`` from ``project_name`` unless set explicitly."""
+    if not config.get("python_module"):
+        config["python_module"] = sanitize_module_name(config["project_name"])
 
 
 def debug_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], FC]:
@@ -57,7 +70,7 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
     def callback(
         ctx: Context,
         param: Parameter,  # pylint: disable=unused-argument
-        value: bool,  # pylint: disable=unused-argument
+        value: str | None,
     ) -> None:
         ctx.ensure_object(Environment)
         ctx.obj.config = load_config(data={"project_name": "nbis-admin"})
@@ -66,16 +79,18 @@ def config_file_option(*param_decls: str, **kwargs: t.Any) -> t.Callable[[FC], F
             config_file = ctx.obj.home / f"{ctx.obj.home.name}.yaml"
             if config_file.exists():
                 ctx.obj.config = load_config(file=config_file)
+            _ensure_python_module(ctx.obj.config)
             return
         ctx.obj.home = pathlib.Path(value).absolute().parent
         ctx.obj.config = load_config(file=value)
+        _ensure_python_module(ctx.obj.config)
         if ctx.resilient_parsing:
             return
 
     if not param_decls:
         param_decls = ("--config-file",)
 
-    kwargs.setdefault("is_flag", True)
+    kwargs["is_flag"] = False
     kwargs.setdefault("expose_value", False)
     kwargs.setdefault("is_eager", True)
     kwargs.setdefault(

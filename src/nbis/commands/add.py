@@ -266,7 +266,11 @@ def pcommand_group(env, command_group, path, show):
 
     """
     tpl = "src/python_module/commands/command.group.py.j2"
-    kw = {"command": command_group}
+    kw = {
+        "command": command_group,
+        "project_name": env.config.project_name,
+        "python_module": env.config.python_module,
+    }
     if path is None:
         path = (
             env.home
@@ -307,7 +311,11 @@ def pcommand(env, command, group, path, show, standalone):  # pylint: disable=to
         tpl = "src/python_module/commands/command.standalone.py.j2"
     else:
         tpl = "src/python_module/commands/command.py.j2"
-    kw = {"command": command}
+    kw = {
+        "command": command,
+        "project_name": env.config.project_name,
+        "python_module": env.config.python_module,
+    }
     mod = group if group is not None else command
     if path is None:
         path = env.home / "src" / env.config.python_module / "commands" / f"{mod}.py"
