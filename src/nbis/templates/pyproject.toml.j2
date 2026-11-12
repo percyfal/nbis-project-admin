@@ -46,7 +46,7 @@ version-file = "src/{{ python_module }}/_version.py"
 packages = ["src/{{ python_module }}"]
 
 [project.scripts]
-{{ python_module }} = "{{ python_module }}.cli:cli"
+"{{ project_name }}" = "{{ python_module }}.cli:cli"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
