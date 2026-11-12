@@ -9,6 +9,7 @@ import toml
 
 from nbis.cli import pass_environment
 from nbis.config import Config, SchemaFiles, get_schema
+from nbis.decorators import read_project_name
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ def example(env, configuration):
         else None
     )
     if configuration == "main":
-        kwargs = {"project_name": env.home.name}
+        kwargs = {"project_name": read_project_name(env.home) or env.home.name}
 
     print()
     print((f"#\n# Showing example configuration for schema {conf_map[configuration]}"))
